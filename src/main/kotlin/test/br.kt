@@ -1,10 +1,9 @@
 package test
 
-import cn.solarmoon.solarmoon_core.api.attachment.animation.AnimHelper
-import cn.solarmoon.solarmoon_core.api.renderer.HandyBlockEntityRenderer
+import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
+import cn.solarmoon.spark_core.api.renderer.HandyBlockEntityRenderer
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.Direction
 

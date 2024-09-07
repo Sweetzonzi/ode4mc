@@ -1,9 +1,9 @@
 package test
 
-import cn.solarmoon.solarmoon_core.api.attachment.animation.AnimHelper
-import cn.solarmoon.solarmoon_core.api.blockentity.SyncedBlockEntity
-import cn.solarmoon.solarmoon_core.api.cap.fluid.FluidHandlerHelper
-import cn.solarmoon.solarmoon_core.api.cap.fluid.TileTank
+import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
+import cn.solarmoon.spark_core.api.blockentity.SyncedBlockEntity
+import cn.solarmoon.spark_core.api.cap.fluid.FluidHandlerHelper
+import cn.solarmoon.spark_core.api.cap.fluid.TileTank
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
