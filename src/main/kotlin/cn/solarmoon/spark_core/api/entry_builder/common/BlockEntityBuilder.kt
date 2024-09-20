@@ -20,8 +20,7 @@ class BlockEntityBuilder<B : BlockEntity>(
     private var id: String = ""
     private var be: BlockEntitySupplier<B>? = null
     private var validBlocks: Supplier<Array<Block>>? = null
-    private var cap: BlockCapability<*, *>? = null
-    private var capP: ICapabilityProvider<B, *, *>? = null
+    private var capP: MutableList<Pair<BlockCapability<*, *>, ICapabilityProvider<B, *, *>>> = mutableListOf()
 
     fun id(id: String) = apply { this.id = id }
     fun bound(blockentity: BlockEntitySupplier<B>) = apply { this.be = blockentity }
@@ -31,21 +30,22 @@ class BlockEntityBuilder<B : BlockEntity>(
         cap: BlockCapability<T, C>,
         provider: ICapabilityProvider<B, C, T>
     ) = apply {
-        this.cap = cap
-        this.capP = provider
+        capP.add(Pair(cap, provider))
     }
 
     fun build(): DeferredHolder<BlockEntityType<*>, BlockEntityType<B>> {
         val reg = blockEntityDeferredRegister.register(id, Supplier {
             BlockEntityType.Builder.of(be!!, *validBlocks!!.get()).build(null)
         })
-        cap?.let { capP?.let { modBus.addListener { e: RegisterCapabilitiesEvent -> registerCap(reg, e) } } }
+        if (!capP.isEmpty()) modBus.addListener { e: RegisterCapabilitiesEvent -> registerCap(reg, e) }
         return reg
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun registerCap(reg: DeferredHolder<BlockEntityType<*>, BlockEntityType<B>>, event: RegisterCapabilitiesEvent) {
-        event.registerBlockEntity(cap as BlockCapability<Any, Any?>, reg.get(), capP as ICapabilityProvider<B, Any?, Any>)
+        for (cap in capP) {
+            event.registerBlockEntity(cap.first as BlockCapability<Any, Any?>, reg.get(), cap.second as ICapabilityProvider<B, Any?, Any>)
+        }
     }
 
 }

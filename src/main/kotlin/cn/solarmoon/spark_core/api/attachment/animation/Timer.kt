@@ -1,5 +1,7 @@
 package cn.solarmoon.spark_core.api.attachment.animation
 
+import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 

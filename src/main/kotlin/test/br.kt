@@ -16,6 +16,6 @@ class br(context: BlockEntityRendererProvider.Context): HandyBlockEntityRenderer
         packedLight: Int,
         packedOverlay: Int
     ) {
-        AnimHelper.Fluid.renderAnimatedFluid(blockEntity, Direction.DOWN, 1f, 1f, 1.0, partialTick, poseStack, bufferSource, packedLight)
+        AnimHelper.Fluid.renderAnimatedFluid(blockEntity, Direction.DOWN, 1f, 1f, 1f, partialTick, poseStack, bufferSource, packedLight)
     }
 }

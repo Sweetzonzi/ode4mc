@@ -1,17 +1,17 @@
 package cn.solarmoon.spark_core.api.data
 
-import cn.solarmoon.spark_core.api.data.element.FoodValue
-import cn.solarmoon.spark_core.api.recipe.ChanceResult
+import cn.solarmoon.spark_core.api.data.element.ChanceResult
+import cn.solarmoon.spark_core.api.data.element.ProportionalIngredient
 import com.google.gson.JsonObject
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
-import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Holder
 import net.minecraft.core.NonNullList
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
@@ -31,11 +31,7 @@ object SerializeHelper {
 
     object BLOCK {
         @JvmStatic
-        val CODEC: Codec<Block> = RecordCodecBuilder.create { instance ->
-            instance.group(
-                Codec.STRING.fieldOf("id").forGetter { BuiltInRegistries.BLOCK.getKey(it).toString() }
-            ).apply(instance) { id -> BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)) }
-        }
+        val CODEC: Codec<Block> = Codec.STRING.xmap({ BuiltInRegistries.BLOCK.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.BLOCK.getKey(it).toString() })
 
         @JvmStatic
         val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Block> {
@@ -47,6 +43,35 @@ object SerializeHelper {
                 buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(value))
             }
         }
+    }
+
+    object FLUID {
+        @JvmStatic
+        val CODEC: Codec<Fluid> = Codec.STRING.xmap({ BuiltInRegistries.FLUID.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.FLUID.getKey(it).toString() })
+
+        @JvmStatic
+        val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Fluid> {
+            override fun decode(buffer: RegistryFriendlyByteBuf): Fluid {
+                return BuiltInRegistries.FLUID.get(buffer.readResourceLocation())
+            }
+
+            override fun encode(buffer: RegistryFriendlyByteBuf, value: Fluid) {
+                buffer.writeResourceLocation(BuiltInRegistries.FLUID.getKey(value))
+            }
+        }
+    }
+
+    object ITEMSTACK {
+        @JvmStatic
+        val LIST_CODEC = ItemStack.CODEC.listOf()
+
+        @JvmStatic
+        val OPTIONAL_LIST_CODEC = ItemStack.OPTIONAL_CODEC.listOf()
+    }
+
+    object INGREDIENT {
+        @JvmStatic
+        val LIST_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, List<Ingredient>> = Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection { mutableListOf() })
     }
 
     /**
@@ -277,11 +302,6 @@ object SerializeHelper {
             }
         }
         return effectInstances
-    }
-
-    @JvmStatic
-    fun readFoodValue(json: JsonObject, id: String): FoodValue {
-        return FoodValue.OPTIONAL_CODEC.parse(JsonOps.INSTANCE, json.get(id)).result().get()
     }
 
 }

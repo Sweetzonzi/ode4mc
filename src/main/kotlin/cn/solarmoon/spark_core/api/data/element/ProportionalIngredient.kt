@@ -1,10 +1,11 @@
-package cn.solarmoon.spark_core.api.recipe
+package cn.solarmoon.spark_core.api.data.element
 
 import com.google.gson.JsonObject
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.NonNullList
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -28,6 +29,9 @@ data class ProportionalIngredient(val ingredient: Ingredient, val count: Int) {
         }
 
         @JvmStatic
+        val LIST_CODEC = CODEC.listOf()
+
+        @JvmStatic
         val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ProportionalIngredient> = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, ProportionalIngredient::ingredient,
             ByteBufCodecs.INT, ProportionalIngredient::count,
@@ -35,36 +39,7 @@ data class ProportionalIngredient(val ingredient: Ingredient, val count: Int) {
         )
 
         @JvmStatic
-        fun readProportionalIngredients(json: JsonObject, id: String): List<ProportionalIngredient> {
-            val ingredients: MutableList<ProportionalIngredient> = ArrayList()
-            if (json.has(id)) {
-                for (element in GsonHelper.getAsJsonArray(json, id)) {
-                    val j = element.asJsonObject
-                    ingredients.add(CODEC.parse(JsonOps.INSTANCE, j).result().orElseThrow { IllegalArgumentException("Invalid ingredient JSON") })
-                }
-            }
-            return ingredients
-        }
-
-        @JvmStatic
-        fun readProportionalIngredients(buf: RegistryFriendlyByteBuf): List<ProportionalIngredient> {
-            val ingredients: MutableList<ProportionalIngredient> = ArrayList()
-            val inCount = buf.readVarInt()
-
-            for (i in 0 until inCount) {
-                ingredients.add(STREAM_CODEC.decode(buf))
-            }
-
-            return ingredients
-        }
-
-        @JvmStatic
-        fun writeProportionalIngredients(buf: RegistryFriendlyByteBuf, ingredients: List<ProportionalIngredient>) {
-            buf.writeVarInt(ingredients.size)
-            for (proportionalIngredient in ingredients) {
-                STREAM_CODEC.encode(buf, proportionalIngredient)
-            }
-        }
+        val LIST_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, List<ProportionalIngredient>> = STREAM_CODEC.apply(ByteBufCodecs.collection { mutableListOf() })
 
         @JvmStatic
         fun getAllIngredients(proportionalIngredients: List<ProportionalIngredient>): List<Ingredient> {
@@ -83,6 +58,9 @@ data class ProportionalIngredient(val ingredient: Ingredient, val count: Int) {
             return `in`.count.toDouble() / sumCount(proportionalIngredients)
         }
 
+        /**
+         * @return 比较输入的物品列表是否按比例匹配配方所需，并给出匹配的比例数
+         */
         @JvmStatic
         fun findMatch(stacks: List<ItemStack>, ins: List<ProportionalIngredient>): Pair<Boolean, Int> {
             val match: MutableMap<Item, Int> = HashMap()

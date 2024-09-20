@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag
  * 动画计时器，能够存储各类动画信息
  *
  * 必须提醒的是，不可在客户端设置ticker的值，会导致各种各样的问题，最优是在服务端自上而下地让客户端接收数据
+ *
+ * 例如，只在服务端侧进行tick或动画的数据操作，然后使用setChanged传回客户端数据，然后使用partialTicks来使得动画在每tick间平滑过渡
  */
 data class AnimTicker(
     val fixedValues: MutableMap<String, Float> = mutableMapOf(),

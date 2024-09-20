@@ -1,4 +1,4 @@
-package cn.solarmoon.spark_core.api.recipe
+package cn.solarmoon.spark_core.api.data.element
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -9,7 +9,6 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
-import java.util.*
 
 data class AttributeData(val attribute: Attribute, val attributeModifier: AttributeModifier ) {
 

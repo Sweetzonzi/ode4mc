@@ -133,7 +133,7 @@ object BlockUtil {
                 player
             )
             val flag: Boolean = removeDoubleBlock(level, pos)
-            if (!flag) level.removeBlock(pos, false)
+            if (!flag) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())
             if (defaultSound) {
                 level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 1f, 1f)
             }

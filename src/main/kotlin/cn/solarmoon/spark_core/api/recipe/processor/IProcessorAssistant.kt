@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.recipe.processor
 
+import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 
 /**
@@ -12,11 +13,11 @@ interface IProcessorAssistant {
     /**
      * 自动存储配方数据
      */
-    fun aSave(tag: CompoundTag)
+    fun aSave(tag: CompoundTag, provider: HolderLookup.Provider)
 
     /**
      * 自动读取配方数据
      */
-    fun aLoad(tag: CompoundTag)
+    fun aLoad(tag: CompoundTag, provider: HolderLookup.Provider)
 
 }

@@ -1,5 +1,6 @@
 package test
 
+import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
 import cn.solarmoon.spark_core.api.blockentity.SyncedEntityBlock
 import cn.solarmoon.spark_core.api.blockstate.IBedPartState
 import cn.solarmoon.spark_core.api.blockstate.IHorizontalFacingState
@@ -39,10 +40,9 @@ class b(properties: Properties) : SyncedEntityBlock(properties), IWaterLoggedSta
         hand: InteractionHand,
         hitResult: BlockHitResult
     ): ItemInteractionResult {
-        level.getCapability(Capabilities.FluidHandler.BLOCK, pos, hitResult.direction)?.let {
-            if (FluidUtil.interactWithFluidHandler(player, hand, it)) {
-                return ItemInteractionResult.SUCCESS
-            }
+        val be = level.getBlockEntity(pos) as be
+        if (!level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, be.tank)) {
+            return ItemInteractionResult.SUCCESS
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
     }

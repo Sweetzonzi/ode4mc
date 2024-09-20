@@ -1,6 +1,6 @@
 package cn.solarmoon.spark_core.feature.use
 
-import cn.solarmoon.spark_core.api.recipe.ChanceResult
+import cn.solarmoon.spark_core.api.data.element.ChanceResult
 import cn.solarmoon.spark_core.api.util.BlockUtil
 import cn.solarmoon.spark_core.api.util.DropUtil
 import cn.solarmoon.spark_core.api.util.DropUtil.addItemToInventory

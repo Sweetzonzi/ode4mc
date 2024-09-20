@@ -8,9 +8,6 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDef
 import java.util.function.Supplier
 
 
-/**
- * 无需在总线注册，有就行
- */
 class LayerBuilder(private val modId: String, private val bus: IEventBus) {
 
     private var id = ""

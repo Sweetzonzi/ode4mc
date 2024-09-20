@@ -1,23 +1,24 @@
 package cn.solarmoon.spark_core.feature.use
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.RecipeJsonBuilder
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.entry_builder.common.RecipeBuilder
-import cn.solarmoon.spark_core.api.recipe.ChanceResult
+import cn.solarmoon.spark_core.api.data.element.ChanceResult
 import cn.solarmoon.spark_core.api.recipe.IConcreteRecipe
+import cn.solarmoon.spark_core.feature.inlay.AttributeForgingRecipe
 import cn.solarmoon.spark_core.registry.common.SparkRecipes
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.block.Block
-import test.b
 
 data class UseRecipe(
     val ingredient: Ingredient,
@@ -60,18 +61,15 @@ data class UseRecipe(
         }
     }
 
-    class JsonBuilder(
-        val ingredient: Ingredient,
-        val inputBlock: Block,
-        val outputBlock: Block,
-        val chanceResults: List<ChanceResult>
-    ): RecipeJsonBuilder() {
-        override fun getResult(): Item {
-            return outputBlock.asItem()
-        }
+    class JsonBuilder(val use: () -> UseRecipe): RecipeJsonBuilder() {
+        override val name: ResourceLocation
+            get() = BuiltInRegistries.BLOCK.getKey(use.invoke().outputBlock)
 
-        override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
-            recipeOutput.accept(id.withPrefix("use/"), UseRecipe(ingredient, inputBlock, outputBlock, chanceResults), null)
+        override val prefix: String
+            get() = SparkRecipes.USE.type.id.path
+
+        override fun getRecipe(recipeOutput: RecipeOutput, location: ResourceLocation): Recipe<*> {
+            return use.invoke()
         }
     }
 

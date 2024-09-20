@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.compat.jei.category
 
 import cn.solarmoon.spark_core.api.compat.jei.BaseJEICategory
-import cn.solarmoon.spark_core.api.recipe.ChanceResult
 import cn.solarmoon.spark_core.feature.use.UseRecipe
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView
@@ -9,7 +8,6 @@ import mezz.jei.api.helpers.IGuiHelper
 import mezz.jei.api.recipe.IFocusGroup
 import mezz.jei.api.recipe.RecipeIngredientRole
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.core.NonNullList
 import net.minecraft.world.item.ItemStack
 
 

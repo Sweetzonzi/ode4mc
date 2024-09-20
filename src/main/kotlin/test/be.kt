@@ -5,16 +5,17 @@ import cn.solarmoon.spark_core.api.blockentity.SyncedBlockEntity
 import cn.solarmoon.spark_core.api.cap.fluid.FluidHandlerHelper
 import cn.solarmoon.spark_core.api.cap.fluid.TileTank
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.state.BlockState
 
 class be(pos: BlockPos, blockState: BlockState): SyncedBlockEntity(Cap.testbe.get(), pos, blockState) {
 
-    val tank = TileTank(this, 5000)
+    val tank = TileTank(this, 1000)
 
     init {
-        AnimHelper.Fluid.createFluidAnim(this)
+        AnimHelper.Fluid.createFluidAnim(this, Direction.NORTH)
     }
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {

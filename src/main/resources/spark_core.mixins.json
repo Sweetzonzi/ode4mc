@@ -10,7 +10,9 @@
     "FluidTypeMixin"
   ],
   "client": [
-    "BlockRenderDispatcherMixin"
+    "BlockRenderDispatcherMixin",
+    "DebugRendererMixin",
+    "ItemInHandLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

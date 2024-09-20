@@ -1,4 +1,4 @@
-package cn.solarmoon.spark_core.api.recipe
+package cn.solarmoon.spark_core.api.data.element
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -12,13 +12,11 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.enchantment.Enchantments
-import java.util.function.IntFunction
 import java.util.stream.Collectors
 
 
-data class ChanceResult(private val stack: ItemStack, private val chance: Float) {
+data class ChanceResult(val stack: ItemStack, val chance: Float) {
 
     companion object {
         @JvmStatic

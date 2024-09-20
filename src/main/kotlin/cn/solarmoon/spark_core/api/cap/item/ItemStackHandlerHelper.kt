@@ -15,6 +15,9 @@ import java.util.function.Consumer
 
 object ItemStackHandlerHelper {
 
+    /**
+     * 如果物品容器直接保存了blockentity的tag数据，则需要用此来统一标识方可用helper类快速获取容器
+     */
     const val ITEM = "ItemHandler"
 
     /**

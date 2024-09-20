@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.attachment.animation
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.cap.fluid.FluidHandlerHelper
 import cn.solarmoon.spark_core.api.phys.SMath
 import cn.solarmoon.spark_core.api.renderer.TextureRenderHelper
@@ -16,7 +17,10 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
+import kotlin.collections.set
+import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrElse
+import kotlin.math.abs
 
 object AnimHelper {
 
@@ -31,11 +35,13 @@ object AnimHelper {
          * 初始化方块实体时调用，可以快速创建默认流体动画组
          */
         @JvmStatic
-        fun createFluidAnim(be: BlockEntity) {
+        fun createFluidAnim(be: BlockEntity, side: Direction) {
             val anim: AnimTicker = be.getData(SparkAttachments.ANIMTICKER)
             val timer = Timer()
             timer.maxTime = 10f
             anim.timers[IDENTIFIER] = timer
+            val level = be.level ?: return
+            anim.fixedElements["FluidSide"] = Direction.CODEC.encodeStart(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), side).orThrow as CompoundTag
         }
 
         /**
@@ -44,20 +50,40 @@ object AnimHelper {
          */
         @JvmStatic
         fun startFluidAnim(be: BlockEntity, fluidStack: FluidStack) {
+            val level = be.level ?: return
+            if (level.isClientSide) return
             val anim = be.getData(SparkAttachments.ANIMTICKER)
             val timer = anim.timers[IDENTIFIER]!!
             timer.onStop = {
-                anim.fixedElements[IDENTIFIER] = FluidStack.OPTIONAL_CODEC.encodeStart(NbtOps.INSTANCE, fluidStack).result().get() as CompoundTag
+                anim.fixedElements[IDENTIFIER] = fluidStack.saveOptional(level.registryAccess()) as CompoundTag
                 be.setChanged()
             }
-            // 想找个更平滑的突变算法
-            if (timer.isTiming) {
-                val p = FluidStack.OPTIONAL_CODEC.parse(NbtOps.INSTANCE, anim.fixedElements[IDENTIFIER]).result().getOrElse { FluidStack.EMPTY }
-                p.amount = (p.amount + (fluidStack.amount - p.amount) * timer.getProgress()).toInt()
-                anim.fixedElements[IDENTIFIER] = FluidStack.OPTIONAL_CODEC.encodeStart(NbtOps.INSTANCE, p).result().get() as CompoundTag
-                return
-            }
             timer.start()
+        }
+
+        @JvmStatic
+        fun tickFluidAnim(be: BlockEntity) {
+            val level = be.level ?: return
+            val anim = be.getData(SparkAttachments.ANIMTICKER)
+            val timer = anim.timers[IDENTIFIER]!!
+            val side = Direction.CODEC.parse(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), anim.fixedElements.getOrDefault("FluidSide", CompoundTag())).result().getOrDefault(Direction.NORTH)
+            be.level?.getCapability(Capabilities.FluidHandler.BLOCK, be.blockPos, side)?.let { tank ->
+                val lastFluid = FluidStack.parseOptional(level.registryAccess(), anim.fixedElements.getOrDefault(IDENTIFIER, CompoundTag()))
+                var presentScale = anim.fixedValues.getOrDefault("FluidPresentScale", lastFluid.amount / tank.getTankCapacity(0).toFloat())
+                val targetScale = FluidHandlerHelper.getScale(tank)
+                val currentTime = timer.time
+                val maxTime = timer.maxTime
+
+                if (currentTime < maxTime - 1) {
+                    val adjustment = (targetScale - presentScale) / (maxTime - currentTime)
+                    presentScale += adjustment
+                    anim.fixedValues["FluidV"] = adjustment
+                    anim.fixedValues["FluidPresentScale"] = presentScale
+                } else {
+                    anim.fixedValues["FluidPresentScale"] = targetScale
+                    anim.fixedValues["FluidV"] = 0f
+                }
+            }
         }
 
         /**
@@ -71,35 +97,32 @@ object AnimHelper {
             side: Direction,
             width: Float,
             height: Float,
-            yOffset: Double,
+            yOffset: Float,
             partialTicks: Float,
             poseStack: PoseStack,
             buffer: MultiBufferSource,
             light: Int
         ) {
+            val level = be.level ?: return
             val anim = be.getData(SparkAttachments.ANIMTICKER)
             val timer = anim.timers[IDENTIFIER]!!
             be.level?.getCapability(Capabilities.FluidHandler.BLOCK, be.blockPos, side)?.let { tank ->
-                val lastFluid = FluidStack.OPTIONAL_CODEC.parse(NbtOps.INSTANCE, anim.fixedElements[IDENTIFIER]).result().getOrElse { FluidStack.EMPTY }
+                val lastFluid = FluidStack.parseOptional(level.registryAccess(), anim.fixedElements.getOrDefault(IDENTIFIER, CompoundTag()))
                 val presentFluid = tank.getFluidInTank(0)
                 val renderFluid = presentFluid.takeIf { !it.isEmpty } ?: lastFluid
                 val color = TextureRenderHelper.getColor(renderFluid)
                 val fluidAttributes = IClientFluidTypeExtensions.of(renderFluid.fluid)
                 val spriteLocation = fluidAttributes.getStillTexture(renderFluid)
-
-                val presentScale = lastFluid.amount / tank.getTankCapacity(0).toFloat()
-                val targetScale = FluidHandlerHelper.getScale(tank)
-                val presentH = presentScale * height
-                val targetH = targetScale * height
-                val hDifference = targetH - presentH
-                val realPartialTicks = partialTicks.takeIf { timer.isTiming } ?: 0f
-                val progress = timer.getProgress(realPartialTicks)
                 val uMax = (width * 16).toInt()
                 val vMax = (width * 16).toInt()
-                val realH = 0.02f.coerceAtLeast(presentH + SMath.smoothInterpolation(progress, 0f, hDifference, 1.4f)) // 保证最低高度，防止重合到底面时闪烁
+
+                val presentScale = anim.fixedValues.getOrDefault("FluidPresentScale", lastFluid.amount / tank.getTankCapacity(0).toFloat())
+                val v = anim.fixedValues.getOrDefault("FluidV", 0f)
+                var realH = (presentScale + v * partialTicks) * height
+                if (realH < 0.02) return
 
                 poseStack.pushPose()
-                poseStack.translate(0.0, yOffset, 0.0)
+                poseStack.translate(0.0, yOffset.toDouble(), 0.0)
                 TextureRenderHelper.render(spriteLocation, 0, 0, uMax, vMax, width, realH, color, 1f, 0, poseStack, buffer, light)
                 poseStack.popPose()
             }

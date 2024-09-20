@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.recipe.processor
 
+import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeInput
@@ -9,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 /**
  * 方块实体专用的配方处理器，简化了绝大多数重复流程，如果不使用默认的预制处理器，则直接接入这个即可
  */
-abstract class RecipeProcessor<C: RecipeInput,  R: Recipe<C>>(val be: BlockEntity) {
+abstract class RecipeProcessor<C: RecipeInput,  R: Recipe<C>>(open val be: BlockEntity) {
 
     /**
      * 用于快速调用所需配方类型
@@ -25,21 +26,21 @@ abstract class RecipeProcessor<C: RecipeInput,  R: Recipe<C>>(val be: BlockEntit
     /**
      * 自动存储配方数据
      */
-    abstract fun save(tag: CompoundTag)
+    abstract fun save(tag: CompoundTag, registries: HolderLookup.Provider)
 
     /**
      * 自动读取配方数据
      */
-    abstract fun load(tag: CompoundTag)
+    abstract fun load(tag: CompoundTag, registries: HolderLookup.Provider)
 
-    fun saveAll(tag: CompoundTag) {
-        if (this is IProcessorAssistant) aSave(tag)
-        save(tag)
+    fun saveAll(tag: CompoundTag, registries: HolderLookup.Provider) {
+        if (this is IProcessorAssistant) aSave(tag, registries)
+        save(tag, registries)
     }
 
-    fun loadAll(tag: CompoundTag) {
-        if (this is IProcessorAssistant) aLoad(tag)
-        load(tag)
+    fun loadAll(tag: CompoundTag, registries: HolderLookup.Provider) {
+        if (this is IProcessorAssistant) aLoad(tag, registries)
+        load(tag, registries)
     }
 
 }

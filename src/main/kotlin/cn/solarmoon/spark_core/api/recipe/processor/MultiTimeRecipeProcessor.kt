@@ -1,7 +1,9 @@
 package cn.solarmoon.spark_core.api.recipe.processor
 
+import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.block.entity.BlockEntity
 
@@ -35,14 +37,14 @@ abstract class MultiTimeRecipeProcessor<C: RecipeInput,  R: Recipe<C>>(be: Block
     /**
      * 根据条件寻找配方
      */
-    fun findRecipe(index: Int): R? = be.level?.recipeManager?.getAllRecipesFor(getRecipeType())?.firstOrNull { isRecipeMatch(it.value, index) }?.value
+    fun findRecipe(index: Int): RecipeHolder<R>? = be.level?.recipeManager?.getAllRecipesFor(getRecipeType())?.firstOrNull { isRecipeMatch(it.value, index) }
 
-    override fun save(tag: CompoundTag) {
+    override fun save(tag: CompoundTag, registries: HolderLookup.Provider) {
         tag.putIntArray(getName() + "Times", times)
         tag.putIntArray(getName() + "RecipeTimes", recipeTimes)
     }
 
-    override fun load(tag: CompoundTag) {
+    override fun load(tag: CompoundTag, registries: HolderLookup.Provider) {
         times = tag.getIntArray(getName() + "Times")
         recipeTimes = tag.getIntArray(getName() + "RecipeTimes")
     }

@@ -1,5 +1,7 @@
 package cn.solarmoon.spark_core.api.blockentity
 
+import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
@@ -58,8 +60,15 @@ abstract class HandyEntityBlock(properties: Properties): BaseEntityBlock(propert
     }
 
     open fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: BlockEntity) {
-        // 进行动画的tick
-        blockEntity.getData(SparkAttachments.ANIMTICKER).timers.forEach { (_, timer) -> timer.tick() }
+        // 在双端进行动画的tick，但是在任何一个动画中，只能从服务端开始，然后传送开始信息到客户端，这样动画才能达到最丝滑的程度
+        val anim = blockEntity.getData(SparkAttachments.ANIMTICKER)
+        val timers = anim.timers
+        timers.forEach { id, timer ->
+            timer.tick()
+            if (id == AnimHelper.Fluid.IDENTIFIER) {
+                AnimHelper.Fluid.tickFluidAnim(blockEntity)
+            }
+        }
     }
 
 }

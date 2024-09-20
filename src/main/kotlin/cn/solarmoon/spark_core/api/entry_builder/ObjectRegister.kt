@@ -87,7 +87,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
         )
     }
 
-    fun <I: Item> item() = ItemBuilder<I>(itemDeferredRegister)
+    fun <I: Item> item() = ItemBuilder<I>(itemDeferredRegister, modBus!!)
     fun <B: Block> block() = BlockBuilder<B>(blockDeferredRegister)
     fun <B: BlockEntity> blockentity() = BlockEntityBuilder<B>(blockEntityDeferredRegister, modBus!!)
     fun <E: Entity> entity() = EntityBuilder<E>(entityDeferredRegister)
@@ -99,7 +99,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     fun creativeTab() = CreativeTabBuilder(creativeTabDeferredRegister)
     fun damageType() = DamageTypeBuilder(modId)
     fun effect() = EffectBuilder(effectDeferredRegister)
-    fun <P: ParticleOptions> particle() = ParticleBuilder<P>(particleDeferredRegister)
+    fun <P: ParticleType<*>> particle() = ParticleBuilder<P>(particleDeferredRegister)
     fun <R: Recipe<*>> recipe() = RecipeBuilder<R>(modId, recipeSerializerDeferredRegister, recipeDeferredRegister)
     fun sound() = SoundBuilder(modId, soundDeferredRegister)
 

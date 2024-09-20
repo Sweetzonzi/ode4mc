@@ -44,12 +44,12 @@ public abstract class BlockEntityMixin extends AttachmentHolder implements IReci
 
     @Inject(method = "saveAdditional", at = @At("HEAD"))
     public void save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        RecipeProcessorHelper.getMap(be).forEach((n, p) -> p.saveAll(tag));
+        RecipeProcessorHelper.getMap(be).forEach((n, p) -> p.saveAll(tag, registries));
     }
 
     @Inject(method = "loadAdditional", at = @At("HEAD"))
     public void load(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        RecipeProcessorHelper.getMap(be).forEach((n, p) -> p.loadAll(tag));
+        RecipeProcessorHelper.getMap(be).forEach((n, p) -> p.loadAll(tag, registries));
     }
 
 }

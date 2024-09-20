@@ -3,16 +3,26 @@ package cn.solarmoon.spark_core.api.tooltip
 import cn.solarmoon.spark_core.SparkCore
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.core.component.DataComponentMap
+import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.util.StringUtil
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffectUtil
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.alchemy.PotionContents
 
 /**
  * 工具提示统一方法，规范了工具提示的格式，并添加工具提示的实用方法
  */
-class TooltipOperator(private val tooltips: MutableList<Component>) {
+class TooltipOperator(private val tooltips: MutableList<Component?>) {
+
+    companion object {
+        @JvmStatic
+        val SHIFT_ON = SparkCore.TRANSLATOR.set("tooltip", "shift_on")
+        @JvmStatic
+        val SHIFT_OFF = SparkCore.TRANSLATOR.set("tooltip", "shift_off")
+    }
 
     /**
      * 添加默认样式shift展开的信息
@@ -20,10 +30,10 @@ class TooltipOperator(private val tooltips: MutableList<Component>) {
      */
     fun addShiftShowTooltip(adder: (TooltipOperator) -> Unit) {
         if (Screen.hasShiftDown()) {
-            tooltips.add(SparkCore.TRANSLATOR.set("tooltip", "shift_on"))
+            tooltips.add(SHIFT_ON)
             adder.invoke(this)
         } else {
-            tooltips.add(SparkCore.TRANSLATOR.set("tooltip", "shift_off"))
+            tooltips.add(SHIFT_OFF)
         }
     }
 

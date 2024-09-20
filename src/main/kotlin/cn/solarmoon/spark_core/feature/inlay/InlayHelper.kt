@@ -1,19 +1,12 @@
 package cn.solarmoon.spark_core.feature.inlay
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.registry.common.SparkAttributes
 import cn.solarmoon.spark_core.registry.common.SparkDataComponents
 import com.google.common.collect.ImmutableList
-import net.minecraft.core.Holder
 import net.minecraft.core.component.DataComponents
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.world.entity.EquipmentSlotGroup
-import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemAttributeModifiers
-import net.minecraft.world.item.component.ItemContainerContents
 import net.neoforged.neoforge.items.ComponentItemHandler
 
 object InlayHelper {

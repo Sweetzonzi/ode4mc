@@ -1,14 +1,16 @@
 package cn.solarmoon.spark_core.feature.inlay
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.RecipeJsonBuilder
 import cn.solarmoon.spark_core.api.entry_builder.common.RecipeBuilder
-import cn.solarmoon.spark_core.api.recipe.AttributeData
+import cn.solarmoon.spark_core.api.data.element.AttributeData
 import cn.solarmoon.spark_core.api.recipe.IConcreteRecipe
 import cn.solarmoon.spark_core.api.util.ItemStackUtil.isSameAndSufficient
 import cn.solarmoon.spark_core.registry.common.SparkRecipes
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
@@ -17,7 +19,9 @@ import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeSerializer
+import kotlin.math.max
 
 
 data class AttributeForgingRecipe(
@@ -85,18 +89,15 @@ data class AttributeForgingRecipe(
         }
     }
 
-    class JsonBuilder(
-        val input: Ingredient,
-        val material: ItemStack,
-        val attributeData: AttributeData,
-        val slot: EquipmentSlotGroup,
-        val expCost: Long,
-        val maxForgeCount: Int
-    ): RecipeJsonBuilder() {
-        override fun getResult(): Item = material.item
+    class JsonBuilder(val ar: () -> AttributeForgingRecipe): RecipeJsonBuilder() {
+        override val name: ResourceLocation
+            get() = ResourceLocation.fromNamespaceAndPath(ar.invoke().attributeData.attributeModifier.id.namespace, BuiltInRegistries.ITEM.getKey(ar.invoke().material.item).path)
 
-        override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
-            recipeOutput.accept(id.withPrefix("attribute_forging/${attributeData.attributeModifier.id.path}/"), AttributeForgingRecipe(input, material, attributeData, slot, expCost, maxForgeCount), null)
+        override val prefix: String
+            get() = "${SparkRecipes.ATTRIBUTE_FORGING.type.id.path}/${ar.invoke().attributeData.attributeModifier.id.path}"
+
+        override fun getRecipe(recipeOutput: RecipeOutput, location: ResourceLocation): Recipe<*> {
+            return ar.invoke()
         }
     }
 

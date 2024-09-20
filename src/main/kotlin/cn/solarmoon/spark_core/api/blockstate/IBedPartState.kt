@@ -23,10 +23,14 @@ interface IBedPartState: IHorizontalFacingState {
             return if (part == BedPart.FOOT) direction else direction.opposite
         }
 
+        /**
+         * 无论part值是head还是foot，都会传出foot的坐标，没有part值会传回原始坐标
+         */
         @JvmStatic
         fun getFootPos(state: BlockState, pos: BlockPos): BlockPos {
-            val nb = getNeighbourDirection(state.getValue(PART), state.getValue(IHorizontalFacingState.FACING))
-            return if (state.getValue(PART) == BedPart.FOOT) pos else pos.relative(nb)
+            val part = (state.values[PART] ?: return pos) as BedPart
+            val nb = getNeighbourDirection(part, state.getValue(IHorizontalFacingState.FACING))
+            return if (part == BedPart.FOOT) pos else pos.relative(nb)
         }
     }
 
