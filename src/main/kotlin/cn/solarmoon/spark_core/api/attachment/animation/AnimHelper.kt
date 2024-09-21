@@ -40,8 +40,9 @@ object AnimHelper {
             val timer = Timer()
             timer.maxTime = 10f
             anim.timers[IDENTIFIER] = timer
-            val level = be.level ?: return
-            anim.fixedElements["FluidSide"] = Direction.CODEC.encodeStart(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), side).orThrow as CompoundTag
+            val sideTag = CompoundTag()
+            sideTag.putString("direction", side.toString())
+            anim.fixedElements["FluidSide"] = sideTag
         }
 
         /**
@@ -66,7 +67,7 @@ object AnimHelper {
             val level = be.level ?: return
             val anim = be.getData(SparkAttachments.ANIMTICKER)
             val timer = anim.timers[IDENTIFIER]!!
-            val side = Direction.CODEC.parse(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), anim.fixedElements.getOrDefault("FluidSide", CompoundTag())).result().getOrDefault(Direction.NORTH)
+            val side = Direction.valueOf(anim.fixedElements["FluidSide"]!!.getString("direction").uppercase())
             be.level?.getCapability(Capabilities.FluidHandler.BLOCK, be.blockPos, side)?.let { tank ->
                 val lastFluid = FluidStack.parseOptional(level.registryAccess(), anim.fixedElements.getOrDefault(IDENTIFIER, CompoundTag()))
                 var presentScale = anim.fixedValues.getOrDefault("FluidPresentScale", lastFluid.amount / tank.getTankCapacity(0).toFloat())
@@ -105,7 +106,6 @@ object AnimHelper {
         ) {
             val level = be.level ?: return
             val anim = be.getData(SparkAttachments.ANIMTICKER)
-            val timer = anim.timers[IDENTIFIER]!!
             be.level?.getCapability(Capabilities.FluidHandler.BLOCK, be.blockPos, side)?.let { tank ->
                 val lastFluid = FluidStack.parseOptional(level.registryAccess(), anim.fixedElements.getOrDefault(IDENTIFIER, CompoundTag()))
                 val presentFluid = tank.getFluidInTank(0)
@@ -119,7 +119,7 @@ object AnimHelper {
                 val presentScale = anim.fixedValues.getOrDefault("FluidPresentScale", lastFluid.amount / tank.getTankCapacity(0).toFloat())
                 val v = anim.fixedValues.getOrDefault("FluidV", 0f)
                 var realH = (presentScale + v * partialTicks) * height
-                if (realH < 0.02) return
+                if (realH < 0.001) return
 
                 poseStack.pushPose()
                 poseStack.translate(0.0, yOffset.toDouble(), 0.0)

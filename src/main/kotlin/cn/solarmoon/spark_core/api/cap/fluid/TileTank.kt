@@ -21,7 +21,9 @@ open class TileTank(open val blockEntity: BlockEntity, capacity: Int): FluidTank
         blockEntity.setComponents(DataComponentMap.builder()
             .addAll(blockEntity.components())
             .set(SparkDataComponents.SIMPLE_FLUID_CONTENT, SimpleFluidContent.copyOf(fluid)).build())
-        AnimHelper.Fluid.startFluidAnim(blockEntity, fluid)
+        if (blockEntity.getData(SparkAttachments.ANIMTICKER).timers.contains(AnimHelper.Fluid.IDENTIFIER)) {
+            AnimHelper.Fluid.startFluidAnim(blockEntity, fluid)
+        }
         blockEntity.invalidateCapabilities()
         blockEntity.setChanged()
     }
