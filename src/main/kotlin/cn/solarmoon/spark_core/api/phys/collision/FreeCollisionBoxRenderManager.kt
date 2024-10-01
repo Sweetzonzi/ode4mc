@@ -4,23 +4,26 @@ import cn.solarmoon.spark_core.SparkCore
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
+import net.neoforged.fml.loading.FMLEnvironment
+import net.neoforged.neoforge.network.PacketDistributor
 import org.jline.utils.Colors
 import org.joml.Vector3f
 import java.awt.Color
+import java.util.Random
 
 /**
  * 控制box在debug中的渲染
  *
  * **只能在客户端侧运行**
  */
-data class FreeCollisionBoxRenderManager(val id: String, val box: FreeCollisionBox) {
+data class FreeCollisionBoxRenderManager(
+    val id: String,
+    val box: FreeCollisionBox,
+    var maxTime: Int = (5 / 0.02).toInt(),
+    var color: Color = Color.WHITE
+) {
 
-    /**
-     * 最长显示时间
-     */
-    var maxTime = (5 / 0.02).toInt()
     var tick = 0
-    var color = Color.WHITE
 
     fun tick() {
         tick++
@@ -34,10 +37,16 @@ data class FreeCollisionBoxRenderManager(val id: String, val box: FreeCollisionB
      * 标记已经击中了目标
      *
      * 会改变debug框颜色并刷新显示时间
+     *
+     * 可在服务端调用，会同步到客户端
      */
-    fun setHit() {
+    fun setHit(toClient: Boolean = false, lifeTime: Int = maxTime) {
         color = Color.RED
+        maxTime = lifeTime
         tick = 0
+        if (toClient) {
+            PacketDistributor.sendToAllPlayers(FreeCollisionBoxData(id, color.rgb, lifeTime, box))
+        }
     }
 
     fun start() {
@@ -46,6 +55,13 @@ data class FreeCollisionBoxRenderManager(val id: String, val box: FreeCollisionB
 
     fun stop() {
         RENDERABLE_BOXES.remove(id)
+    }
+
+    /**
+     * 向客户端渲染一个具体位置的box
+     */
+    fun sendRenderableBoxToClient() {
+        PacketDistributor.sendToAllPlayers(FreeCollisionBoxData(id, color.rgb, maxTime, box))
     }
 
     companion object {

@@ -15,7 +15,7 @@ public class FluidTypeMixin {
     @Inject(remap = false, method = "getBucket", at = @At("RETURN"), cancellable = true)
     public void getBucket(FluidStack stack, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack bucket = cir.getReturnValue();
-        if (bucket != null) {
+        if (bucket != null) {//
             BucketFixer.saveFluidToBucket(stack, bucket);
             cir.setReturnValue(bucket);
         }

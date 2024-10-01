@@ -19,7 +19,7 @@ public class FluidBucketWrapperMixin {
     @Inject(remap = false, method = "getFluid", at = @At("RETURN"), cancellable = true)
     public void getFluid(CallbackInfoReturnable<FluidStack> cir) {
         FluidStack fluidStack = cir.getReturnValue();
-        if (fluidStack != null) {
+        if (fluidStack != null) {//
             cir.setReturnValue(BucketFixer.readBucketFluid(container, fluidStack));
         }
     }

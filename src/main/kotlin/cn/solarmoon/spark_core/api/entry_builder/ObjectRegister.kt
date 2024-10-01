@@ -7,6 +7,7 @@ import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.syncher.EntityDataSerializer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.Entity
@@ -52,6 +53,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     val recipeSerializerDeferredRegister: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(Registries.RECIPE_SERIALIZER, modId)
     val soundDeferredRegister: DeferredRegister<SoundEvent> = DeferredRegister.create(Registries.SOUND_EVENT, modId)
     val dataComponentDeferredRegister: DeferredRegister.DataComponents = DeferredRegister.createDataComponents(modId)
+    val entityDataDeferredRegister: DeferredRegister<EntityDataSerializer<*>> = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, modId)
 
     fun register(bus: IEventBus) {
         modBus = bus
@@ -71,6 +73,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
         recipeSerializerDeferredRegister.register(bus)
         soundDeferredRegister.register(bus)
         dataComponentDeferredRegister.register(bus)
+        entityDataDeferredRegister.register(bus)
         modBus!!.takeIf { gatherData }?.addListener(this::gather)
     }
 
@@ -102,6 +105,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     fun <P: ParticleType<*>> particle() = ParticleBuilder<P>(particleDeferredRegister)
     fun <R: Recipe<*>> recipe() = RecipeBuilder<R>(modId, recipeSerializerDeferredRegister, recipeDeferredRegister)
     fun sound() = SoundBuilder(modId, soundDeferredRegister)
+    fun <D> entityData() = EntityDataBuilder<D>(entityDataDeferredRegister)
 
     fun layer() = LayerBuilder(modId, modBus!!)
 

@@ -35,8 +35,6 @@ public abstract class BlockMixin extends BlockBehaviour {
 
     @Shadow private BlockState defaultBlockState;
 
-    @Shadow protected abstract void registerDefaultState(BlockState p_49960_);
-
     private Block block = (Block)(Object)this;
 
     public BlockMixin(Properties p_60452_) {

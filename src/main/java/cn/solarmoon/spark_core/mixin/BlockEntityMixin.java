@@ -31,11 +31,6 @@ public abstract class BlockEntityMixin extends AttachmentHolder implements IReci
     private BlockEntity be = (BlockEntity) (Object) this;
     private final Map<RecipeType<?>, RecipeProcessor<?, ?>> recipeProcessorMap = new HashMap<>();
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    public void init(BlockEntityType<?> type, BlockPos pos, BlockState blockState, CallbackInfo ci) {
-
-    }
-
     @NotNull
     @Override
     public Map<RecipeType<?>, RecipeProcessor<?, ?>> getRecipeProcessors() {

@@ -22,7 +22,7 @@ public class DebugRendererMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, double camX, double camY, double camZ, CallbackInfo ci) {
-        freeBox.render(poseStack, bufferSource, camX, camY, camZ);
+        freeBox.render(poseStack, bufferSource, camX, camY, camZ);//
     }
 
 }

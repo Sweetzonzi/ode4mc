@@ -1,5 +1,9 @@
 package cn.solarmoon.spark_core.api.phys
 
+import net.minecraft.world.phys.Vec2
+import net.minecraft.world.phys.Vec3
+import org.joml.Vector3f
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import kotlin.math.cos
 import kotlin.math.pow
 
@@ -54,4 +58,20 @@ object SMath {
         return a * (x - vertexX).pow(2.0) + vertexY
     }
 
+}
+
+public fun Vec3.toRadians(): Vec3 {
+    return Vec3(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z))
+}
+
+public fun Vec3.toDegrees(): Vec3 {
+    return Vec3(Math.toDegrees(x), Math.toDegrees(y), Math.toDegrees(z))
+}
+
+public fun Vector3f.toRadians(): Vector3f {
+    return Vector3f(Math.toRadians(x.toDouble()).toFloat(), Math.toRadians(y.toDouble()).toFloat(), Math.toRadians(z.toDouble()).toFloat())
+}
+
+public fun Vector3f.toDegrees(): Vector3f {
+    return Vector3f(Math.toDegrees(x.toDouble()).toFloat(), Math.toDegrees(y.toDouble()).toFloat(), Math.toDegrees(z.toDouble()).toFloat())
 }

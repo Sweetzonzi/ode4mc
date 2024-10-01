@@ -1,7 +1,15 @@
 package cn.solarmoon.spark_core.api.phys.collision
 
+import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
+import cn.solarmoon.spark_core.api.animation.sync.AnimNetData
+import cn.solarmoon.spark_core.api.data.SerializeHelper
 import com.mojang.math.Axis
 import com.mojang.math.MatrixUtil
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -18,6 +26,9 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 //   |/
 //   +--------------------> X
 /**
+ * 自由碰撞箱，比AABB更为自由，且有配套碰撞箱debug一套，爽飞
+ *
+ * 同时可以和客户端进行同步
  * @param center 坐标轴原点位置，同时也是立方体的中心
  * @param rotation 坐标轴的整体旋转，对其进行变换则变换立方体的整体
  * @param size 以顺序为x，y，z轴坐标的正方向上的长度（整体长度，不是一半长度）
@@ -77,11 +88,11 @@ data class FreeCollisionBox(
     /**
      * 两个碰撞箱是否有相交部分，利用两者的三条坐标轴来进行比较，三条轴都有相交部分，则相交
      */
-    fun intersects(box1: FreeCollisionBox, box2: FreeCollisionBox): Boolean {
-        val min1 = box1.center.subtract(box1.size.scale(0.5))
-        val max1 = box1.center.add(box1.size.scale(0.5))
-        val min2 = box2.center.subtract(box2.size.scale(0.5))
-        val max2 = box2.center.add(box2.size.scale(0.5))
+    fun intersects(box: FreeCollisionBox): Boolean {
+        val min1 = center.subtract(size.scale(0.5))
+        val max1 = center.add(size.scale(0.5))
+        val min2 = box.center.subtract(box.size.scale(0.5))
+        val max2 = box.center.add(box.size.scale(0.5))
 
         return (min1.x <= max2.x && max1.x >= min2.x) &&
                 (min1.y <= max2.y && max1.y >= min2.y) &&
@@ -103,6 +114,14 @@ data class FreeCollisionBox(
             )
             return FreeCollisionBox(center, size)
         }
+
+        @JvmStatic
+        val STREAM_CODEC = StreamCodec.composite(
+            SerializeHelper.VEC3_STREAM_CODEC, FreeCollisionBox::center,
+            SerializeHelper.VEC3_STREAM_CODEC, FreeCollisionBox::size,
+            SerializeHelper.QUATERNIONF_STREAM_CODEC, FreeCollisionBox::rotation,
+            ::FreeCollisionBox
+        )
     }
 
 }

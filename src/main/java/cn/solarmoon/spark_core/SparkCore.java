@@ -12,12 +12,14 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import test.Cap;
+import test.cep;
+import test.ees;
 
 @Mod(SparkCore.MOD_ID)
 public class SparkCore {
 
     public static final String MOD_ID = "spark_core";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger("星火核心");
     public static final Translator TRANSLATOR = new Translator(MOD_ID);
     public static final ObjectRegister REGISTER = new ObjectRegister(MOD_ID, true);
 
@@ -26,6 +28,7 @@ public class SparkCore {
 
         if (FMLEnvironment.dist.isClient()) {
             SparkTooltips.register(modEventBus);
+            cep.register(modEventBus);
         }
 
         SparkAttachments.register();
@@ -36,6 +39,9 @@ public class SparkCore {
         SparkCommonEvents.register();
         SparkCommands.register();
         SparkNetDatas.register(modEventBus);
+        SparkDatas.register();
+        SparkEntityDatas.register();
+        ees.register(modEventBus);
 
         DataGenerater.register(modEventBus);
 

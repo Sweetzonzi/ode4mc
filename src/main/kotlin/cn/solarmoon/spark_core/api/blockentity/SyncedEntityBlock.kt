@@ -37,14 +37,14 @@ abstract class SyncedEntityBlock(properties: Properties) : HandyEntityBlock(prop
         super.setPlacedBy(level, pos, state, placer, stack)
         level.getBlockEntity(pos)?.let { be ->
             be.applyComponentsFromItemStack(stack)
-            stack.get(DataComponents.BLOCK_ENTITY_DATA)?.copyTag()?.let { tag ->
-                stack.get(SparkDataComponents.SIMPLE_FLUID_CONTENT)?.let {
-                    val tank = FluidTank(1000)
-                    tank.fluid = it.copy()
-                    tag.put(FluidHandlerHelper.FLUID, tank.writeToNBT(level.registryAccess(), CompoundTag()))
+            stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(be.saveCustomOnly(level.registryAccess()))).copyTag().let { tag ->
+                    stack.get(SparkDataComponents.SIMPLE_FLUID_CONTENT)?.let {
+                        val tank = FluidTank(1000)
+                        tank.fluid = it.copy()
+                        tag.put(FluidHandlerHelper.FLUID, tank.writeToNBT(level.registryAccess(), CompoundTag()))
+                    }
+                    be.loadCustomOnly(tag, level.registryAccess())
                 }
-                be.loadCustomOnly(tag, level.registryAccess())
-            }
         }
     }
 

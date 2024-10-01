@@ -32,7 +32,7 @@ public abstract class BlockRenderDispatcherMixin {
 
     @Inject(remap = false, method = "renderSingleBlock(Lnet/minecraft/world/level/block/state/BlockState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V", at = @At("RETURN"))
     public void renderSingleBlock(BlockState state, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay, ModelData modelData, RenderType renderType, CallbackInfo ci) {
-        Block block = state.getBlock();
+        Block block = state.getBlock(); //
         if (state.getRenderShape() == RenderShape.INVISIBLE && block instanceof IFreeRenderBlock) {
             BakedModel bakedmodel = this.getBlockModel(state);
             int i = this.blockColors.getColor(state, null, null, 0);
