@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
-object DropUtil {
+object DropUtil {//
 
     /**
      * 生成基础掉落物

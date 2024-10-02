@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class BaseJEICategory<T> implements IRecipeCategory<T> {
+public abstract class BaseJEICategory<T> implements IRecipeCategory<T> {//
 
     protected BaseJEI.JEIBuilder jeiBuilder;
     protected IGuiHelper helper;

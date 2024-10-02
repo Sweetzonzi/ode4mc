@@ -2,14 +2,12 @@ package cn.solarmoon.spark_core.api.animation.sync
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.AnimationSet
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
 import cn.solarmoon.spark_core.api.animation.model.CommonModel
-import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
-data class WholeModelData(
+data class WholeModelData(//
     val models: MutableMap<ResourceLocation, CommonModel>,
     val animationSets: MutableMap<ResourceLocation, AnimationSet>
 ): CustomPacketPayload {

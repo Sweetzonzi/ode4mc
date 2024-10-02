@@ -1,9 +1,6 @@
 package cn.solarmoon.spark_core.api.entry_builder.common
 
-import cn.solarmoon.spark_core.SparkCore
-import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
-import net.minecraft.core.particles.SimpleParticleType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier

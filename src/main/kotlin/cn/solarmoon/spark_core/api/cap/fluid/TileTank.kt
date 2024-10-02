@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.cap.fluid
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import cn.solarmoon.spark_core.registry.common.SparkDataComponents
@@ -8,7 +7,6 @@ import net.minecraft.core.component.DataComponentMap
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.fluids.SimpleFluidContent
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank
-import test.be
 
 /**
  * 会当液体变化时自动进行方块实体的同步

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty
  * 同时需要注意，双方块本质上是两个方块，因此如果在双方块上加blockentity，实际上是加了两个blockentity，这在诸如setplace时亟需注意，因为setplace时
  * 往往只对一个pos进行操作，而容易忽略另一个pos。
  */
-interface IBedPartState: IHorizontalFacingState {
+interface IBedPartState: IHorizontalFacingState {//
 
     companion object {
         @JvmStatic

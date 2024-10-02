@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.animation.model.helper
 /**
  * 顶点数据
  */
-data class Vertex(
+data class Vertex(//
     val x: Float,
     val y: Float,
     val z: Float,

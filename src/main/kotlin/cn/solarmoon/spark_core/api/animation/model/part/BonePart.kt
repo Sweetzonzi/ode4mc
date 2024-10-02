@@ -1,11 +1,8 @@
 package cn.solarmoon.spark_core.api.animation.model.part
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
-import cn.solarmoon.spark_core.api.data.SerializeHelper
-import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
+import cn.solarmoon.spark_core.api.animation.anim.AnimData
 import cn.solarmoon.spark_core.api.animation.model.CommonModel
-import cn.solarmoon.spark_core.api.phys.toRadians
+import cn.solarmoon.spark_core.api.data.SerializeHelper
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -17,7 +14,6 @@ import net.neoforged.api.distmarker.OnlyIn
 import org.joml.Matrix3f
 import org.joml.Matrix4f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.util.Optional
 
 data class BonePart(
@@ -54,18 +50,19 @@ data class BonePart(
     /**
      * 应用当前骨骼的变换到传入的矩阵中
      */
-    fun applyTransform(animData: ClientAnimData, ma: Matrix4f, partialTick: Float = 0f) {
+    fun applyTransform(animData: AnimData, ma: Matrix4f, headMatrix: Matrix4f, partialTick: Float = 0f) {
         ma.translate(pivot.div(16.0).toVector3f())
         val animEqual = animData.presentAnim?.getBoneAnim(name)
         val rot = animEqual?.applyRotTransform(animData, partialTick) ?: rotationInRadians.toVector3f()
         ma.rotateZYX(rot.z, rot.y, rot.x)
+        if (name == "head") ma.mul(headMatrix) // 应用头部旋转
         ma.translate(pivot.div(-16.0).toVector3f())
     }
 
     /**
      * 应用当前以及所有父类的骨骼的变换到传入的矩阵中
      */
-    fun applyTransformWithParents(animData: ClientAnimData, ma: Matrix4f, partialTick: Float = 0f) {
+    fun applyTransformWithParents(animData: AnimData, ma: Matrix4f, headMatrix: Matrix4f, partialTick: Float = 0f) {
         val l = arrayListOf<BonePart>(this)
         var parent = getParent()
         while (parent != null) {
@@ -74,7 +71,7 @@ data class BonePart(
         }
 
         for (i in l.asReversed()) {
-            i.applyTransform(animData, ma, partialTick)
+            i.applyTransform(animData, ma, headMatrix, partialTick)
         }
 
         val animEqual = animData.presentAnim?.getBoneAnim(name)
@@ -85,8 +82,8 @@ data class BonePart(
      * @param normal3f 法线的矩阵，从当前poseStack获取
      */
     @OnlyIn(Dist.CLIENT)
-    fun renderCubes(animData: ClientAnimData, ma: Matrix4f, normal3f: Matrix3f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int, partialTick: Float = 0f) {
-        applyTransformWithParents(animData, ma, partialTick)
+    fun renderCubes(animData: AnimData, ma: Matrix4f, normal3f: Matrix3f, headMatrix: Matrix4f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int, partialTick: Float = 0f) {
+        applyTransformWithParents(animData, ma, headMatrix, partialTick)
         cubes.forEach {
             it.renderVertexes(Matrix4f(ma), normal3f, buffer, packedLight, packedOverlay, color)
         }

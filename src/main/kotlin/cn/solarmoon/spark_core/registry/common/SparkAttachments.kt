@@ -1,11 +1,9 @@
 package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.anim.AnimData
 import cn.solarmoon.spark_core.api.attachment.animation.AnimTicker
 import cn.solarmoon.spark_core.api.attachment.counting.CountingDevice
-import cn.solarmoon.spark_core.api.animation.anim.AnimationSet
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
-import cn.solarmoon.spark_core.api.animation.model.CommonModel
 
 
 object SparkAttachments {
@@ -27,10 +25,10 @@ object SparkAttachments {
         .build()
 
     @JvmStatic
-    val ANIM_DATA = SparkCore.REGISTER.attachment<ClientAnimData>()
+    val ANIM_DATA = SparkCore.REGISTER.attachment<AnimData>()
         .id("anim_data")
-        .defaultValue { ClientAnimData.EMPTY }
-        .serializer { it.serialize(ClientAnimData.CODEC) }
+        .defaultValue { AnimData.EMPTY }
+        .serializer { it.serialize(AnimData.CODEC) }
         .build()
 
 }

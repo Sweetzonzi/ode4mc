@@ -20,7 +20,7 @@ public class ItemInHandLayerMixin {
     @Inject(method = "renderArmWithItem", at = @At("HEAD"))
     public void renderArmWithItem(LivingEntity entity, ItemStack stack, ItemDisplayContext context, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int l, CallbackInfo ci) {
         if (IClientItemExtensions.of(stack) instanceof IItemExtensionsWith3rdPTrans t3) {
-            t3.applyTransformTo3rdPerson(entity, stack, context, arm, poseStack, buffer, l);//
+            t3.applyTransformTo3rdPerson(entity, stack, context, arm, poseStack, buffer, l);
         }
     }
 

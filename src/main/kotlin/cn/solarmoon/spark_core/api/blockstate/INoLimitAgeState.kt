@@ -4,7 +4,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 
 interface INoLimitAgeState {
-
+//
     fun getMaxAge(): Int
 
     companion object {

@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundTag
  *
  * 例如，只在服务端侧进行tick或动画的数据操作，然后使用setChanged传回客户端数据，然后使用partialTicks来使得动画在每tick间平滑过渡
  */
-data class AnimTicker(
+data class AnimTicker(//
     val fixedValues: MutableMap<String, Float> = mutableMapOf(),
     val timers: MutableMap<String, Timer> = mutableMapOf(),
     var fixedElements: MutableMap<String, CompoundTag> = mutableMapOf()

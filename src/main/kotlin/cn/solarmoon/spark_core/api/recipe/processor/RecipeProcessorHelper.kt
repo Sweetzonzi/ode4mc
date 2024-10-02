@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.recipe.processor
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.entity.BlockEntity
 
-object RecipeProcessorHelper {
+object RecipeProcessorHelper {//
 
     /**
      * 直接获取对应的配方处理器

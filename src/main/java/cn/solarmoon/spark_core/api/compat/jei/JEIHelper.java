@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 
 import java.text.DecimalFormat;
 
-public class JEIHelper {
+public class JEIHelper {//
 
     public static Component chanceText(float chance) {
         DecimalFormat df = new DecimalFormat("0.##");

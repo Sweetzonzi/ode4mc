@@ -1,9 +1,8 @@
 package cn.solarmoon.spark_core.feature.inlay
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.RecipeJsonBuilder
-import cn.solarmoon.spark_core.api.entry_builder.common.RecipeBuilder
 import cn.solarmoon.spark_core.api.data.element.AttributeData
+import cn.solarmoon.spark_core.api.entry_builder.common.RecipeBuilder
 import cn.solarmoon.spark_core.api.recipe.IConcreteRecipe
 import cn.solarmoon.spark_core.api.util.ItemStackUtil.isSameAndSufficient
 import cn.solarmoon.spark_core.registry.common.SparkRecipes
@@ -16,12 +15,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EquipmentSlotGroup
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeSerializer
-import kotlin.math.max
 
 
 data class AttributeForgingRecipe(

@@ -1,8 +1,8 @@
 package cn.solarmoon.spark_core.api.animation.model.part
 
-import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.animation.model.helper.Polygon
 import cn.solarmoon.spark_core.api.animation.model.helper.VertexSet
+import cn.solarmoon.spark_core.api.data.SerializeHelper
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder

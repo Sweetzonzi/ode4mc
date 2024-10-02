@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.entry_builder.common
 
-import com.mojang.serialization.Codec
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister

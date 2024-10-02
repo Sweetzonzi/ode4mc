@@ -1,15 +1,12 @@
 package cn.solarmoon.spark_core.api.attachment.animation
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.cap.fluid.FluidHandlerHelper
-import cn.solarmoon.spark_core.api.phys.SMath
 import cn.solarmoon.spark_core.api.renderer.TextureRenderHelper
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
@@ -18,9 +15,6 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import kotlin.collections.set
-import kotlin.jvm.optionals.getOrDefault
-import kotlin.jvm.optionals.getOrElse
-import kotlin.math.abs
 
 object AnimHelper {
 

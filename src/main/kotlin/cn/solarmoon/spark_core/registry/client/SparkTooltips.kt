@@ -7,7 +7,6 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
 import net.neoforged.neoforge.common.NeoForge
-import net.neoforged.neoforge.common.NeoForgeMod
 
 object SparkTooltips {
 

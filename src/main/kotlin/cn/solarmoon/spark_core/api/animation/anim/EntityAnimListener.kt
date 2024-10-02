@@ -1,8 +1,8 @@
 package cn.solarmoon.spark_core.api.animation.anim
 
-import cn.solarmoon.spark_core.api.data.SimpleJsonListener
 import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
+import cn.solarmoon.spark_core.api.data.SimpleJsonListener
 import com.google.gson.JsonElement
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager

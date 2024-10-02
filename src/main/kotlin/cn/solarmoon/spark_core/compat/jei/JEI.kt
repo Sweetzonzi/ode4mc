@@ -1,12 +1,12 @@
 package cn.solarmoon.spark_core.compat.jei
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.registry.client.SparkResources
 import cn.solarmoon.spark_core.api.compat.jei.BaseJEI
 import cn.solarmoon.spark_core.compat.jei.category.AttributeForgingCategory
 import cn.solarmoon.spark_core.compat.jei.category.UseCategory
 import cn.solarmoon.spark_core.feature.inlay.AttributeForgingRecipe
 import cn.solarmoon.spark_core.feature.use.UseRecipe
+import cn.solarmoon.spark_core.registry.client.SparkResources
 import cn.solarmoon.spark_core.registry.common.SparkRecipes
 import mezz.jei.api.JeiPlugin
 import net.minecraft.resources.ResourceLocation

@@ -1,15 +1,7 @@
 package cn.solarmoon.spark_core.api.phys.collision
 
-import cn.solarmoon.spark_core.SparkCore
-import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
-import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.network.PacketDistributor
-import org.jline.utils.Colors
-import org.joml.Vector3f
 import java.awt.Color
-import java.util.Random
 
 /**
  * 控制box在debug中的渲染
@@ -64,7 +56,7 @@ data class FreeCollisionBoxRenderManager(
         PacketDistributor.sendToAllPlayers(FreeCollisionBoxData(id, color.rgb, maxTime, box))
     }
 
-    companion object {
+    companion object {//
         @JvmStatic
         val RENDERABLE_BOXES = mutableMapOf<String, FreeCollisionBoxRenderManager>()
     }

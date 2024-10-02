@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDef
 import java.util.function.Supplier
 
 
-class LayerBuilder(private val modId: String, private val bus: IEventBus) {
+class LayerBuilder(private val modId: String, private val bus: IEventBus) {//
 
     private var id = ""
     private var layerId = "main"

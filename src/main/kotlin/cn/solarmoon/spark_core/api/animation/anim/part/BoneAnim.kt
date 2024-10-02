@@ -1,22 +1,16 @@
 package cn.solarmoon.spark_core.api.animation.anim.part
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
+import cn.solarmoon.spark_core.api.animation.anim.AnimData
 import cn.solarmoon.spark_core.api.data.SerializeHelper.VECTOR3F_CODEC
 import cn.solarmoon.spark_core.api.data.SerializeHelper.VECTOR3F_STREAM_CODEC
-import cn.solarmoon.spark_core.api.animation.anim.TransitionType
-import cn.solarmoon.spark_core.api.animation.anim.IAnimatable
-import cn.solarmoon.spark_core.api.phys.toDegrees
 import cn.solarmoon.spark_core.api.phys.toRadians
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.util.TreeMap
 
 /**
@@ -37,11 +31,13 @@ data class BoneAnim(
     var posCache: Vector3f? = null
     var rotCache: Vector3f? = null
 
+    var ppCache: Vector3f = Vector3f()
+
     /**
      * 获取当前绑定实体在当前动画的当前tick所对应的旋转值
      * @return 进行过基础偏移后的旋转弧度角
      */
-    fun getPresentRot(animData: ClientAnimData, partialTick: Float = 0F): Vector3f {
+    fun getPresentRot(animData: AnimData, partialTick: Float = 0F): Vector3f {
         val time = (animData.tick + partialTick) / 20f
         // 当前时间和基础时间的比值，用于缩放时间点
         val timeScale = animData.lifeTime / baseLifeTime
@@ -67,10 +63,9 @@ data class BoneAnim(
 
     /**
      * 计算指定时间的变换，这里旋转是直接修改数值所以无所谓在哪个域
-     *
      * @return 返回计算后的旋转值，在对应骨骼处应用
      */
-    fun applyRotTransform(animData: ClientAnimData, partialTick: Float = 0F): Vector3f {
+    fun applyRotTransform(animData: AnimData, partialTick: Float = 0F): Vector3f {
         val presentRot = if (animData.targetAnim == null || rotCache == null) getPresentRot(animData, partialTick) else rotCache!!
         var rot = Vector3f(presentRot)
 
@@ -94,13 +89,13 @@ data class BoneAnim(
     }
 
     /**
-     * **警告：我不知道是什么导致了这样，但是json文件中各个时间点pos值在相等的情况下在动画末尾会突变为0，因此如果一个骨骼在同一个动画中始终保持相同的位置，那就不要设置多个位置点了**
      * @return 获取指定tick位置的位移数值，如果不在任何区间内，返回第一个位置
      */
-    fun getPresentPos(animData: ClientAnimData, partialTick: Float = 0F): Vector3f {
+    fun getPresentPos(animData: AnimData, partialTick: Float = 0F): Vector3f {
         val time = (animData.tick + partialTick) / 20f
         // 当前时间和基础时间的比值，用于缩放时间点
         val timeScale = animData.lifeTime / baseLifeTime
+
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         positionSequence.entries.zipWithNext().forEach { (a, b) ->
             val timestampA = a.key * timeScale; val aPos = a.value
@@ -112,6 +107,7 @@ data class BoneAnim(
                 return Vector3f(-pos.x, pos.y, pos.z)
             }
         }
+
         // 并且要考虑map只有一个元素的情况
         val presentBoneAnimPosOfThis = positionSequence.lastEntry()?.value
         if (presentBoneAnimPosOfThis != null) {
@@ -123,7 +119,7 @@ data class BoneAnim(
     /**
      * 应用当前所绑定实体的动画时间所对应的动画位移变换到给定域
      */
-    fun applyPosTransform(animData: ClientAnimData, matrix: Matrix4f, partialTick: Float = 0F) {
+    fun applyPosTransform(animData: AnimData, matrix: Matrix4f, partialTick: Float = 0F) {
         val presentPos = if (animData.targetAnim == null || posCache == null) getPresentPos(animData, partialTick) else posCache!!
         var pos = Vector3f(presentPos)
 
@@ -135,6 +131,9 @@ data class BoneAnim(
             val progress = time / animData.maxTransTick.toDouble()
             pos = animData.transitionType.lerpValue(progress, presentPos, tPos)
         }
+
+        // 不知道为什么，在tick到达max时，一些相同位移量会在某个瞬间突变为0，这个缓存只是缓兵之计，只是让突变有了个过渡过程，但是突变还是存在
+        if (animData.tick == animData.maxTick) pos = ppCache else ppCache = pos
 
         // 在过渡动画开始的一瞬间对当前动画位置进行缓存，并使用此缓存进行过渡
         if (animData.targetAnim != null && posCache == null ) {
@@ -173,8 +172,8 @@ data class BoneAnim(
             }
 
             override fun decode(input: RegistryFriendlyByteBuf): TreeMap<Double, Vector3f> {
-                val size = input.readInt()
                 val map = TreeMap<Double, Vector3f>()
+                val size = input.readInt()
                 repeat(size) {
                     val key = ByteBufCodecs.DOUBLE.decode(input)
                     val vector = VECTOR3F_STREAM_CODEC.decode(input)

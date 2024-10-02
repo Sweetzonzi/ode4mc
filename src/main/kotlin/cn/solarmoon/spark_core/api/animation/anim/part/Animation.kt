@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation.anim.part
 
-import cn.solarmoon.spark_core.api.animation.anim.IAnimatable
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.codec.ByteBufCodecs

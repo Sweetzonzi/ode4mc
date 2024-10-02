@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core.api.animation.anim
 
 import cn.solarmoon.spark_core.api.animation.sync.AnimNetData
+import cn.solarmoon.spark_core.api.phys.toRadians
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
@@ -27,7 +28,7 @@ interface IAnimatable<T: Entity> {
      */
     val animController: AnimController<IAnimatable<T>>
 
-    var animData: ClientAnimData
+    var animData: AnimData
         get() = animatable.getData(SparkAttachments.ANIM_DATA)
         set(value) { animatable.setData(SparkAttachments.ANIM_DATA, value) }
 
@@ -36,7 +37,7 @@ interface IAnimatable<T: Entity> {
      */
     fun getEntityMatrix(partialTick: Float = -1f): Matrix4f {
         val p = if (partialTick == -1f) 1f else partialTick // 修正一下客户端tick，不然无法和apply里的partialTick统一
-        return Matrix4f().translate(animatable.getPosition(p).toVector3f())
+        return Matrix4f().translate(animatable.getPosition(p).toVector3f()).rotateY(PI.toFloat() - animatable.getPreciseBodyRotation(partialTick).toRadians())
     }
 
     /**
@@ -44,9 +45,10 @@ interface IAnimatable<T: Entity> {
      */
     fun getBonePivot(name: String, partialTick: Float = -1f): Vec3 {
         val p = if (partialTick == -1f) 0f else partialTick // 修正一下客户端tick，不然无法和apply里的partialTick统一
-        val ma = getEntityMatrix(partialTick).rotateY(PI.toFloat())
+        val ma = getEntityMatrix(partialTick)
         val bone = animData.model.getBone(name)
-        bone.applyTransformWithParents(animData, ma, p)
+        val headRot = getHeadMatrix(partialTick)
+        bone.applyTransformWithParents(animData, ma, headRot, p)
         val pivot = bone.pivot.div(16.0).toVector3f()
         return ma.transformPosition(pivot).toVec3()
     }
@@ -56,18 +58,29 @@ interface IAnimatable<T: Entity> {
      */
     fun getBoneMatrix(name: String, partialTick: Float = -1f): Matrix4f {
         val p = if (partialTick == -1f) 0f else partialTick // 修正一下客户端tick，不然无法和apply里的partialTick统一
-        val ma = getEntityMatrix(partialTick).rotateY(PI.toFloat())
+        val ma = getEntityMatrix(partialTick)
         val bone = animData.model.getBone(name)
-        bone.applyTransformWithParents(animData, ma, p)
+        val headRot = getHeadMatrix(partialTick)
+        bone.applyTransformWithParents(animData, ma, headRot, p)
         return ma
     }
 
     /**
-     * 同步当前动画数据到客户端，默认每tick都会调用一次
+     * 获取头部视野的旋转矩阵
      */
-    fun syncAnimDataToClient() {
+    fun getHeadMatrix(partialTick: Float = 0f): Matrix4f {
+        val pitch = -animatable.getViewXRot(partialTick).toRadians()
+        val yaw = -animatable.getViewYRot(partialTick).toRadians() + animatable.getPreciseBodyRotation(partialTick).toRadians()
+        return Matrix4f().rotateZYX(0f, yaw, pitch)
+    }
+
+    /**
+     * 同步当前动画数据到客户端，默认每tick都会调用一次
+     * @param placeAnyCase 是否只在动画名字不同时发送数据，反之则无论如何也要同步
+     */
+    fun syncAnimDataToClient(placeAnyCase: Boolean = false) {
         if (!animatable.level().isClientSide) {
-            PacketDistributor.sendToAllPlayers(AnimNetData(animatable.id, animData))
+            PacketDistributor.sendToAllPlayers(AnimNetData(animatable.id, animData, placeAnyCase))
         }
     }
 

@@ -5,7 +5,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 
-interface IMultilayerState {
+interface IMultilayerState {//
 
     fun getMaxLayer(): Int
 

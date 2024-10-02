@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DebugRenderer.class)
-public class DebugRendererMixin {
+public class DebugRendererMixin {//
 
     private FreeCollisionBoxRenderer freeBox;
 

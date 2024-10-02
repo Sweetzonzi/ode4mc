@@ -1,19 +1,13 @@
 package cn.solarmoon.spark_core.api.phys.collision
 
-import cn.solarmoon.spark_core.SparkCore
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.debug.DebugRenderer
-import net.minecraft.world.phys.AABB
-import net.minecraft.world.phys.Vec3
-import org.jline.utils.Colors
-import org.joml.Quaternionf
 import org.joml.Vector3f
-import java.awt.Color
 
-class FreeCollisionBoxRenderer(private val mc: Minecraft): DebugRenderer.SimpleDebugRenderer {
+class FreeCollisionBoxRenderer(private val mc: Minecraft): DebugRenderer.SimpleDebugRenderer {//
     override fun render(
         poseStack: PoseStack,
         bufferSource: MultiBufferSource,

@@ -1,17 +1,11 @@
 package cn.solarmoon.spark_core.feature.bucket_fix
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.registry.common.SparkDataComponents
-import net.minecraft.core.component.DataComponentMap
-import net.minecraft.core.component.DataComponents
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.component.CustomData
 import net.neoforged.neoforge.fluids.FluidStack
 
 
-object BucketFixer {
+object BucketFixer {//
 
     /**
      * 用于mixin，读取桶内保存有的带数据的液体

@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 /**
  * 方块实体专用的配方处理器，简化了绝大多数重复流程，如果不使用默认的预制处理器，则直接接入这个即可
  */
-abstract class RecipeProcessor<C: RecipeInput,  R: Recipe<C>>(open val be: BlockEntity) {
+abstract class RecipeProcessor<C: RecipeInput,  R: Recipe<C>>(open val be: BlockEntity) {//
 
     /**
      * 用于快速调用所需配方类型

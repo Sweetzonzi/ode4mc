@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag
  *
  * 默认可以对配方数据进行辅助处理
  */
-interface IProcessorAssistant {
+interface IProcessorAssistant {//
 
     /**
      * 自动存储配方数据

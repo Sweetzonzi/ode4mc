@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.blockentity
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import com.mojang.serialization.MapCodec

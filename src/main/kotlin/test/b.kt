@@ -1,12 +1,9 @@
 package test
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.attachment.animation.AnimHelper
 import cn.solarmoon.spark_core.api.blockentity.SyncedEntityBlock
 import cn.solarmoon.spark_core.api.blockstate.IBedPartState
 import cn.solarmoon.spark_core.api.blockstate.IHorizontalFacingState
 import cn.solarmoon.spark_core.api.blockstate.IWaterLoggedState
-import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
@@ -21,7 +18,6 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.fluids.FluidUtil
 
 class b(properties: Properties) : SyncedEntityBlock(properties), IWaterLoggedState, IHorizontalFacingState, IBedPartState {

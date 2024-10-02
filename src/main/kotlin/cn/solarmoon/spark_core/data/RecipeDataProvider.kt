@@ -13,8 +13,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.common.Tags
-import test.Cap
-import test.b
 import java.util.concurrent.CompletableFuture
 
 class RecipeDataProvider(output: PackOutput, registries: CompletableFuture<HolderLookup.Provider>) : RecipeProvider(output, registries) {

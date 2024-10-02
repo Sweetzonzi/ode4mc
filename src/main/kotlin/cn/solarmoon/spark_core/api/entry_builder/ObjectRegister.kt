@@ -4,7 +4,6 @@ import cn.solarmoon.spark_core.api.entry_builder.client.LayerBuilder
 import cn.solarmoon.spark_core.api.entry_builder.common.*
 import cn.solarmoon.spark_core.api.util.RegisterUtil
 import net.minecraft.core.RegistrySetBuilder
-import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.syncher.EntityDataSerializer

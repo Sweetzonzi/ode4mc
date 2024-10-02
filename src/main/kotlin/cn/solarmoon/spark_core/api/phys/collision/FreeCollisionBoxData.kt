@@ -6,7 +6,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
-data class FreeCollisionBoxData(
+data class FreeCollisionBoxData(//
     val id: String,
     val color: Int,
     val lifetime: Int,

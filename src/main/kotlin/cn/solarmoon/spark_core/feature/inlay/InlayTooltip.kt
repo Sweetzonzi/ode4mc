@@ -1,8 +1,8 @@
 package cn.solarmoon.spark_core.feature.inlay
 
-import cn.solarmoon.spark_core.registry.client.SparkResources
 import cn.solarmoon.spark_core.api.cap.item.ItemStackHandlerHelper
 import cn.solarmoon.spark_core.api.tooltip.CustomTooltip
+import cn.solarmoon.spark_core.registry.client.SparkResources
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.inventory.tooltip.TooltipComponent

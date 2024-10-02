@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.registry.client
 import cn.solarmoon.spark_core.SparkCore
 import net.minecraft.resources.ResourceLocation
 
-object SparkResources {
+object SparkResources {//
 
     @JvmStatic
     val JEI_SLOT: ResourceLocation = ResourceLocation.fromNamespaceAndPath(SparkCore.MOD_ID, "textures/gui/jei/slot.png")

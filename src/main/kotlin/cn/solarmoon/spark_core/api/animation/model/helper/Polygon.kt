@@ -6,7 +6,7 @@ import net.minecraft.core.Direction
 /**
  * 多边形的面，能够修正传入顶点的正确映射位置，并给出法线方向
  */
-data class Polygon(
+data class Polygon(//
     val vertexes: Array<Vertex>,
     var u1: Float, var v1: Float,
     var u2: Float, var v2: Float,

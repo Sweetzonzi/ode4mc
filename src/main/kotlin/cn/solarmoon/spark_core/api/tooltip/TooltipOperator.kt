@@ -3,13 +3,10 @@ package cn.solarmoon.spark_core.api.tooltip
 import cn.solarmoon.spark_core.SparkCore
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.core.component.DataComponentMap
-import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.util.StringUtil
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffectUtil
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.alchemy.PotionContents
 
 /**

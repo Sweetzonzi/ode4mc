@@ -7,7 +7,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 
-abstract class SimpleJsonListener(fileName: String): SimpleJsonResourceReloadListener(Gson().newBuilder().create(), fileName) {
+abstract class SimpleJsonListener(fileName: String): SimpleJsonResourceReloadListener(Gson().newBuilder().create(), fileName) {//
 
     abstract override fun apply(
         reads: Map<ResourceLocation, JsonElement>,

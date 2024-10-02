@@ -1,37 +1,25 @@
 package cn.solarmoon.spark_core.api.data
 
-import cn.solarmoon.spark_core.api.data.element.ChanceResult
-import cn.solarmoon.spark_core.api.data.element.ProportionalIngredient
-import com.google.gson.JsonObject
 import com.mojang.serialization.Codec
-import com.mojang.serialization.JsonOps
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.Util
-import net.minecraft.core.Holder
-import net.minecraft.core.NonNullList
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.GsonHelper
-import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.material.Fluid
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.fluids.FluidStack
 import org.joml.Quaternionf
 import org.joml.Vector3f
 
 /**
  * 补充一些解码方法
  */
-object SerializeHelper {
+object SerializeHelper {//
 
     object BLOCK {
         @JvmStatic

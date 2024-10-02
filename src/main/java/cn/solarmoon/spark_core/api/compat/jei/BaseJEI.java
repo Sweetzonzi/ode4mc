@@ -26,7 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 简便的jei创建器，需要自己添加@JeiPlugin标识以启用
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class BaseJEI implements IModPlugin {
+public abstract class BaseJEI implements IModPlugin {//
 
     protected IGuiHelper guiHelper;
     private final List<JEIBuilder> jeiBuilders;

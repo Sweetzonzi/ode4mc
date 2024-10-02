@@ -1,15 +1,7 @@
 package cn.solarmoon.spark_core.api.phys.collision
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
-import cn.solarmoon.spark_core.api.animation.sync.AnimNetData
 import cn.solarmoon.spark_core.api.data.SerializeHelper
-import com.mojang.math.Axis
-import com.mojang.math.MatrixUtil
-import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -33,7 +25,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
  * @param rotation 坐标轴的整体旋转，对其进行变换则变换立方体的整体
  * @param size 以顺序为x，y，z轴坐标的正方向上的长度（整体长度，不是一半长度）
  */
-data class FreeCollisionBox(
+data class FreeCollisionBox(//
     var center: Vec3,
     var size: Vec3,
     val rotation: Quaternionf = Quaternionf()

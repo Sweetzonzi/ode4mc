@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.model
 
-import cn.solarmoon.spark_core.api.animation.anim.ClientAnimData
-import cn.solarmoon.spark_core.api.animation.anim.part.Animation
+import cn.solarmoon.spark_core.api.animation.anim.AnimData
 import cn.solarmoon.spark_core.api.animation.model.part.BonePart
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
@@ -25,7 +24,7 @@ data class CommonModel(
     val textureWidth: Int,
     val textureHeight: Int,
     val bones: ArrayList<BonePart>
-) {
+) {//
 
     init {
         bones.forEach { it.rootModel = this }
@@ -42,9 +41,9 @@ data class CommonModel(
      * @param normal3f 法线的矩阵，从当前poseStack获取
      */
     @OnlyIn(Dist.CLIENT)
-    fun renderBones(animData: ClientAnimData, matrix4f: Matrix4f, normal3f: Matrix3f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int, partialTick: Float = 0f) {
+    fun renderBones(animData: AnimData, matrix4f: Matrix4f, normal3f: Matrix3f, headMatrix: Matrix4f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int, partialTick: Float = 0f) {
         bones.forEach {
-            it.renderCubes(animData, Matrix4f(matrix4f), normal3f, buffer, packedLight, packedOverlay, color, partialTick)
+            it.renderCubes(animData, Matrix4f(matrix4f), normal3f, headMatrix, buffer, packedLight, packedOverlay, color, partialTick)
         }
     }
 

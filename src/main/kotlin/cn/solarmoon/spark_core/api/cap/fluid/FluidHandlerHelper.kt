@@ -7,7 +7,7 @@ import net.neoforged.neoforge.fluids.FluidUtil
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank
 
-object FluidHandlerHelper {
+object FluidHandlerHelper {//
 
     const val FLUID = "FluidHandler"
 

@@ -2,9 +2,7 @@ package cn.solarmoon.spark_core.api.entry_builder.common
 
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.neoforged.bus.api.IEventBus
-import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.ICapabilityProvider
 import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent

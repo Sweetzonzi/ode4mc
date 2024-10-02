@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.api.entry_builder.common
 
 import net.minecraft.network.syncher.EntityDataSerializer
-import net.minecraft.world.entity.EntityType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier

@@ -4,12 +4,7 @@ import net.minecraft.util.Mth
 import org.joml.Vector3f
 import kotlin.math.min
 
-enum class TransitionType {
-    /**
-     * 立刻重置模型为默认状态，接着播放指定的动画
-     */
-    INSTANT,
-
+enum class TransitionType {//
     /**
      * 将当前动作线性过渡到目标动作
      */

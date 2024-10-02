@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 
-interface ILitState {
+interface ILitState {//
 
     /**
      * 默认lit值

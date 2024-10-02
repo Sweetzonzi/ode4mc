@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
 object TextureRenderHelper {
-
+//
     @JvmStatic
     fun render(
         texture: ResourceLocation?,

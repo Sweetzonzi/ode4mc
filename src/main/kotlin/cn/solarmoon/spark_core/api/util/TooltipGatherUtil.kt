@@ -2,7 +2,6 @@ package cn.solarmoon.spark_core.api.util
 
 import com.mojang.datafixers.util.Either
 import net.minecraft.world.inventory.tooltip.TooltipComponent
-import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
 
 
