@@ -1,13 +1,14 @@
 package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.AnimData
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.attachment.animation.AnimTicker
 import cn.solarmoon.spark_core.api.attachment.counting.CountingDevice
+import cn.solarmoon.spark_core.api.entity.ai.attack.AttackedData
 
 
 object SparkAttachments {
-    @JvmStatic
+    @JvmStatic//
     fun register() {}
 
     @JvmStatic
@@ -29,6 +30,13 @@ object SparkAttachments {
         .id("anim_data")
         .defaultValue { AnimData.EMPTY }
         .serializer { it.serialize(AnimData.CODEC) }
+        .build()
+
+    @JvmStatic
+    val ATTACKED_DATA = SparkCore.REGISTER.attachment<ArrayList<AttackedData>>()
+        .id("attacked_data")
+        .defaultValue { arrayListOf<AttackedData>() }
+        .serializer { it.serialize(AttackedData.LIST_CODEC) }
         .build()
 
 }

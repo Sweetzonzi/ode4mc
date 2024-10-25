@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class BlockBuilder<B : Block>(private val blockDeferredRegister: DeferredRegister<Block>) {
+class BlockBuilder<B : Block>(private val blockDeferredRegister: DeferredRegister<Block>) {//
 
     private var id: String = ""
     private var block: Supplier<B>? = null

@@ -23,7 +23,7 @@ data class UseRecipe(
     val inputBlock: Block,
     val outputBlock: Block,
     val chanceResults: List<ChanceResult>
-): IConcreteRecipe {
+): IConcreteRecipe {//
 
     override val entry: RecipeBuilder.RecipeEntry<*> = SparkRecipes.USE
 
@@ -32,8 +32,8 @@ data class UseRecipe(
             return RecordCodecBuilder.mapCodec { instance ->
                 instance.group(
                     Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter{ it.ingredient },
-                    SerializeHelper.BLOCK.CODEC.fieldOf("input_block").forGetter { it.inputBlock },
-                    SerializeHelper.BLOCK.CODEC.fieldOf("output_block").forGetter { it.outputBlock },
+                    SerializeHelper.BLOCK_CODEC.fieldOf("input_block").forGetter { it.inputBlock },
+                    SerializeHelper.BLOCK_CODEC.fieldOf("output_block").forGetter { it.outputBlock },
                     ChanceResult.LIST_CODEC.fieldOf("results").forGetter { it.chanceResults }
                 ).apply(instance, ::UseRecipe)
             }
@@ -43,16 +43,16 @@ data class UseRecipe(
             return object : StreamCodec<RegistryFriendlyByteBuf, UseRecipe> {
                 override fun decode(buffer: RegistryFriendlyByteBuf): UseRecipe {
                     val ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer)
-                    val inputBlock = SerializeHelper.BLOCK.STREAM_CODEC.decode(buffer)
-                    val outputBlock = SerializeHelper.BLOCK.STREAM_CODEC.decode(buffer)
+                    val inputBlock = SerializeHelper.BLOCK_STREAM_CODEC.decode(buffer)
+                    val outputBlock = SerializeHelper.BLOCK_STREAM_CODEC.decode(buffer)
                     val chanceResults = ChanceResult.LIST_STREAM_CODEC.decode(buffer)
                     return UseRecipe(ingredient, inputBlock, outputBlock, chanceResults)
                 }
 
                 override fun encode(buffer: RegistryFriendlyByteBuf, value: UseRecipe) {
                     Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, value.ingredient)
-                    SerializeHelper.BLOCK.STREAM_CODEC.encode(buffer, value.inputBlock)
-                    SerializeHelper.BLOCK.STREAM_CODEC.encode(buffer, value.outputBlock)
+                    SerializeHelper.BLOCK_STREAM_CODEC.encode(buffer, value.inputBlock)
+                    SerializeHelper.BLOCK_STREAM_CODEC.encode(buffer, value.outputBlock)
                     ChanceResult.LIST_STREAM_CODEC.encode(buffer, value.chanceResults)
                 }
             }

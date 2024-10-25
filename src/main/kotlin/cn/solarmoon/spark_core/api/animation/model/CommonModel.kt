@@ -1,16 +1,15 @@
 package cn.solarmoon.spark_core.api.animation.model
 
-import cn.solarmoon.spark_core.api.animation.anim.AnimData
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimPlayData
 import cn.solarmoon.spark_core.api.animation.model.part.BonePart
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.EntityType
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import org.joml.Matrix3f
@@ -24,7 +23,7 @@ data class CommonModel(
     val textureWidth: Int,
     val textureHeight: Int,
     val bones: ArrayList<BonePart>
-) {//
+) {
 
     init {
         bones.forEach { it.rootModel = this }
@@ -34,16 +33,30 @@ data class CommonModel(
      * 根据名字获取特定骨骼组，名字在json文件中定义，如果重名只会获得第一个骨骼
      */
     fun getBone(name: String): BonePart {
-        return bones.first { it.name == name }
+        return try {
+            bones.first { it.name == name }
+        } catch (e: Exception) {
+            throw IllegalStateException("Bone with name '$name' not found", e)
+        }
     }
 
     /**
      * @param normal3f 法线的矩阵，从当前poseStack获取
      */
     @OnlyIn(Dist.CLIENT)
-    fun renderBones(animData: AnimData, matrix4f: Matrix4f, normal3f: Matrix3f, headMatrix: Matrix4f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int, partialTick: Float = 0f) {
+    fun renderBones(
+        playData: AnimPlayData,
+        matrix4f: Matrix4f,
+        extraMatrix: Map<String, Matrix4f> = mapOf(),
+        normal3f: Matrix3f,
+        buffer: VertexConsumer,
+        packedLight: Int,
+        packedOverlay: Int,
+        color: Int,
+        partialTick: Float = 0f
+    ) {
         bones.forEach {
-            it.renderCubes(animData, Matrix4f(matrix4f), normal3f, headMatrix, buffer, packedLight, packedOverlay, color, partialTick)
+            it.renderCubes(playData, Matrix4f(matrix4f), extraMatrix, normal3f, buffer, packedLight, packedOverlay, color, partialTick)
         }
     }
 
@@ -54,17 +67,17 @@ data class CommonModel(
     }
 
     companion object {
-        /**
-         * 安全获取原始数据，目的是保证原始数据不被修改
-         */
         @JvmStatic
-        fun getOriginCopy(entityType: EntityType<*>) = ORIGINS[BuiltInRegistries.ENTITY_TYPE.getKey(entityType)]?.copy() ?: CommonModel(0, 0, arrayListOf())
+        fun get(id: ResourceLocation) = ORIGINS[id] ?: EMPTY
 
         /**
          * 地图加载后读取的原始模型数据，最好不要修改
          */
         @JvmStatic
         val ORIGINS = mutableMapOf<ResourceLocation, CommonModel>()
+
+        @JvmStatic
+        val EMPTY get() = CommonModel(0, 0, arrayListOf())
 
         @JvmStatic
         val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, MutableMap<ResourceLocation, CommonModel>> {

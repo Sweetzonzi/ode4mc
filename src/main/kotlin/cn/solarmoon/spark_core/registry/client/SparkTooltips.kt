@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
 import net.neoforged.neoforge.common.NeoForge
 
-object SparkTooltips {
+object SparkTooltips {//
 
     @JvmStatic
     private fun addTooltips(event: RegisterClientTooltipComponentFactoriesEvent) {

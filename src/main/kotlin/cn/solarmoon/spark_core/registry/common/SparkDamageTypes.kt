@@ -2,7 +2,7 @@ package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.SparkCore
 
-object SparkDamageTypes {
+object SparkDamageTypes {//
 
     @JvmStatic
     fun register() {}

@@ -22,7 +22,7 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid
  *
  * 增加了默认的桶和液体本体方块
  */
-abstract class BaseFluid(properties: Properties) : BaseFlowingFluid(properties) {
+abstract class BaseFluid(properties: Properties) : BaseFlowingFluid(properties) {//
 
     val underFluidParticle: ParticleOptions
         get() = ParticleTypes.UNDERWATER
@@ -53,7 +53,7 @@ abstract class BaseFluid(properties: Properties) : BaseFlowingFluid(properties) 
     /**
      * 液体方块
      */
-    open class FluidBlock(flowingFluid: FlowingFluid): LiquidBlock(
+    open class FluidBlock(flowingFluid: FlowingFluid): LiquidBlock(//
         flowingFluid, Properties.of()
             .replaceable() // 可替换液体为方块
             .noCollission()

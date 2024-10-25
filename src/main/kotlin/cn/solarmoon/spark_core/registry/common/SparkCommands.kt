@@ -6,7 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 
-object SparkCommands {
+object SparkCommands {//
 
     @SubscribeEvent
     private fun registries(event: RegisterCommandsEvent) {

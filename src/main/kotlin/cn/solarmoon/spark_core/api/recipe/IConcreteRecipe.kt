@@ -12,7 +12,7 @@ import net.neoforged.neoforge.items.wrapper.RecipeWrapper
 /**
  * 若配方交互无需gui，则可用此接口
  */
-interface IConcreteRecipe: Recipe<RecipeWrapper> {
+interface IConcreteRecipe: Recipe<RecipeWrapper> {//
 
     val entry: RecipeBuilder.RecipeEntry<*>
 

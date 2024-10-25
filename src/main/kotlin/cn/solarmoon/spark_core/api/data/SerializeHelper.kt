@@ -19,47 +19,41 @@ import org.joml.Vector3f
 /**
  * 补充一些解码方法
  */
-object SerializeHelper {//
+object SerializeHelper {
 
-    object BLOCK {
-        @JvmStatic
-        val CODEC: Codec<Block> = Codec.STRING.xmap({ BuiltInRegistries.BLOCK.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.BLOCK.getKey(it).toString() })
+    @JvmStatic
+    val BLOCK_CODEC: Codec<Block> = Codec.STRING.xmap({ BuiltInRegistries.BLOCK.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.BLOCK.getKey(it).toString() })
 
-        @JvmStatic
-        val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Block> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): Block {
-                return BuiltInRegistries.BLOCK.get(buffer.readResourceLocation())
-            }
+    @JvmStatic
+    val BLOCK_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Block> {
+        override fun decode(buffer: RegistryFriendlyByteBuf): Block {
+            return BuiltInRegistries.BLOCK.get(buffer.readResourceLocation())
+        }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: Block) {
-                buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(value))
-            }
+        override fun encode(buffer: RegistryFriendlyByteBuf, value: Block) {
+            buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(value))
         }
     }
 
-    object FLUID {
-        @JvmStatic
-        val CODEC: Codec<Fluid> = Codec.STRING.xmap({ BuiltInRegistries.FLUID.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.FLUID.getKey(it).toString() })
+    @JvmStatic
+    val FLUID_CODEC: Codec<Fluid> = Codec.STRING.xmap({ BuiltInRegistries.FLUID.get(ResourceLocation.parse(it)) }, { BuiltInRegistries.FLUID.getKey(it).toString() })
 
-        @JvmStatic
-        val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Fluid> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): Fluid {
-                return BuiltInRegistries.FLUID.get(buffer.readResourceLocation())
-            }
+    @JvmStatic
+    val FLUID_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Fluid> {
+        override fun decode(buffer: RegistryFriendlyByteBuf): Fluid {
+            return BuiltInRegistries.FLUID.get(buffer.readResourceLocation())
+        }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: Fluid) {
-                buffer.writeResourceLocation(BuiltInRegistries.FLUID.getKey(value))
-            }
+        override fun encode(buffer: RegistryFriendlyByteBuf, value: Fluid) {
+            buffer.writeResourceLocation(BuiltInRegistries.FLUID.getKey(value))
         }
     }
 
-    object ITEMSTACK {
-        @JvmStatic
-        val LIST_CODEC = ItemStack.CODEC.listOf()
+    @JvmStatic
+    val ITEMSTACK_LIST_CODEC = ItemStack.CODEC.listOf()
 
-        @JvmStatic
-        val OPTIONAL_LIST_CODEC = ItemStack.OPTIONAL_CODEC.listOf()
-    }
+    @JvmStatic
+    val ITEMSTACK_OPTIONAL_LIST_CODEC = ItemStack.OPTIONAL_CODEC.listOf()
 
     object INGREDIENT {
         @JvmStatic
@@ -118,6 +112,12 @@ object SerializeHelper {//
             buffer.writeFloat(value.y)
         }
     }
+
+    @JvmStatic
+    val QUATERNIONF_CODEC: Codec<Quaternionf> = Codec.FLOAT.listOf().xmap(
+        { Quaternionf(it[0], it[1], it[2], it[3]) },
+        { listOf(it.x, it.y, it.z, it.w) }
+    )
 
     @JvmStatic
     val QUATERNIONF_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, Quaternionf> {

@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.anim.part
 
+import cn.solarmoon.spark_core.api.animation.anim.Loop
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.codec.ByteBufCodecs
@@ -10,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec
  */
 data class Animation(
     val name: String,
+    val loop: Loop,
     val baseLifeTime: Double,
     val boneAnims: ArrayList<BoneAnim>
 ) {
@@ -23,7 +25,7 @@ data class Animation(
     fun copy(): Animation {
         val list = arrayListOf<BoneAnim>()
         boneAnims.forEach { list.add(it.copy()) }
-        return Animation(name, baseLifeTime, list)
+        return Animation(name, loop, baseLifeTime, list)
     }
 
     companion object {
@@ -31,9 +33,10 @@ data class Animation(
         val CODEC: Codec<Animation> = RecordCodecBuilder.create {
             it.group(
                 Codec.STRING.fieldOf("name").forGetter { it.name },
+                Loop.CODEC.fieldOf("loop").forGetter { it.loop },
                 Codec.DOUBLE.fieldOf("base_lifetime").forGetter { it.baseLifeTime },
                 BoneAnim.LIST_CODEC.fieldOf("bone_anims").forGetter { it.boneAnims }
-            ).apply(it) { a, b, c -> Animation(a, b, ArrayList(c)) }
+            ).apply(it) { a, loo, b, c -> Animation(a, loo, b, ArrayList(c)) }
         }
 
         @JvmStatic
@@ -42,6 +45,7 @@ data class Animation(
         @JvmStatic
         val STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, Animation::name,
+            Loop.STREAM_CODEC, Animation::loop,
             ByteBufCodecs.DOUBLE, Animation::baseLifeTime,
             BoneAnim.LIST_STREAM_CODEC, Animation::boneAnims,
             ::Animation

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 
 
-class DamageTypeBuilder(private val modId: String) {
+class DamageTypeBuilder(private val modId: String) {//
 
     private var id = ""
 

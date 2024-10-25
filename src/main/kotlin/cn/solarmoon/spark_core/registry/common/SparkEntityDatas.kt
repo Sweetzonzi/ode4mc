@@ -1,6 +1,6 @@
 package cn.solarmoon.spark_core.registry.common
 
-object SparkEntityDatas {
+object SparkEntityDatas {//
 
     @JvmStatic
     fun register() {}

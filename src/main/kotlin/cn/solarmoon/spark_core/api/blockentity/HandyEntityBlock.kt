@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-abstract class HandyEntityBlock(properties: Properties): BaseEntityBlock(properties) {
+abstract class HandyEntityBlock(properties: Properties): BaseEntityBlock(properties) {//
 
     /**
      * 必填项 - 碰撞箱

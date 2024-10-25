@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class EntityDataBuilder<D>(private val entityDataDeferredRegister: DeferredRegister<EntityDataSerializer<*>>) {
+class EntityDataBuilder<D>(private val entityDataDeferredRegister: DeferredRegister<EntityDataSerializer<*>>) {//
 
     private var id = ""
     private var dataSerializer: Supplier<EntityDataSerializer<D>>? = null

@@ -15,10 +15,10 @@ class FreeCollisionBoxRenderer(private val mc: Minecraft): DebugRenderer.SimpleD
         camY: Double,
         camZ: Double
     ) {
-        if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) return
         val buffer = bufferSource.getBuffer(RenderType.LINES)
         FreeCollisionBoxRenderManager.RENDERABLE_BOXES.toMap().forEach { id, it ->
             it.tick()
+            if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) return@forEach
             val box = it.box
             box.connections.forEach { (c1, c2) ->
                 val vs = box.vertexes

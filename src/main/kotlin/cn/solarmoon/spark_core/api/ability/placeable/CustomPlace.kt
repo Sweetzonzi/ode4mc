@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent
 
-class CustomPlace {
+class CustomPlace {//
 
     @SubscribeEvent
     fun place(event: UseItemOnBlockEvent) {

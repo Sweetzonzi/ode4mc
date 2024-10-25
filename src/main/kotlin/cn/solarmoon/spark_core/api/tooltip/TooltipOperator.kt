@@ -12,7 +12,7 @@ import net.minecraft.world.item.alchemy.PotionContents
 /**
  * 工具提示统一方法，规范了工具提示的格式，并添加工具提示的实用方法
  */
-class TooltipOperator(private val tooltips: MutableList<Component?>) {
+class TooltipOperator(private val tooltips: MutableList<Component?>) {//
 
     companion object {
         @JvmStatic

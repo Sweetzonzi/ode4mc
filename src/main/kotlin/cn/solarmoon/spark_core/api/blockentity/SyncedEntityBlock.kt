@@ -24,7 +24,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank
  *
  * 已经考虑了双方块情况
  */
-abstract class SyncedEntityBlock(properties: Properties) : HandyEntityBlock(properties) {
+abstract class SyncedEntityBlock(properties: Properties) : HandyEntityBlock(properties) {//
 
     override fun getCloneItemStack(state: BlockState, target: HitResult, level: LevelReader, pos: BlockPos, player: Player): ItemStack {
         val realPos = IBedPartState.getFootPos(state, pos)

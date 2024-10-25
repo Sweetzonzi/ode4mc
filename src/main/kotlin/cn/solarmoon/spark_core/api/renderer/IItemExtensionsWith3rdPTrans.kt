@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 /**
  * 可以转换物品的第三人称下的显示
  */
-interface IItemExtensionsWith3rdPTrans: IClientItemExtensions {
+interface IItemExtensionsWith3rdPTrans: IClientItemExtensions {//
 
     fun applyTransformTo3rdPerson(entity: LivingEntity, stack: ItemStack, context: ItemDisplayContext, arm: HumanoidArm, poseStack: PoseStack, buffer: MultiBufferSource, light: Int)
 

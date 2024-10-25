@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class BlockEntityBuilder<B : BlockEntity>(
+class BlockEntityBuilder<B : BlockEntity>(//
     private val blockEntityDeferredRegister: DeferredRegister<BlockEntityType<*>>,
     private val modBus: IEventBus
 ) {

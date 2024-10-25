@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class CreativeTabBuilder(private val creativeTabDeferredRegister: DeferredRegister<CreativeModeTab>) {
+class CreativeTabBuilder(private val creativeTabDeferredRegister: DeferredRegister<CreativeModeTab>) {//
 
     private var id = ""
     private var builder: CreativeModeTab.Builder? = null

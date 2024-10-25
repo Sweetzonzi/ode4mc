@@ -3,7 +3,9 @@ package cn.solarmoon.spark_core;
 import cn.solarmoon.spark_core.api.entry_builder.ObjectRegister;
 import cn.solarmoon.spark_core.api.kit.Translator;
 import cn.solarmoon.spark_core.data.DataGenerater;
+import cn.solarmoon.spark_core.registry.client.SparkClientEvents;
 import cn.solarmoon.spark_core.registry.client.SparkTooltips;
+import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers;
 import cn.solarmoon.spark_core.registry.common.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -13,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import test.Cap;
 import test.cep;
-import test.ees;
+import test.EES;
 
 @Mod(SparkCore.MOD_ID)
 public class SparkCore {
@@ -27,6 +29,8 @@ public class SparkCore {
         REGISTER.register(modEventBus);
 
         if (FMLEnvironment.dist.isClient()) {
+            SparkClientEvents.register();
+            SparkVisualEffectRenderers.register();
             SparkTooltips.register(modEventBus);
             cep.register(modEventBus);
         }
@@ -41,7 +45,7 @@ public class SparkCore {
         SparkNetDatas.register(modEventBus);
         SparkDatas.register();
         SparkEntityDatas.register();
-        ees.register(modEventBus);
+        EES.register(modEventBus);
 
         DataGenerater.register(modEventBus);
 

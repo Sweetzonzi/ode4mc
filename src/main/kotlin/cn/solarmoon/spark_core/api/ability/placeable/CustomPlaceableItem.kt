@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.ability.placeable
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 
-data class CustomPlaceableItem(
+data class CustomPlaceableItem(//
     val item: Item,
     val block: Block
 ) {

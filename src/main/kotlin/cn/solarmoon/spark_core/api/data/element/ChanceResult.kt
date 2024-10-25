@@ -16,7 +16,7 @@ import net.minecraft.world.item.enchantment.Enchantments
 import java.util.stream.Collectors
 
 
-data class ChanceResult(val stack: ItemStack, val chance: Float) {
+data class ChanceResult(val stack: ItemStack, val chance: Float) {//
 
     companion object {
         @JvmStatic

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
  * 拥有单个时间的配方处理器，自动存储时间数据
  */
 abstract class SingleTimeRecipeProcessor<C: RecipeInput,  R: Recipe<C>>(be: BlockEntity) :
-    RecipeProcessor<C, R>(be) {
+    RecipeProcessor<C, R>(be) {//
 
     var time = 0
     var recipeTime = 0

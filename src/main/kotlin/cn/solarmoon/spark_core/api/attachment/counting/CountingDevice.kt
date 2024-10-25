@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 
-class CountingDevice {
+class CountingDevice {//
 
     var count: Int = 0
         private set

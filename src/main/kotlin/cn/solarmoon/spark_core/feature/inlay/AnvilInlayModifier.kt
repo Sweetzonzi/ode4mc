@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.AnvilUpdateEvent
 
 
-class AnvilInlayModifier {
+class AnvilInlayModifier {//
 
     @SubscribeEvent
     fun onAnvilUpdate(event: AnvilUpdateEvent) {

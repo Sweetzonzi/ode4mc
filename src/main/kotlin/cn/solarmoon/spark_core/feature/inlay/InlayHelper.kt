@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemAttributeModifiers
 import net.neoforged.neoforge.items.ComponentItemHandler
 
-object InlayHelper {
+object InlayHelper {//
 
     @JvmStatic
     fun addAttributeToItem(stack: ItemStack, recipe: AttributeForgingRecipe) {

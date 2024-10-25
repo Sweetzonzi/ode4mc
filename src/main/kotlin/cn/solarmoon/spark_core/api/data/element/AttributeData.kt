@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
 
-data class AttributeData(val attribute: Attribute, val attributeModifier: AttributeModifier ) {
+data class AttributeData(val attribute: Attribute, val attributeModifier: AttributeModifier ) {//
 
     val holder: Holder.Reference<Attribute>
         get() = BuiltInRegistries.ATTRIBUTE.getHolder(BuiltInRegistries.ATTRIBUTE.getKey(attribute)!!).get()

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
  * 拥有多个时间的配方处理器，适用于如营火这类的每个格有独立配方时间的配方，自动存储时间数据
  */
 abstract class MultiTimeRecipeProcessor<C: RecipeInput,  R: Recipe<C>>(be: BlockEntity) :
-    RecipeProcessor<C, R>(be) {
+    RecipeProcessor<C, R>(be) {//
 
     var times = IntArray(64)
     var recipeTimes = IntArray(64)

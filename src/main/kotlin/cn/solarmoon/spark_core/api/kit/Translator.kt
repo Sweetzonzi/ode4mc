@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component
 /**
  * 翻译键实用程序
  */
-class Translator(private val modId: String) {
+class Translator(private val modId: String) {//
 
     fun set(string1: String, string2: String, vararg objects: Any): Component {
         return Component.translatable("$string1.$modId.$string2", *objects)

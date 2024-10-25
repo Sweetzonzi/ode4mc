@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.Ingredient
 
 
 @JeiPlugin
-class JEI: BaseJEI() {
+class JEI: BaseJEI() {//
 
     override fun register() {
         add(

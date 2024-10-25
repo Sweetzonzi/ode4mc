@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 
 
-class CounterInjuryEvent {
+class CounterInjuryEvent {//
 
     @SubscribeEvent
     fun counter(event: LivingDamageEvent.Post) {

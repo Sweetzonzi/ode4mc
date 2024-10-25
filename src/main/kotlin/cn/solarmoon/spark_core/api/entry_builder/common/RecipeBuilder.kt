@@ -11,7 +11,7 @@ class RecipeBuilder<R: Recipe<*>>(
     private val modId: String,
     private val recipeSerializerDeferredRegister: DeferredRegister<RecipeSerializer<*>>,
     private val recipeDeferredRegister: DeferredRegister<RecipeType<*>>
-) {
+) {//
 
     private var id = ""
     private var serializerSupplier: Supplier<RecipeSerializer<R>>? = null

@@ -4,7 +4,7 @@ import net.minecraft.core.component.DataComponentType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister.DataComponents
 
-class DataComponentBuilder<D>(private val dataComponentDeferredRegister: DataComponents) {
+class DataComponentBuilder<D>(private val dataComponentDeferredRegister: DataComponents) {//
 
     private var id = ""
 

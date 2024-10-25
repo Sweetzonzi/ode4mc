@@ -11,7 +11,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank
 /**
  * 会当液体变化时自动进行方块实体的同步
  */
-open class TileTank(open val blockEntity: BlockEntity, capacity: Int): FluidTank(capacity) {
+open class TileTank(open val blockEntity: BlockEntity, capacity: Int): FluidTank(capacity) {//
 
     override fun onContentsChanged() {
         super.onContentsChanged()

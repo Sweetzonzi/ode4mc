@@ -9,7 +9,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
 
-class BlockUseManager {
+class BlockUseManager {//
 
     @SubscribeEvent
     fun onPlayerUseOn(event: PlayerInteractEvent.RightClickBlock) {

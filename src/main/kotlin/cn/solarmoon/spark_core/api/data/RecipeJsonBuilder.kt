@@ -10,7 +10,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Recipe
 
 
-abstract class RecipeJsonBuilder: RecipeBuilder {
+abstract class RecipeJsonBuilder: RecipeBuilder {//
 
     protected val criteria: LinkedHashMap<String, Criterion<*>> = LinkedHashMap()
     protected var group: String? = null

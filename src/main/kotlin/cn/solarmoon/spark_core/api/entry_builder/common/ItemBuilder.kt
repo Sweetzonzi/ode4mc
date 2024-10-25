@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class ItemBuilder<I: Item>(private val itemDeferredRegister: DeferredRegister<Item>, private val bus: IEventBus) {
+class ItemBuilder<I: Item>(private val itemDeferredRegister: DeferredRegister<Item>, private val bus: IEventBus) {//
 
     private var id: String = ""
     private var item: Supplier<I>? = null

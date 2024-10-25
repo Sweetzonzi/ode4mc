@@ -20,7 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.fluids.FluidUtil
 
-class b(properties: Properties) : SyncedEntityBlock(properties), IWaterLoggedState, IHorizontalFacingState, IBedPartState {
+class b(properties: Properties) : SyncedEntityBlock(properties), IWaterLoggedState, IHorizontalFacingState, IBedPartState {//
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
         return Shapes.block()

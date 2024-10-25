@@ -12,7 +12,7 @@ import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.common.CommonHooks
 
-abstract class MultilayerCropBlock(properties: Properties): HandyCropBlock(properties), IMultilayerState {
+abstract class MultilayerCropBlock(properties: Properties): HandyCropBlock(properties), IMultilayerState {//
 
     override fun randomTick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
         if (!level.isAreaLoaded(pos, 1)) return  // Forge: prevent loading unloaded chunks when checking neighbor's light

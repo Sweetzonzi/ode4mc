@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class SoundBuilder(private val modId: String, private val soundDeferredRegister: DeferredRegister<SoundEvent>) {
+class SoundBuilder(private val modId: String, private val soundDeferredRegister: DeferredRegister<SoundEvent>) {//
 
     private var id = ""
 

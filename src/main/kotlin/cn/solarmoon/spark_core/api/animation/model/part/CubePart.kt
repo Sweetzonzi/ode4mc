@@ -1,8 +1,11 @@
 package cn.solarmoon.spark_core.api.animation.model.part
 
 import cn.solarmoon.spark_core.api.animation.model.helper.Polygon
+import cn.solarmoon.spark_core.api.animation.model.helper.UVUnion
+import cn.solarmoon.spark_core.api.animation.model.helper.Vertex
 import cn.solarmoon.spark_core.api.animation.model.helper.VertexSet
 import cn.solarmoon.spark_core.api.data.SerializeHelper
+import cn.solarmoon.spark_core.api.phys.collision.FreeCollisionBox
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -17,6 +20,7 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import org.joml.Matrix3f
 import org.joml.Matrix4f
+import org.joml.Quaternionf
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 
@@ -26,7 +30,7 @@ data class CubePart(
     val pivot: Vec3,
     val rotation: Vec3,
     var inflate: Double,
-    var uv: Vec2,
+    val uvUnion: UVUnion,
     val mirror: Boolean,
     val textureWidth: Int,
     val textureHeight: Int,
@@ -37,65 +41,57 @@ data class CubePart(
      */
     var rootBone: BonePart? = null
 
-    var maxPos = originPos.add(size)
-
-    /**
-     * 弧度制的旋转角
-     */
-    val rotationInRadians = Vec3(
-        Math.toRadians(rotation.x),
-        Math.toRadians(rotation.y),
-        Math.toRadians(rotation.z)
-    )
-
-    init {
-        // 应用扩张值
-        originPos = originPos.subtract(inflate, inflate, inflate)
-        maxPos = maxPos.add(inflate, inflate, inflate)
-        // 应用镜像
-        if (mirror) {
-            val f3 = maxPos.x
-            maxPos = Vec3(originPos.x, maxPos.y, maxPos.z)
-            originPos = Vec3(f3, originPos.y, originPos.z)
-        }
-    }
-
     val vertices = VertexSet(originPos, size, inflate)
 
     val polygonSet = listOf(
-        Polygon.Companion.of(vertices, this, Direction.WEST),
-        Polygon.Companion.of(vertices, this, Direction.EAST),
-        Polygon.Companion.of(vertices, this, Direction.NORTH),
-        Polygon.Companion.of(vertices, this, Direction.SOUTH),
-        Polygon.Companion.of(vertices, this, Direction.UP),
-        Polygon.Companion.of(vertices, this, Direction.DOWN)
+        Polygon.of(vertices, this, Direction.WEST),
+        Polygon.of(vertices, this, Direction.EAST),
+        Polygon.of(vertices, this, Direction.NORTH),
+        Polygon.of(vertices, this, Direction.SOUTH),
+        Polygon.of(vertices, this, Direction.UP),
+        Polygon.of(vertices, this, Direction.DOWN)
     )
+
+    /**
+     * 获取转换到给定域的所有顶点坐标数据
+     */
+    fun getTransformedVertices(matrix4f: Matrix4f): List<Vector3f> {
+        matrix4f.translate(pivot.toVector3f())
+        matrix4f.rotateZYX(rotation.toVector3f())
+        matrix4f.translate(pivot.div(-1.0).toVector3f())
+        val list = arrayListOf<Vector3f>()
+        for (polygon in polygonSet) {
+            for (vertex in polygon.vertexes) {
+                val vector3f2 = matrix4f.transformPosition(vertex.x, vertex.y, vertex.z, Vector3f())
+                if (list.any { it == vector3f2 }) continue
+                list.add(vector3f2)
+            }
+        }
+        return list.toList()
+    }
 
     /**
      * 在客户端渲染各个顶点
      */
     @OnlyIn(Dist.CLIENT)
     fun renderVertexes(matrix4f: Matrix4f, normal3f: Matrix3f, buffer: VertexConsumer, packedLight: Int, packedOverlay: Int, color: Int) {
-        matrix4f.translate(pivot.div(16.0).toVector3f())
-        matrix4f.rotateZYX(rotationInRadians.toVector3f().z, rotationInRadians.toVector3f().y, rotationInRadians.toVector3f().x)
-        matrix4f.translate(pivot.div(-16.0).toVector3f())
+        matrix4f.translate(pivot.toVector3f())
+        matrix4f.rotateZYX(rotation.toVector3f())
+        matrix4f.translate(pivot.div(-1.0).toVector3f())
 
         for (polygon in polygonSet) {
-            val vector3f = Vector3f()
             val normal = normal3f.transform(polygon.normal, Vector3f())
             fixInvertedFlatCube(normal)
 
             for (vertex in polygon.vertexes) {
                 val cam = Minecraft.getInstance().gameRenderer.mainCamera.position.toVector3f()
-                val vector3f2 = matrix4f.transformPosition(
-                    vertex.x / 16,
-                    vertex.y / 16,
-                    vertex.z / 16,
-                    vector3f
-                ).sub(cam)
-                buffer.addVertex(vector3f2.x(), vector3f2.y(), vector3f2.z(), color,
-                    vertex.u,
-                    vertex.v, packedOverlay, packedLight, normal.x, normal.y, normal.z)
+                val vector3f2 = matrix4f.transformPosition(vertex.x, vertex.y, vertex.z, Vector3f()).sub(cam)
+                buffer.addVertex(
+                    vector3f2.x(), vector3f2.y(), vector3f2.z(), color,
+                    vertex.u, vertex.v,
+                    packedOverlay, packedLight,
+                    normal.x, normal.y, normal.z
+                )
             }
         }
     }
@@ -120,7 +116,7 @@ data class CubePart(
                 Vec3.CODEC.optionalFieldOf("pivot", Vec3.ZERO).forGetter { it.pivot },
                 Vec3.CODEC.optionalFieldOf("rotation", Vec3.ZERO).forGetter { it.rotation },
                 Codec.DOUBLE.optionalFieldOf("inflate", 0.0).forGetter { it.inflate },
-                SerializeHelper.VEC2_CODEC.optionalFieldOf("uv", Vec2.ZERO).forGetter { it.uv },
+                UVUnion.CODEC.optionalFieldOf("uv", UVUnion(Vec2.ZERO, null)).forGetter { it.uvUnion },
                 Codec.BOOL.optionalFieldOf("mirror", false).forGetter { it.mirror },
                 Codec.INT.optionalFieldOf("textureWidth", 16).forGetter { it.textureWidth },
                 Codec.INT.optionalFieldOf("textureHeight", 16).forGetter { it.textureHeight }
@@ -138,7 +134,7 @@ data class CubePart(
                 val pivot = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
                 val rotation = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
                 val inflate = buffer.readDouble()
-                val uv = SerializeHelper.VEC2_STREAM_CODEC.decode(buffer)
+                val uv = UVUnion.STREAM_CODEC.decode(buffer)
                 val mirror = buffer.readBoolean()
                 val tw = buffer.readInt()
                 val th = buffer.readInt()
@@ -151,7 +147,7 @@ data class CubePart(
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.pivot)
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.rotation)
                 buffer.writeDouble(value.inflate)
-                SerializeHelper.VEC2_STREAM_CODEC.encode(buffer, value.uv)
+                UVUnion.STREAM_CODEC.encode(buffer, value.uvUnion)
                 buffer.writeBoolean(value.mirror)
                 buffer.writeInt(value.textureWidth)
                 buffer.writeInt(value.textureHeight)

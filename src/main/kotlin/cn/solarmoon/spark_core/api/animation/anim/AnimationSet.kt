@@ -32,14 +32,22 @@ data class AnimationSet(
 
     companion object {
         /**
-         * 安全获取原始数据，目的是保证原始数据不被修改，并应用生物数据
-         * @param type 如果实体已经初始化，无需传递type，但是如果实体还未初始化，则必须传递type
+         * 如果res是玩家，自动返回玩家的动画集合
          */
         @JvmStatic
-        fun getOriginCopy(type: EntityType<*>) = ORIGINS[BuiltInRegistries.ENTITY_TYPE.getKey(type)]?.copy() ?: AnimationSet(arrayListOf())
+        fun get(res: ResourceLocation): AnimationSet {
+            return if (res == ResourceLocation.withDefaultNamespace("player")) PLAYER_ORIGINS
+            else ORIGINS[res] ?: EMPTY
+        }
 
         @JvmStatic
-        val ORIGINS = mutableMapOf<ResourceLocation, AnimationSet>()
+        val EMPTY get() = AnimationSet(arrayListOf())
+
+        @JvmStatic
+        var ORIGINS = mutableMapOf<ResourceLocation, AnimationSet>()
+
+        @JvmStatic
+        val PLAYER_ORIGINS = EMPTY
 
         @JvmStatic
         val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, MutableMap<ResourceLocation, AnimationSet>> {

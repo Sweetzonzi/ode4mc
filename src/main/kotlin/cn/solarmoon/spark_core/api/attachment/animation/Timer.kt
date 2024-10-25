@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.attachment.animation
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
-data class Timer(
+data class Timer(//
     var isTiming: Boolean = false,
     var time: Float = 0f,
     var maxTime: Float = 100f

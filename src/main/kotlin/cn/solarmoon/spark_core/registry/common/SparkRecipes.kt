@@ -4,7 +4,7 @@ import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.feature.inlay.AttributeForgingRecipe
 import cn.solarmoon.spark_core.feature.use.UseRecipe
 
-object SparkRecipes {
+object SparkRecipes {//
 
     @JvmStatic
     fun register() {}
@@ -13,7 +13,7 @@ object SparkRecipes {
     val ATTRIBUTE_FORGING = SparkCore.REGISTER.recipe<AttributeForgingRecipe>()
         .id("attribute_forging")
         .serializer { AttributeForgingRecipe.Serializer() }
-        .build()
+        .build()//
 
     @JvmStatic
     val USE = SparkCore.REGISTER.recipe<UseRecipe>()

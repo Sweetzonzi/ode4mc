@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.fluid
 import cn.solarmoon.spark_core.api.entry_builder.common.FluidBuilder
 import net.neoforged.neoforge.fluids.BaseFlowingFluid
 
-open class SimpleFluid(private val entry: FluidBuilder.FluidEntry) {
+open class SimpleFluid(private val entry: FluidBuilder.FluidEntry) {//
 
     val flowing
         get() = BaseFluid.Flowing(makeProperties(entry))

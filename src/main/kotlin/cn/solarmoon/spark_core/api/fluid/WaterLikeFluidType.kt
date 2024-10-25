@@ -7,7 +7,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.common.SoundActions
 
 
-class WaterLikeFluidType(val defaultUnderOverlay: Boolean, modId: String, id: String, color: Int, properties: Properties): BaseFluidType(modId, id, color, properties) {
+class WaterLikeFluidType(val defaultUnderOverlay: Boolean, modId: String, id: String, color: Int, properties: Properties): BaseFluidType(modId, id, color, properties) {//
 
     companion object {
         @JvmStatic

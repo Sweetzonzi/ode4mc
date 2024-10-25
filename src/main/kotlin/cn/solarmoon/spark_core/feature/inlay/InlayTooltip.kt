@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.items.ComponentItemHandler
 
 
-class InlayTooltip(component: Component) : CustomTooltip<InlayTooltip.Component>(component) {
+class InlayTooltip(component: Component) : CustomTooltip<InlayTooltip.Component>(component) {//
 
     val inv: ComponentItemHandler = InlayHelper.getInlayHandler(component.stack)
     val inlays = ItemStackHandlerHelper.getStacks(inv)

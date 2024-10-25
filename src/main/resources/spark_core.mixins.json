@@ -7,12 +7,30 @@
     "BlockEntityMixin",
     "BlockMixin",
     "FluidBucketWrapperMixin",
-    "FluidTypeMixin"
+    "FluidTypeMixin",
+    "animation.EntityMixin",
+    "animation.LivingEntityMixin",
+    "fighter.player.PlayerMixin",
+    "fighter.vindicator.MeleeAttackGoalMixin",
+    "fighter.vindicator.VindicatorMixin"
   ],
   "client": [
     "BlockRenderDispatcherMixin",
     "DebugRendererMixin",
-    "ItemInHandLayerMixin"
+    "ItemInHandLayerMixin",
+    "animation.HumanoidArmorLayerMixin",
+    "animation.HumanoidArmorModelMixin",
+    "animation.HumanoidModelMixin",
+    "animation.ItemInHandLayerMixin",
+    "animation.ModelPartMixin",
+    "animation.PlayerModelMixin",
+    "animation.PlayerRendererMixin",
+    "animation.humanoid.first_person.EntityRenderDispatcherMixin",
+    "animation.humanoid.first_person.ItemInHandRendererMixin",
+    "animation.humanoid.first_person.LevelRendererMixin",
+    "animation.humanoid.first_person.LivingEntityRendererMixin",
+    "animation.humanoid.first_person.PlayerRendererMixin",
+    "fighter.player.PlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

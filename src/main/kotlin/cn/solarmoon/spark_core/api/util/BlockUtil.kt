@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BedPart
 import net.minecraft.world.level.block.state.properties.Property
 
-object BlockUtil {
+object BlockUtil {//
 
     /**
      * 使得设置的方块具有原位方块的方向属性

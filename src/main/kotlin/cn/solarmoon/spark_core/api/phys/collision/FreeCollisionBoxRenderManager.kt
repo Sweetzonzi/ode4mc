@@ -7,6 +7,8 @@ import java.awt.Color
  * 控制box在debug中的渲染
  *
  * **只能在客户端侧运行**
+ *
+ * @param maxTime 不以游戏刻为单位，以客户端刻为单位
  */
 data class FreeCollisionBoxRenderManager(
     val id: String,

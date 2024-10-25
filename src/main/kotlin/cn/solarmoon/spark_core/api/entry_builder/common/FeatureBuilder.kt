@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
 
-class FeatureBuilder<C: FeatureConfiguration, F: Feature<C>>(
+class FeatureBuilder<C: FeatureConfiguration, F: Feature<C>>(//
     private val modId: String,
     private val featureDeferredRegister: DeferredRegister<Feature<*>>
 ) {

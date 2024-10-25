@@ -2,15 +2,24 @@ package test
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.fluid.WaterLikeFluidType
+import cn.solarmoon.spark_core.api.network.CommonNetRegister
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.event.EntityRenderersEvent
+import net.neoforged.neoforge.common.NeoForge
+import test.player.Attack
+import test.player.AttackNet
 
 object Cap {
+
     @JvmStatic
-    fun register() {}
+    fun register() {
+        if (FMLEnvironment.dist.isClient) NeoForge.EVENT_BUS.register(Attack())
+        CommonNetRegister.register(Pair(AttackNet.Else(), AttackNet()))
+    }
 
     @JvmStatic
     fun r2(event: EntityRenderersEvent.RegisterRenderers) {

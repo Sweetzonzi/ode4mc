@@ -4,7 +4,7 @@ import com.google.gson.JsonParser
 import java.text.DecimalFormat
 import java.util.*
 
-object TextUtil {
+object TextUtil {//
 
     @JvmStatic
     fun toRoman(num: Int): String {
@@ -31,7 +31,7 @@ object TextUtil {
     }
 
     /**
-     * 提取tag中的词条（其实未必是tag中的词条）<br></br>
+     * 提取tag中的词条（其实未必是tag中的词条）
      * 如果 tag 是 {"name": "John"}，extractTag 是 "name"，那么这段代码将返回 "John"
      * @param tag 要提取的tag
      * @param extractTag 指定一个词条

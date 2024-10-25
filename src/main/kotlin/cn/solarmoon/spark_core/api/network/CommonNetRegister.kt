@@ -1,6 +1,6 @@
 package cn.solarmoon.spark_core.api.network
 
-object CommonNetRegister {
+object CommonNetRegister {//
 
     @JvmStatic
     val HANDLERS = mutableListOf<Pair<ICommonNetHandler, ICommonNetHandler>>()

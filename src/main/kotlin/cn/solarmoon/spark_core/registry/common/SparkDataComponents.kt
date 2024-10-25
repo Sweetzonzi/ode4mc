@@ -5,7 +5,7 @@ import net.minecraft.world.item.component.ItemContainerContents
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.SimpleFluidContent
 
-object SparkDataComponents {//
+object SparkDataComponents {///
 
     @JvmStatic
     fun register() {}

@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 
 
-class AttributeForgingCategory(helper: IGuiHelper) : BaseJEICategory<AttributeForgingRecipe>(helper) {
+class AttributeForgingCategory(helper: IGuiHelper) : BaseJEICategory<AttributeForgingRecipe>(helper) {//
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: AttributeForgingRecipe, focuses: IFocusGroup) {
         val leftInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.input)

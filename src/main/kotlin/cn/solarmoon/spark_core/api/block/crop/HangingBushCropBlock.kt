@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
 import net.neoforged.neoforge.common.CommonHooks
 
-abstract class HangingBushCropBlock(properties: Properties = Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH)): BushCropBlock(properties) {
+abstract class HangingBushCropBlock(properties: Properties = Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH)): BushCropBlock(properties) {//
 
     /**
      * 设置可放置（种植）的地方

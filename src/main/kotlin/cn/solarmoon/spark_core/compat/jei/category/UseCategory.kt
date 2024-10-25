@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.item.ItemStack
 
 
-class UseCategory(helper: IGuiHelper) : BaseJEICategory<UseRecipe>(helper) {
+class UseCategory(helper: IGuiHelper) : BaseJEICategory<UseRecipe>(helper) {//
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: UseRecipe, focuses: IFocusGroup) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.ingredient)

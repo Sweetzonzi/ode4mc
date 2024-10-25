@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-abstract class HandyCropBlock(properties: Properties = Properties.ofFullCopy(Blocks.WHEAT)): CropBlock(properties) {
+abstract class HandyCropBlock(properties: Properties = Properties.ofFullCopy(Blocks.WHEAT)): CropBlock(properties) {//
 
     abstract override fun getBaseSeedId(): ItemLike
 

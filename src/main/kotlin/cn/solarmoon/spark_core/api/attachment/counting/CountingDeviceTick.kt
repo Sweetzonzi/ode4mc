@@ -4,7 +4,7 @@ import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 
-class CountingDeviceTick {
+class CountingDeviceTick {//
 
     @SubscribeEvent
     fun onPlayerTick(event: PlayerTickEvent.Pre) {

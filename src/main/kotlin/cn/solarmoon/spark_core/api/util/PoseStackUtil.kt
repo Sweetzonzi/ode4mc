@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.core.Direction
 
-object PoseStackUtil {
+object PoseStackUtil {//
 
     @JvmStatic
     fun rotateByDirection(direction: Direction, poseStack: PoseStack) {

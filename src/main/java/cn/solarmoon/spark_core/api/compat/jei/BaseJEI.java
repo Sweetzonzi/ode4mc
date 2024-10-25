@@ -33,7 +33,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class BaseJEI implements IModPlugin {//
+public abstract class BaseJEI implements IModPlugin {///
 
     protected IGuiHelper guiHelper;
     private final List<JEIBuilder> jeiBuilders;

@@ -4,7 +4,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 
-object ItemStackUtil {
+object ItemStackUtil {//
 
     /**
      * 是否一致并且能提供足够的数量给lessStack

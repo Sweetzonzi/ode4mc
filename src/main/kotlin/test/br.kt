@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.Direction
 
-class br(context: BlockEntityRendererProvider.Context): HandyBlockEntityRenderer<be>(context) {
+class br(context: BlockEntityRendererProvider.Context): HandyBlockEntityRenderer<be>(context) {//
     override fun render(
         blockEntity: be,
         partialTick: Float,

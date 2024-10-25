@@ -16,7 +16,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import kotlin.collections.set
 
-object AnimHelper {
+object AnimHelper {//
 
     object Fluid {
 

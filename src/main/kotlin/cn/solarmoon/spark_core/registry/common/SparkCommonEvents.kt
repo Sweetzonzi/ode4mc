@@ -8,7 +8,7 @@ import cn.solarmoon.spark_core.feature.thorns.CounterInjuryEvent
 import cn.solarmoon.spark_core.feature.use.UseImpl
 import net.neoforged.neoforge.common.NeoForge
 
-object SparkCommonEvents {
+object SparkCommonEvents {//
 
     @JvmStatic
     fun register() {

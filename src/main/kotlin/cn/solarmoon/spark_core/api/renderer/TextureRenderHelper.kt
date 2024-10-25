@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
-object TextureRenderHelper {
+object TextureRenderHelper {//
 //
     @JvmStatic
     fun render(

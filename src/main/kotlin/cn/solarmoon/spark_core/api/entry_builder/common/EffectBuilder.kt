@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class EffectBuilder(private val effectDeferredRegister: DeferredRegister<MobEffect>) {
+class EffectBuilder(private val effectDeferredRegister: DeferredRegister<MobEffect>) {//
 
     private var id = ""
     private var effectSupplier: Supplier<MobEffect>? = null

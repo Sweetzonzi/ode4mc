@@ -8,7 +8,7 @@ import net.neoforged.neoforge.fluids.FluidType
 /**
  * 基本fluidType类，设定了默认液体所需贴图路径和颜色
  */
-open class BaseFluidType(modId: String, id: String, val color: Int, properties: Properties): FluidType(properties) {
+open class BaseFluidType(modId: String, id: String, val color: Int, properties: Properties): FluidType(properties) {//
 
     protected var spriteStill = ResourceLocation.tryBuild(modId, "block/fluid/" + id + "_still")
     protected var spriteFlowing = ResourceLocation.tryBuild(modId, "block/fluid/" + id + "_flow")

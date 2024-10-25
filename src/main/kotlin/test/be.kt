@@ -10,7 +10,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.state.BlockState
 
-class be(pos: BlockPos, blockState: BlockState): SyncedBlockEntity(Cap.testbe.get(), pos, blockState) {
+class be(pos: BlockPos, blockState: BlockState): SyncedBlockEntity(Cap.testbe.get(), pos, blockState) {//
 
     val tank = TileTank(this, 1000)
 

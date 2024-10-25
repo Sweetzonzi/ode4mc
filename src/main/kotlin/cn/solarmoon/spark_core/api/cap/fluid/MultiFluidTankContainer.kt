@@ -9,7 +9,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank
 /**
  * 可以容纳多个储罐，且能一键解析
  */
-data class MultiFluidTankContainer(
+data class MultiFluidTankContainer(//
     val tanks: MutableList<FluidTank>
 ): INBTSerializable<ListTag> {
 

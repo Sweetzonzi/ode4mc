@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
 
 
-object TooltipGatherUtil {
+object TooltipGatherUtil {//
 
     /**
      * 把内容收集到第一个空行中

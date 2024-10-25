@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
 
-class AttributeBuilder(private val modId: String, private val attributeRegister: DeferredRegister<Attribute>, private val bus: IEventBus) {
+class AttributeBuilder(private val modId: String, private val attributeRegister: DeferredRegister<Attribute>, private val bus: IEventBus) {//
 
     private var id = ""
     private var attributeSupplier: Supplier<Attribute>? = null

@@ -8,7 +8,7 @@ import java.util.function.Consumer
 import java.util.stream.Collectors
 
 
-class GetTagsCommand(head: String, permissionLevel: Int, isEnabled: Boolean) : CustomCommand(head, permissionLevel, isEnabled) {
+class GetTagsCommand(head: String, permissionLevel: Int, isEnabled: Boolean) : CustomCommand(head, permissionLevel, isEnabled) {///
 
     override fun putExecution() {
         builder.executes { getTags(it.source.playerOrException) }

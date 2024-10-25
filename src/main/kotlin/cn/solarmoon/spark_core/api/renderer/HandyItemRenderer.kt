@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 
-abstract class HandyItemRenderer: BlockEntityWithoutLevelRenderer(Minecraft.getInstance().blockEntityRenderDispatcher, Minecraft.getInstance().entityModels) {
+abstract class HandyItemRenderer: BlockEntityWithoutLevelRenderer(Minecraft.getInstance().blockEntityRenderDispatcher, Minecraft.getInstance().entityModels) {//
 
     protected val blockRenderer: BlockRenderDispatcher = Minecraft.getInstance().blockRenderer
     protected val itemRenderer: ItemRenderer = Minecraft.getInstance().itemRenderer

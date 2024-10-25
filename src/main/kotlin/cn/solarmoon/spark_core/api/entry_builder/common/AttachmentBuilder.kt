@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class AttachmentBuilder<A>(private val attachmentDeferredRegister: DeferredRegister<AttachmentType<*>>) {
+class AttachmentBuilder<A>(private val attachmentDeferredRegister: DeferredRegister<AttachmentType<*>>) {//
 
     private var id: String = ""
     private var builder: AttachmentType.Builder<A>? = null

@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
-data class WholeModelData(//
+data class WholeModelData(
     val models: MutableMap<ResourceLocation, CommonModel>,
     val animationSets: MutableMap<ResourceLocation, AnimationSet>
 ): CustomPacketPayload {

@@ -3,7 +3,7 @@ package cn.solarmoon.spark_core.api.animation.model.helper
 import net.minecraft.core.Direction
 import net.minecraft.world.phys.Vec3
 
-data class VertexSet(//
+data class VertexSet(
     val bottomLeftBack: Vertex,
     val bottomRightBack: Vertex,
     val topLeftBack: Vertex,

@@ -28,7 +28,7 @@ data class AttributeForgingRecipe(
     val slot: EquipmentSlotGroup,
     val expCost: Long,
     val maxForgeCount: Int
-): IConcreteRecipe {
+): IConcreteRecipe {///
 
     override val entry: RecipeBuilder.RecipeEntry<*>
         get() = SparkRecipes.ATTRIBUTE_FORGING

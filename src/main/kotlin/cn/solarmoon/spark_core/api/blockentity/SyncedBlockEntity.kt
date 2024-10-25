@@ -19,7 +19,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank
 /**
  * setChanged调用时同步所有可保存的数据
  */
-abstract class SyncedBlockEntity(type: BlockEntityType<*>, pos: BlockPos, blockState: BlockState) : BlockEntity(type, pos, blockState) {
+abstract class SyncedBlockEntity(type: BlockEntityType<*>, pos: BlockPos, blockState: BlockState) : BlockEntity(type, pos, blockState) {//
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
         return super.saveWithoutMetadata(registries)

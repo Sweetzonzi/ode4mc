@@ -51,7 +51,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     val recipeDeferredRegister: DeferredRegister<RecipeType<*>> = DeferredRegister.create(Registries.RECIPE_TYPE, modId)
     val recipeSerializerDeferredRegister: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(Registries.RECIPE_SERIALIZER, modId)
     val soundDeferredRegister: DeferredRegister<SoundEvent> = DeferredRegister.create(Registries.SOUND_EVENT, modId)
-    val dataComponentDeferredRegister: DeferredRegister.DataComponents = DeferredRegister.createDataComponents(modId)
+    val dataComponentDeferredRegister: DeferredRegister.DataComponents = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, modId)
     val entityDataDeferredRegister: DeferredRegister<EntityDataSerializer<*>> = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, modId)
 
     fun register(bus: IEventBus) {

@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class ParticleBuilder<P: ParticleType<*>>(private val particleDeferredRegister: DeferredRegister<ParticleType<*>>) {
+class ParticleBuilder<P: ParticleType<*>>(private val particleDeferredRegister: DeferredRegister<ParticleType<*>>) {//
 
     private var id = ""
     private var particleSupplier: Supplier<P>? = null

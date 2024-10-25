@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.fluids.FluidStack
 
 
-object BucketFixer {//
+object BucketFixer {///
 
     /**
      * 用于mixin，读取桶内保存有的带数据的液体

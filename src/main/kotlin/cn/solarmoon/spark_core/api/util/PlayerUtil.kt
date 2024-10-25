@@ -5,7 +5,7 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.food.FoodProperties
 
-object PlayerUtil {
+object PlayerUtil {//
 
     /**
      * 快速让玩家吃下FoodProperties的所有效果<br></br>

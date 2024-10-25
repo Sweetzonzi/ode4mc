@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.common.Tags
 import java.util.concurrent.CompletableFuture
 
-class RecipeDataProvider(output: PackOutput, registries: CompletableFuture<HolderLookup.Provider>) : RecipeProvider(output, registries) {
+class RecipeDataProvider(output: PackOutput, registries: CompletableFuture<HolderLookup.Provider>) : RecipeProvider(output, registries) {//
 
     override fun buildRecipes(recipeOutput: RecipeOutput) {
         AttributeForgingRecipe.JsonBuilder {

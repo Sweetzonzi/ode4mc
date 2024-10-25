@@ -9,7 +9,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-object VecUtil {
+object VecUtil {//
 
     /**
      * 计算生物面前一段距离的坐标位置，高度默认和玩家视线齐平

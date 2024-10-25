@@ -5,7 +5,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
 
-object DataGenerater {
+object DataGenerater {//
 
     @SubscribeEvent
     private fun gather(event: GatherDataEvent) {

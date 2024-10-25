@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.handling.IPayloadHandler
-//
+
 class WholeModelDataRefraction: IPayloadHandler<WholeModelData> {
 
     override fun handle(

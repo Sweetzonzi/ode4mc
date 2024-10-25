@@ -26,7 +26,7 @@ import net.neoforged.neoforge.common.CommonHooks
 import kotlin.math.min
 
 abstract class BushCropBlock(properties: Properties = Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH))
-    : BushBlock(properties), BonemealableBlock, INoLimitAgeState {
+    : BushBlock(properties), BonemealableBlock, INoLimitAgeState {//
 
     /**
      * 所有生长收割都会自动根据maxAge调整到合适的状态

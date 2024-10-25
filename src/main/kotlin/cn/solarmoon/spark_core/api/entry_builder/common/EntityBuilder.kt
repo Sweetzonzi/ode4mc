@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
 
-class EntityBuilder<E: Entity>(private val entityDeferredRegister: DeferredRegister<EntityType<*>>) {
+class EntityBuilder<E: Entity>(private val entityDeferredRegister: DeferredRegister<EntityType<*>>) {//
 
     private var id = ""
     private var builder: EntityType.Builder<E>? = null

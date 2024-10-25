@@ -12,7 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
 
 
-class UseImpl {
+class UseImpl {//
 
     @SubscribeEvent
     fun whenUse(event: PlayerInteractEvent.RightClickBlock) {

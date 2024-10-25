@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.common.util.RecipeMatcher
 import java.util.function.Consumer
 
-data class ProportionalIngredient(val ingredient: Ingredient, val count: Int) {
+data class ProportionalIngredient(val ingredient: Ingredient, val count: Int) {//
 
     companion object {
 
