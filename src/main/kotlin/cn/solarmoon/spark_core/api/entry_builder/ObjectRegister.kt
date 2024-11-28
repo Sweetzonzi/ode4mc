@@ -1,7 +1,9 @@
 package cn.solarmoon.spark_core.api.entry_builder
 
+import cn.solarmoon.spark_core.api.entry_builder.client.KeyMappingBuilder
 import cn.solarmoon.spark_core.api.entry_builder.client.LayerBuilder
 import cn.solarmoon.spark_core.api.entry_builder.common.*
+import cn.solarmoon.spark_core.api.entry_builder.common.fluid.FluidBuilder
 import cn.solarmoon.spark_core.api.util.RegisterUtil
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleType
@@ -93,7 +95,14 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     fun <B: Block> block() = BlockBuilder<B>(blockDeferredRegister)
     fun <B: BlockEntity> blockentity() = BlockEntityBuilder<B>(blockEntityDeferredRegister, modBus!!)
     fun <E: Entity> entity() = EntityBuilder<E>(entityDeferredRegister)
-    fun fluid() = FluidBuilder(modId, fluidDeferredRegister, fluidTypeDeferredRegister, blockDeferredRegister, itemDeferredRegister, modBus!!)
+    fun fluid() = FluidBuilder(
+        modId,
+        fluidDeferredRegister,
+        fluidTypeDeferredRegister,
+        blockDeferredRegister,
+        itemDeferredRegister,
+        modBus!!
+    )
     fun <A> attachment() = AttachmentBuilder<A>(attachmentDeferredRegister)
     fun <D> dataComponent() = DataComponentBuilder<D>(dataComponentDeferredRegister)
     fun <C: FeatureConfiguration, F: Feature<C>> feature() = FeatureBuilder<C, F>(modId, featureDeferredRegister)
@@ -107,5 +116,6 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     fun <D> entityData() = EntityDataBuilder<D>(entityDataDeferredRegister)
 
     fun layer() = LayerBuilder(modId, modBus!!)
+    fun keyMapping() = KeyMappingBuilder(modId, modBus!!)
 
 }

@@ -4,6 +4,7 @@ import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -21,8 +22,14 @@ data class AnimationSet(
      * 获取第一个匹配输入名字的动画
      */
     fun getAnimation(name: String): Animation {
-        return animations.filter { it.name == name }.first()
+        return try {
+            animations.filter { it.name == name }.first()
+        } catch (e: Exception) {
+            throw Exception("找不到名为 $name 的动画")
+        }
     }
+
+    fun hasAnimation(name: String): Boolean = animations.any { it.name == name }
 
     fun copy(): AnimationSet {
         val list = arrayListOf<Animation>()
@@ -50,8 +57,8 @@ data class AnimationSet(
         val PLAYER_ORIGINS = EMPTY
 
         @JvmStatic
-        val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, MutableMap<ResourceLocation, AnimationSet>> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): MutableMap<ResourceLocation, AnimationSet> {
+        val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<FriendlyByteBuf, MutableMap<ResourceLocation, AnimationSet>> {
+            override fun decode(buffer: FriendlyByteBuf): MutableMap<ResourceLocation, AnimationSet> {
                 val map = mutableMapOf<ResourceLocation, AnimationSet>()
                 val size = buffer.readInt()
                 repeat(size) {
@@ -62,7 +69,7 @@ data class AnimationSet(
                 return map
             }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: MutableMap<ResourceLocation, AnimationSet>) {
+            override fun encode(buffer: FriendlyByteBuf, value: MutableMap<ResourceLocation, AnimationSet>) {
                 buffer.writeInt(value.size)
                 value.forEach { id, anim ->
                     buffer.writeResourceLocation(id)

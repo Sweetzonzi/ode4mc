@@ -2,23 +2,18 @@ package cn.solarmoon.spark_core.api.kotlinImpl;
 
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
-import cn.solarmoon.spark_core.api.animation.anim.part.Animation;
-import cn.solarmoon.spark_core.api.animation.sync.AnimNetData;
-import cn.solarmoon.spark_core.api.phys.collision.FreeCollisionBox;
+import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload;
+import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;
-import kotlin.jvm.functions.Function0;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +42,14 @@ public interface IEntityAnimatableJava<T extends Entity> extends IEntityAnimatab
     }
 
     @Override
-    default void syncAnimDataToClient() {
-        PacketDistributor.sendToAllPlayers(new AnimNetData(getAnimatable().getId(), getAnimData()));
+    default void syncAnimDataToClient(@Nullable ServerPlayer player) {
+        var data = new AnimDataPayload(getAnimatable().getId(), getAnimData().copy());
+        if (!getAnimatable().level().isClientSide) {
+            if (player != null) {
+                PacketDistributor.sendToPlayersNear(player.serverLevel(), player, player.getX(), player.getY(), player.getZ(), 512, data);
+            }
+            else PacketDistributor.sendToAllPlayers(data);
+        }
     }
 
     @Override
@@ -82,9 +83,9 @@ public interface IEntityAnimatableJava<T extends Entity> extends IEntityAnimatab
     }
 
     @Override
-    default @NotNull FreeCollisionBox createCollisionBoxBoundToBone(@NotNull String boneName, @NotNull Vector3f size, @NotNull Vector3f offset) {
-        var box = new FreeCollisionBox(getBonePivot(boneName, 0f), size, new Quaternionf());
-        box.getRotation().setFromUnnormalized(getBoneMatrix(boneName, 0f));
+    default @NotNull OrientedBoundingBox createCollisionBoxBoundToBone(@NotNull String boneName, @NotNull Vector3f size, @NotNull Vector3f offset, float partialTicks) {
+        var box = new OrientedBoundingBox(getBonePivot(boneName, partialTicks), size, new Quaternionf());
+        box.getRotation().setFromUnnormalized(getBoneMatrix(boneName, partialTicks));
         box.offsetCenter(offset);
         return box;
     }

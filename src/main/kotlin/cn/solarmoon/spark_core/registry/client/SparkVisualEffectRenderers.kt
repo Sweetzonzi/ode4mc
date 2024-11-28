@@ -1,21 +1,21 @@
 package cn.solarmoon.spark_core.registry.client
 
-import cn.solarmoon.aurorian2_bosses_reborn.client.visual_effect.TrailRenderer
-import cn.solarmoon.spark_core.api.visual_effect.VisualEffectManager
-import cn.solarmoon.spark_core.api.visual_effect.VisualEffectRenderer
-import cn.solarmoon.spark_core.api.visual_effect.common.StreakRenderer
+import cn.solarmoon.spark_core.api.phys.obb.renderable.OBBRenderer
+import cn.solarmoon.spark_core.api.visual_effect.common.shadow.ShadowRenderer
+import cn.solarmoon.spark_core.api.visual_effect.common.trail.TrailRenderer
 
 object SparkVisualEffectRenderers {
 
     @JvmStatic
-    private fun add(renderer: VisualEffectRenderer) {
-        VisualEffectManager.registerRenderer(renderer)
-    }
+    val OBB = OBBRenderer()
 
     @JvmStatic
-    fun register() {
-        add(TrailRenderer())
-        add(StreakRenderer())
-    }
+    val TRAIL = TrailRenderer()
+
+    @JvmStatic
+    val SHADOW = ShadowRenderer()
+
+    @JvmStatic
+    fun register() {}
 
 }

@@ -6,6 +6,7 @@ import cn.solarmoon.spark_core.api.animation.model.part.BonePart
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -80,8 +81,8 @@ data class CommonModel(
         val EMPTY get() = CommonModel(0, 0, arrayListOf())
 
         @JvmStatic
-        val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, MutableMap<ResourceLocation, CommonModel>> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): MutableMap<ResourceLocation, CommonModel> {
+        val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<FriendlyByteBuf, MutableMap<ResourceLocation, CommonModel>> {
+            override fun decode(buffer: FriendlyByteBuf): MutableMap<ResourceLocation, CommonModel> {
                 val map = mutableMapOf<ResourceLocation, CommonModel>()
                 val size = buffer.readInt()
                 repeat(size) {
@@ -92,7 +93,7 @@ data class CommonModel(
                 return map
             }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: MutableMap<ResourceLocation, CommonModel>) {
+            override fun encode(buffer: FriendlyByteBuf, value: MutableMap<ResourceLocation, CommonModel>) {
                 buffer.writeInt(value.size)
                 value.forEach { id, model ->
                     buffer.writeResourceLocation(id)

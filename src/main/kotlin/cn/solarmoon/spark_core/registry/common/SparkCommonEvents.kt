@@ -1,23 +1,21 @@
 package cn.solarmoon.spark_core.registry.common
 
-import cn.solarmoon.spark_core.api.ability.placeable.CustomPlace
-import cn.solarmoon.spark_core.api.animation.sync.WholeModelDataRefraction
-import cn.solarmoon.spark_core.api.attachment.counting.CountingDeviceTick
-import cn.solarmoon.spark_core.feature.inlay.AnvilInlayModifier
-import cn.solarmoon.spark_core.feature.thorns.CounterInjuryEvent
-import cn.solarmoon.spark_core.feature.use.UseImpl
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimTicker
+import cn.solarmoon.spark_core.api.entity.attack.AttackedDataController
+import cn.solarmoon.spark_core.api.entity.preinput.PreInputApplier
+import cn.solarmoon.spark_core.api.entity.skill.AnimSkillApplier
+import cn.solarmoon.spark_core.api.entity.state.EntityStateModifier
 import net.neoforged.neoforge.common.NeoForge
 
-object SparkCommonEvents {//
+object SparkCommonEvents {
 
     @JvmStatic
     fun register() {
-        add(CountingDeviceTick())
-        add(CustomPlace())
-        add(CounterInjuryEvent())
-        add(AnvilInlayModifier())
-        add(UseImpl())
-        add(WholeModelDataRefraction())
+        add(AnimTicker())
+        add(AttackedDataController())
+        add(AnimSkillApplier())
+        add(EntityStateModifier())
+        add(PreInputApplier())
     }
 
     private fun add(event: Any) {

@@ -64,7 +64,7 @@ data class BonePart(
         ma: Matrix4f,
         extraMatrix: Map<String, Matrix4f> = mapOf(),
         partialTick: Float = 0f
-    ) {
+    ): Matrix4f {
         val l = arrayListOf<BonePart>(this)
         var parent = getParent()
         while (parent != null) {
@@ -75,6 +75,7 @@ data class BonePart(
         for (i in l.asReversed()) {
             i.applyTransform(playData, ma, extraMatrix, partialTick)
         }
+        return ma
     }
 
     /**

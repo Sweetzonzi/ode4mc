@@ -1,14 +1,18 @@
 package cn.solarmoon.spark_core.mixin.animation.humanoid.first_person;
 
+import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModel;
 import cn.solarmoon.spark_core.api.animation.vanilla.PlayerAnimHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
+import net.neoforged.neoforge.client.event.RenderArmEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,13 +30,24 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
     private void hideUnnecessaryBonesWhenRenderInFirstPerson(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         if (PlayerAnimHelper.shouldRenderArmAnimInFirstPerson(entity)) {
             model.setAllVisible(false);
-            var isPlayingMeleeAttack = false; // 是否正在进行近战攻击，否则将只渲染武器
-            var showRightArm = PlayerAnimHelper.isPlayingAnimOnArm(entity, HumanoidArm.RIGHT) && isPlayingMeleeAttack;
-            var showLeftArm = PlayerAnimHelper.isPlayingAnimOnArm(entity, HumanoidArm.LEFT) && isPlayingMeleeAttack;
-            model.rightArm.visible = showRightArm;
-            model.rightSleeve.visible = showRightArm;
-            model.leftArm.visible = showLeftArm;
-            model.leftSleeve.visible = showLeftArm;
+            // 感觉不是很好看先注释掉了
+//            model.leftArm.visible = true;
+//            model.leftSleeve.visible = true;
+//            model.rightArm.visible = true;
+//            model.rightSleeve.visible = true;
+        }
+    }
+
+    /**
+     * 防止手臂在第一人称空手状态下随动画旋转
+     */
+    @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/PlayerModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V"))
+    private void renderHand(PoseStack poseStack, MultiBufferSource buffer, int combinedLight, AbstractClientPlayer player, ModelPart rendererArm, ModelPart rendererArmwear, CallbackInfo ci) {
+        if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+            var model = getModel();
+            if (model instanceof ITransformModel tmodel) {
+                tmodel.setShouldTransform(false);
+            }
         }
     }
 

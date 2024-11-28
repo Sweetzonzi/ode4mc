@@ -1,41 +1,49 @@
 package cn.solarmoon.spark_core.api.animation.vanilla
 
+import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
-import cn.solarmoon.spark_core.api.animation.model.CommonModel
 import net.minecraft.client.Minecraft
+import net.minecraft.client.model.HumanoidModel
 import net.minecraft.client.model.geom.ModelPart
+import net.minecraft.client.renderer.entity.LivingEntityRenderer
+import net.minecraft.world.entity.Entity
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
-import org.joml.Vector3f
-import kotlin.math.PI
 
 @OnlyIn(Dist.CLIENT)
 object VanillaModelHelper {
 
+    /**
+     * 是否应当以自定义动画覆盖原版的动画模型参数
+     * @return 正在播放默认的任意自定义动画则为true
+     */
     @JvmStatic
-    fun setPivot(animData: AnimData, boneName: String, model: ModelPart) {
-        (model as IPivotModelPart).pivot.set(animData.model.getBone(boneName).pivot.toVector3f())
-    }
-
-    @JvmStatic
-    fun setPivot(commonModel: CommonModel, boneName: String, model: ModelPart) {
-        (model as IPivotModelPart).pivot.set(commonModel.getBone(boneName).pivot.toVector3f())
-    }
+    fun shouldSwitchToAnim(animatable: IAnimatable<*>) = !animatable.animController.isPlaying(null)
 
     @JvmStatic
     fun setRoot(child: ModelPart, root: ModelPart) {
-        (child as IPivotModelPart).root = root
+        (child as ITransformModelPart).root = root
+    }
+
+    @JvmStatic
+    fun isHumanoidModel(entity: Entity): Boolean {
+        val renderer = Minecraft.getInstance().entityRenderDispatcher.getRenderer(entity)
+        return renderer is LivingEntityRenderer<*, *> && renderer.model is HumanoidModel<*>
+    }
+
+    @JvmStatic
+    fun setPivot(animData: AnimData, boneName: String, model: ModelPart) {
+        (model as ITransformModelPart).pivot.set(animData.model.getBone(boneName).pivot.toVector3f())
     }
 
     @JvmStatic
     fun applyStartTransform(animData: AnimData, boneName: String, part: ModelPart, partialTicks: Float) {
-        val pos = animData.playData.getMixedBoneAnimPosition(boneName, partialTicks)
-        val rot = animData.playData.getMixedBoneAnimRotation(boneName, partialTicks)
+        if (part !is ITransformModelPart) return
+        val pos = animData.playData.getMixedBoneAnimPosition(boneName, partialTicks).mul(16f).apply { x = -x; y = -y }
+        val rot = animData.playData.getMixedBoneAnimRotation(boneName, partialTicks).apply { x = -x; y = -y }
         val scale = animData.playData.getMixedBoneAnimScale(boneName, partialTicks)
-        part.setRotation(-rot.x, -rot.y, rot.z)
-        part.offsetPos(pos.mul(16f).apply { x = -x; y = -y })
+        part.offsetPos(pos)
+        if (boneName == "head") part.offsetRotation(rot) else part.setRotation(rot.x, rot.y, rot.z)
         part.xScale = scale.x; part.yScale = scale.y; part.zScale = scale.z
     }
 

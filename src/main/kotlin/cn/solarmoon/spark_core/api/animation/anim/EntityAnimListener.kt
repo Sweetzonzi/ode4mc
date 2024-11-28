@@ -1,7 +1,7 @@
 package cn.solarmoon.spark_core.api.animation.anim
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.helper.KeyFrame
+import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
 import cn.solarmoon.spark_core.api.data.SimpleJsonListener
@@ -51,9 +51,9 @@ class EntityAnimListener: SimpleJsonListener("geo/animation") {
                 animationList.add(Animation(animName, loop, baseLifeTime, boneList))
             }
             AnimationSet.ORIGINS[id] = AnimationSet(animationList)
-            val playerAnimations = AnimationSet.ORIGINS.filter { (id, _) -> id.path == "player" }.flatMap { (_, anims) -> anims.animations }
-            AnimationSet.PLAYER_ORIGINS.animations.addAll(playerAnimations)
         }
+        val playerAnimations = AnimationSet.ORIGINS.filter { (id, _) -> id.path == "player" }.flatMap { (_, anims) -> anims.animations }
+        AnimationSet.PLAYER_ORIGINS.animations.addAll(playerAnimations)
         SparkCore.LOGGER.info("已加载 ${AnimationSet.ORIGINS.size} 种类型的动画文件，并在其中加载了 ${AnimationSet.PLAYER_ORIGINS.animations.size} 个玩家动画")
     }
 

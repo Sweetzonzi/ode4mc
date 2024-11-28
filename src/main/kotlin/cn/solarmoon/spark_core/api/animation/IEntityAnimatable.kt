@@ -1,12 +1,10 @@
 package cn.solarmoon.spark_core.api.animation
 
-import cn.solarmoon.spark_core.api.animation.anim.part.Animation
-import cn.solarmoon.spark_core.api.animation.sync.AnimNetData
+import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
+import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.toRadians
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.LivingEntity
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -52,8 +50,21 @@ interface IEntityAnimatable<T: Entity>: IAnimatable<T> {
         return mapOf(Pair("head", Matrix4f().rotateZYX(0f, yaw, pitch)))
     }
 
-    override fun syncAnimDataToClient() {
-        if (!animatable.level().isClientSide) PacketDistributor.sendToAllPlayers(AnimNetData(animatable.id, animData))
+    override fun syncAnimDataToClient(playerExcept: ServerPlayer?) {
+        if (!animatable.level().isClientSide) {
+            val data = AnimDataPayload(0, animData.copy())
+            playerExcept?.let { PacketDistributor.sendToPlayersNear(it.serverLevel(), it, it.x, it.y, it.z, 512.0, data) }
+                ?: run {
+                    PacketDistributor.sendToAllPlayers(data)
+                }
+        }
     }
+
+    /**
+     * 状态动画，比如待机行走一类的动画，可用的所有状态都可在[EntityStateAnim]中找到，所有状态的判断目前暂时使用统一逻辑
+     *
+     * 如果想方便的在各个状态添加动画，可以直接放入该状态到此方法返回的列表中，一键放入所有可以使用[EntityStateAnim.ALL_STATES]
+     */
+    val statusAnims: List<EntityStateAnim> get() = listOf()
 
 }

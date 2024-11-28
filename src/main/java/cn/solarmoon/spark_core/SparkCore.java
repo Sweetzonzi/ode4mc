@@ -1,28 +1,28 @@
 package cn.solarmoon.spark_core;
 
 import cn.solarmoon.spark_core.api.entry_builder.ObjectRegister;
-import cn.solarmoon.spark_core.api.kit.Translator;
-import cn.solarmoon.spark_core.data.DataGenerater;
 import cn.solarmoon.spark_core.registry.client.SparkClientEvents;
-import cn.solarmoon.spark_core.registry.client.SparkTooltips;
 import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers;
 import cn.solarmoon.spark_core.registry.common.*;
+import cn.solarmoon.spirit_of_fight.registry.client.SOFClientEvents;
+import cn.solarmoon.spirit_of_fight.registry.client.SOFGuis;
+import cn.solarmoon.spirit_of_fight.registry.client.SOFKeyMappings;
+import cn.solarmoon.spirit_of_fight.registry.common.SOFAttachments;
+import cn.solarmoon.spirit_of_fight.registry.common.SOFCommonEvents;
+import cn.solarmoon.spirit_of_fight.registry.common.SOFSyncedAnimReg;
+import cn.solarmoon.spirit_of_fight.registry.common.SOFNetworks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import test.Cap;
-import test.cep;
-import test.EES;
 
 @Mod(SparkCore.MOD_ID)
 public class SparkCore {
 
     public static final String MOD_ID = "spark_core";
     public static final Logger LOGGER = LoggerFactory.getLogger("星火核心");
-    public static final Translator TRANSLATOR = new Translator(MOD_ID);
     public static final ObjectRegister REGISTER = new ObjectRegister(MOD_ID, true);
 
     public SparkCore(IEventBus modEventBus, ModContainer modContainer) {
@@ -30,27 +30,23 @@ public class SparkCore {
 
         if (FMLEnvironment.dist.isClient()) {
             SparkClientEvents.register();
-            SparkVisualEffectRenderers.register();
-            SparkTooltips.register(modEventBus);
-            cep.register(modEventBus);
+            SOFClientEvents.register();
+            SOFKeyMappings.register();
         }
 
+        SparkVisualEffectRenderers.register();
         SparkAttachments.register();
-        SparkAttributes.register();
-        SparkRecipes.register();
-        SparkDamageTypes.register();
-        SparkDataComponents.register();
         SparkCommonEvents.register();
-        SparkCommands.register();
-        SparkNetDatas.register(modEventBus);
+        SparkPayloads.register(modEventBus);
         SparkDatas.register();
-        SparkEntityDatas.register();
-        EES.register(modEventBus);
+        SparkSyncedAnimReg.register();
 
-        DataGenerater.register(modEventBus);
+        SOFNetworks.register(modEventBus);
+        SOFGuis.register(modEventBus);
+        SOFCommonEvents.register();
+        SOFAttachments.register();
+        SOFSyncedAnimReg.register();
 
-        Cap.register();
-        modEventBus.addListener(Cap::r2);
     }
 
 }

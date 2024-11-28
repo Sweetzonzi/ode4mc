@@ -2,9 +2,12 @@ package cn.solarmoon.spark_core.mixin.animation;
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.vanilla.VanillaModelHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,15 +23,17 @@ public class HumanoidArmorLayerMixin<
         A extends net. minecraft. client. model. HumanoidModel<T>
         > {
 
-    @Shadow @Final private A innerModel;
-
-    @Shadow @Final private A outerModel;
-
-    @Inject(method = "getArmorModelHook", at = @At("HEAD"))
-    private void in(T entity, ItemStack itemStack, EquipmentSlot slot, A model, CallbackInfoReturnable<Model> cir) {
-        if (entity instanceof IEntityAnimatable<?> animatable) {
-            VanillaModelHelper.setPivot(animatable.getAnimData(), "body", innerModel.body);
-            VanillaModelHelper.setPivot(animatable.getAnimData(), "body", outerModel.body);
+    @Inject(method = "getArmorModelHook", at = @At("RETURN"))
+    private void setup(T entity, ItemStack itemStack, EquipmentSlot slot, A model, CallbackInfoReturnable<Model> cir) {
+        if (entity instanceof IEntityAnimatable<?> animatable && VanillaModelHelper.shouldSwitchToAnim(animatable)) {
+            var model0 = cir.getReturnValue();
+            if (model0 instanceof HumanoidModel<?> humanoidModel) {
+                VanillaModelHelper.setRoot(humanoidModel.leftArm, humanoidModel.body);
+                VanillaModelHelper.setRoot(humanoidModel.rightArm, humanoidModel.body);
+                VanillaModelHelper.setRoot(humanoidModel.head, humanoidModel.body);
+                VanillaModelHelper.setPivot(animatable.getAnimData(), "waist", humanoidModel.body);
+                VanillaModelHelper.setPivot(animatable.getAnimData(), "waist", humanoidModel.body);
+            }
         }
     }
 

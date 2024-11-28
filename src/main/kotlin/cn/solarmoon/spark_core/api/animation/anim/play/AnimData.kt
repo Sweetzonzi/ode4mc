@@ -17,6 +17,8 @@ import kotlin.math.ceil
 
 /**
  * 保存了客户端渲染完整动画和模型所需的必要数据
+ *
+ * 模型和动画路径格式如：minecraft:player 一般和该实体注册id一致
  */
 data class AnimData(
     var modelPath: ResourceLocation,
@@ -28,6 +30,10 @@ data class AnimData(
     val model get() = CommonModel.get(modelPath)
     val animationSet get() = AnimationSet.get(animPath)
     val textureLocation get() = ResourceLocation.fromNamespaceAndPath(modelPath.namespace, "textures/entity/${modelPath.path}.png")
+
+    fun copy(): AnimData {
+        return AnimData(modelPath, animPath, playData.copy())
+    }
 
     /**
      * 一键将模型和动画变为指定路径的模型和动画

@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.mixin;
 
-import cn.solarmoon.spark_core.api.phys.collision.FreeCollisionBoxRenderer;
-import cn.solarmoon.spark_core.api.visual_effect.VisualEffectManager;
+import cn.solarmoon.spark_core.api.visual_effect.VisualEffectRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,18 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DebugRendererMixin {
 
     private Minecraft mc = Minecraft.getInstance();
-    private FreeCollisionBoxRenderer freeBox;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(Minecraft minecraft, CallbackInfo ci) {
         mc = minecraft;
-        freeBox = new FreeCollisionBoxRenderer(minecraft);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, double camX, double camY, double camZ, CallbackInfo ci) {
-        VisualEffectManager.renderAllEffects(mc, poseStack, bufferSource, new Vec3(camX, camY, camZ));
-        freeBox.render(poseStack, bufferSource, camX, camY, camZ);
+        var partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(true);
+        VisualEffectRenderer.getALL_VISUAL_EFFECTS().forEach(i -> i.render(mc, new Vec3(camX, camY, camZ), poseStack, bufferSource, partialTicks));
     }
 
 }

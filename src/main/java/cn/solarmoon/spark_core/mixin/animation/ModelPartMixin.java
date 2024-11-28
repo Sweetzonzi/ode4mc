@@ -1,8 +1,7 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
-import cn.solarmoon.spark_core.api.animation.vanilla.IPivotModelPart;
+import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModelPart;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,13 +9,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
 
 @Mixin(ModelPart.class)
-public class ModelPartMixin implements IPivotModelPart {
+public abstract class ModelPartMixin implements ITransformModelPart {
 
-    private Vector3f pivot = new Vector3f();
+    private final Vector3f pivot = new Vector3f();
     private ModelPart root = null;
 
     @Inject(method = "translateAndRotate", at = @At("HEAD"))
@@ -26,7 +25,7 @@ public class ModelPartMixin implements IPivotModelPart {
         var list = new ArrayList<ModelPart>();
         while (r != null) {
             list.add(r);
-            r = ((IPivotModelPart)r).getRoot();
+            r = ((ITransformModelPart)r).getRoot();
         }
         for (int i = list.size() - 1; i >= 0; i--) {
             list.get(i).translateAndRotate(poseStack);
@@ -45,11 +44,11 @@ public class ModelPartMixin implements IPivotModelPart {
 
     @Override
     public void setPivot(Vector3f pivot) {
-        this.pivot = pivot;
+        this.pivot.set(pivot);
     }
 
     @Override
-    public ModelPart getRoot() {
+    public @Nullable ModelPart getRoot() {
         return root;
     }
 

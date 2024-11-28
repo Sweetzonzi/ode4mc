@@ -1,21 +1,13 @@
 package cn.solarmoon.spark_core.api.animation.anim.part
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
-import cn.solarmoon.spark_core.api.animation.anim.helper.KeyFrame
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.phys.copy
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import org.joml.Matrix4f
 import org.joml.Vector3f
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.min
-import kotlin.math.sign
 
 /**
  * 骨骼动画，是一个完整动画的一部分，是动画的最小单位，受animation制约和控制
@@ -38,15 +30,13 @@ data class BoneAnim(
      * @return 进行过基础偏移后的旋转弧度角
      */
     fun getPresentAnimRot(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.transTick < mixedAnimation.maxTransTick) 0.0001f else partialTick) / 20f
-        // 当前时间和基础时间的比值，用于缩放时间点
-        val timeScale = 1 / mixedAnimation.speed
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / 20f
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         rotationSequence.forEachIndexed { index, keyFrame ->
             val kNow = keyFrame.copy()
             val kTarget = rotationSequence[min(index + 1, rotationSequence.size - 1)].copy()
-            val timestampA = kNow.timestamp * timeScale
-            val timestampB = kTarget.timestamp * timeScale
+            val timestampA = kNow.timestamp
+            val timestampB = kTarget.timestamp
             if (time >= timestampA && time < timestampB) {
                 val timeInternal = timestampB - timestampA
                 val progress = (time - timestampA) / timeInternal
@@ -66,16 +56,14 @@ data class BoneAnim(
      * @return 获取指定tick位置的位移数值，如果不在任何区间内，返回第一个位置
      */
     fun getPresentAnimPos(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.transTick < mixedAnimation.maxTransTick) 0.0001f else partialTick) / 20f
-        // 当前时间和基础时间的比值，用于缩放时间点
-        val timeScale = 1 / mixedAnimation.speed
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / 20f
 
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         positionSequence.forEachIndexed { index, keyFrame ->
             val kNow = keyFrame.copy()
             val kTarget = positionSequence[min(index + 1, positionSequence.size - 1)].copy()
-            val timestampA = kNow.timestamp * timeScale
-            val timestampB = kTarget.timestamp * timeScale
+            val timestampA = kNow.timestamp
+            val timestampB = kTarget.timestamp
             if (time >= timestampA && time < timestampB) {
                 val timeInternal = timestampB - timestampA
                 val progress = (time - timestampA) / timeInternal
@@ -95,16 +83,14 @@ data class BoneAnim(
      * @return 获取指定tick位置的缩放数值，如果不在任何区间内，返回第一个位置
      */
     fun getPresentAnimScale(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.transTick < mixedAnimation.maxTransTick) 0.0001f else partialTick) / 20f
-        // 当前时间和基础时间的比值，用于缩放时间点
-        val timeScale = 1 / mixedAnimation.speed
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / 20f
 
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         scaleSequence.forEachIndexed { index, keyFrame ->
             val kNow = keyFrame.copy()
             val kTarget = scaleSequence[min(index + 1, scaleSequence.size - 1)].copy()
-            val timestampA = kNow.timestamp * timeScale
-            val timestampB = kTarget.timestamp * timeScale
+            val timestampA = kNow.timestamp
+            val timestampB = kTarget.timestamp
             if (time >= timestampA && time < timestampB) {
                 val timeInternal = timestampB - timestampA
                 val progress = (time - timestampA) / timeInternal

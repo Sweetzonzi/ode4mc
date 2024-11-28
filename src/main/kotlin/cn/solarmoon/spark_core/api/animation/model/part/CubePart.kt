@@ -1,16 +1,12 @@
 package cn.solarmoon.spark_core.api.animation.model.part
 
-import cn.solarmoon.spark_core.api.animation.model.helper.Polygon
-import cn.solarmoon.spark_core.api.animation.model.helper.UVUnion
-import cn.solarmoon.spark_core.api.animation.model.helper.Vertex
-import cn.solarmoon.spark_core.api.animation.model.helper.VertexSet
 import cn.solarmoon.spark_core.api.data.SerializeHelper
-import cn.solarmoon.spark_core.api.phys.collision.FreeCollisionBox
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.core.Direction
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -20,7 +16,6 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import org.joml.Matrix3f
 import org.joml.Matrix4f
-import org.joml.Quaternionf
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 
@@ -127,8 +122,8 @@ data class CubePart(
         val LIST_CODEC = CODEC.listOf()
 
         @JvmStatic
-        val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, CubePart> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): CubePart {
+        val STREAM_CODEC = object : StreamCodec<FriendlyByteBuf, CubePart> {
+            override fun decode(buffer: FriendlyByteBuf): CubePart {
                 val origin = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
                 val size = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
                 val pivot = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
@@ -141,7 +136,7 @@ data class CubePart(
                 return CubePart(origin, size, pivot, rotation, inflate, uv, mirror, tw, th)
             }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: CubePart) {
+            override fun encode(buffer: FriendlyByteBuf, value: CubePart) {
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.originPos)
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.size)
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.pivot)

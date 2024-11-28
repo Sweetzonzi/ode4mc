@@ -4,24 +4,20 @@
   "package": "cn.solarmoon.spark_core.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BlockEntityMixin",
-    "BlockMixin",
-    "FluidBucketWrapperMixin",
-    "FluidTypeMixin",
     "animation.EntityMixin",
     "animation.LivingEntityMixin",
-    "fighter.player.PlayerMixin",
-    "fighter.vindicator.MeleeAttackGoalMixin",
-    "fighter.vindicator.VindicatorMixin"
+    "event.EntityMixin",
+    "event.PlayerMixin",
+    "fighter.player.PlayerMixin"
   ],
   "client": [
-    "BlockRenderDispatcherMixin",
     "DebugRendererMixin",
-    "ItemInHandLayerMixin",
+    "animation.CapeLayerMixin",
+    "animation.ElytraModelMixin",
     "animation.HumanoidArmorLayerMixin",
-    "animation.HumanoidArmorModelMixin",
     "animation.HumanoidModelMixin",
     "animation.ItemInHandLayerMixin",
+    "animation.LivingEntityRendererMixin",
     "animation.ModelPartMixin",
     "animation.PlayerModelMixin",
     "animation.PlayerRendererMixin",
@@ -30,7 +26,7 @@
     "animation.humanoid.first_person.LevelRendererMixin",
     "animation.humanoid.first_person.LivingEntityRendererMixin",
     "animation.humanoid.first_person.PlayerRendererMixin",
-    "fighter.player.PlayerRendererMixin"
+    "event.KeyboardInputMixin"
   ],
   "injectors": {
     "defaultRequire": 1

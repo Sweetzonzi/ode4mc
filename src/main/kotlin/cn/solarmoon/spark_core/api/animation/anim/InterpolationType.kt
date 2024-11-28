@@ -1,8 +1,9 @@
 package cn.solarmoon.spark_core.api.animation.anim
 
-import cn.solarmoon.spark_core.api.animation.anim.helper.KeyFrame
+import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.phys.copy
 import com.mojang.serialization.Codec
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.util.Mth
@@ -11,9 +12,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 enum class InterpolationType {
-    /**
-     * 将当前动作线性过渡到目标动作
-     */
     LINEAR, CATMULLROM;
 
     fun lerp(progress: Float, keyFrameGroup: ArrayList<KeyFrame>, presentIndex: Int): Vector3f {
@@ -46,12 +44,12 @@ enum class InterpolationType {
         )
 
         @JvmStatic
-        val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, InterpolationType> {
-            override fun decode(buffer: RegistryFriendlyByteBuf): InterpolationType {
+        val STREAM_CODEC = object : StreamCodec<FriendlyByteBuf, InterpolationType> {
+            override fun decode(buffer: FriendlyByteBuf): InterpolationType {
                 return buffer.readEnum(InterpolationType::class.java)
             }
 
-            override fun encode(buffer: RegistryFriendlyByteBuf, value: InterpolationType) {
+            override fun encode(buffer: FriendlyByteBuf, value: InterpolationType) {
                 buffer.writeEnum(value)
             }
         }

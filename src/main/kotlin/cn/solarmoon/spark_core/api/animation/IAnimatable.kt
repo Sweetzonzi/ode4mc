@@ -1,11 +1,11 @@
 package cn.solarmoon.spark_core.api.animation
 
-import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimController
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
-import cn.solarmoon.spark_core.api.animation.sync.AnimNetData
-import cn.solarmoon.spark_core.api.phys.collision.FreeCollisionBox
+import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
+import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
+import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
@@ -30,7 +30,7 @@ interface IAnimatable<T: IAttachmentHolder> {
     /**
      * 获取位移到当前坐标并应用了基础旋转的变换矩阵
      */
-    fun getPositionMatrix(partialTick: Float = 0f): Matrix4f
+    fun getPositionMatrix(partialTick: Float = 1f): Matrix4f
 
     /**
      * 对指定骨骼进行的额外变换
@@ -50,21 +50,26 @@ interface IAnimatable<T: IAttachmentHolder> {
     /**
      * 创建和骨骼绑定的碰撞箱
      */
-    fun createCollisionBoxBoundToBone(boneName: String, size: Vector3f = Vector3f(), offset: Vector3f = Vector3f()): FreeCollisionBox {
-        return FreeCollisionBox(getBonePivot(boneName), size)
+    fun createCollisionBoxBoundToBone(boneName: String, size: Vector3f = Vector3f(), offset: Vector3f = Vector3f(), partialTicks: Float = 0f): OrientedBoundingBox {
+        return OrientedBoundingBox(getBonePivot(boneName, partialTicks), size)
             .apply { rotation.setFromUnnormalized(getBoneMatrix(boneName)) }
             .apply { offsetCenter(offset) }
     }
 
     /**
-     * 同步当前动画播放和定位的必要数据到客户端
+     * 同步当前动画播放和定位的所有必要数据到客户端
+     * @param playerExcept 如果不希望发送数据包到当前玩家，输入一个非null玩家值即可（一般此玩家和本地玩家一致）
      */
-    fun syncAnimDataToClient() {
-        PacketDistributor.sendToAllPlayers(AnimNetData(0, animData))
+    fun syncAnimDataToClient(playerExcept: ServerPlayer? = null) {
+        val data = AnimDataPayload(0, animData.copy())
+        playerExcept?.let { PacketDistributor.sendToPlayersNear(it.serverLevel(), it, it.x, it.y, it.z, 512.0, data) }
+            ?: run {
+                PacketDistributor.sendToAllPlayers(data)
+            }
     }
 
     /**
-     * 在使用[cn.solarmoon.spark_core.api.entity.ai.attack.AttackHelper.getDamageBone]时，将会过滤掉该列表中的骨骼，也就是不会击中这些过滤掉的骨骼
+     * 在使用[cn.solarmoon.spark_core.api.entity.attack.AttackHelper.getDamageBone]时，将会过滤掉该列表中的骨骼，也就是不会击中这些过滤掉的骨骼
      */
     val passableBones: List<String> get() = listOf()
 

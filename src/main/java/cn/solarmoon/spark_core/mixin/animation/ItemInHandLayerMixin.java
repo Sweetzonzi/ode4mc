@@ -32,7 +32,9 @@ public class ItemInHandLayerMixin {
             var ma = new Matrix4f().translate(pos.x, -pos.z, pos.y)
                     .rotateZYX(rot.y, -rot.z, rot.x + (float) Math.toRadians(10))
                     .scale(play.getMixedBoneAnimScale(boneName, partialTicks));
+            poseStack.translate(0f, -2/16f, 1/16f);
             poseStack.mulPose(ma);
+            poseStack.translate(0f, 2/16f, -1/16f);
         }
     }
 
