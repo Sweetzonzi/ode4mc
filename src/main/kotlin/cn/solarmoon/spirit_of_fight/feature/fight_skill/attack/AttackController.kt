@@ -55,6 +55,8 @@ class AttackController {
         }
     }
 
+
+
     @SubscribeEvent
     private fun specialAttack(event: InputEvent.Key) {
         val player = Minecraft.getInstance().player ?: return

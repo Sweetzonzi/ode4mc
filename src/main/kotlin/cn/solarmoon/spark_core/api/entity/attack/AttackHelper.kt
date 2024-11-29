@@ -79,14 +79,12 @@ object AttackHelper {
  * @param boxId 其不为null时有两个用途：
  * - 通过给定的id生成该box在客户端的debug渲染（在击中到生物骨骼时会标红）
  * - 通过给定的id获取该box在该生物身上的缓存，以生成连贯的box碰撞（见[OrientedBoundingBox.connectionIntersects]）
- * @param extraData 在击中生物后会给上生物一个包含box和击中骨骼的受击数据，如果还需要为受击数据添加额外内容，则可以填入此data
  * @param setAttacked 每个生物在被加入到返回的列表前可以用此方法进行过滤，并且最重要的是，此方法返回false将不会给予该生物[AttackedData]
  * @return 被输入box接触到的所有实体
  */
 fun Entity.boxAttack(
     box: OrientedBoundingBox,
     boxId: String?,
-    extraData: CompoundTag = CompoundTag(),
     setAttacked: (Entity) -> Boolean = { true },
 ): List<Entity> {
     val level = level()
@@ -113,7 +111,7 @@ fun Entity.boxAttack(
             }
             if (attackFlag) {
                 if (setAttacked.invoke(target) && target.id != vehicle?.id) {
-                    target.setAttackedData(AttackedData(id, hitBox, hitBone, extraData))
+                    target.setAttackedData(AttackedData(id, hitBox, hitBone))
                     list.add(target)
                 }
             }

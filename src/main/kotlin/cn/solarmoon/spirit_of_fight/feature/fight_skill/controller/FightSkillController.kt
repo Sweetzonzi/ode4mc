@@ -58,6 +58,7 @@ abstract class FightSkillController(
     }
 
     override fun onDisabledMoment() {
+        super.onDisabledMoment()
         if (preInput.hasInput()) preInput.clear()
     }
 

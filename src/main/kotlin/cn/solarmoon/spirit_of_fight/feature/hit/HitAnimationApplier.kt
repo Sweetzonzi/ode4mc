@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 
-class HitAnimationController {
+class HitAnimationApplier {
 
     @SubscribeEvent
     private fun hurt(event: LivingDamageEvent.Post) {
@@ -18,8 +18,7 @@ class HitAnimationController {
         val sourcePos = event.source.sourcePosition ?: return
         if (entity is IEntityAnimatable<*> && !level.isClientSide) {
             (entity as Entity).getAttackedData()?.let { data ->
-                val hit = data.extraData.getString("hit").takeIf { !it.isEmpty() } ?: return
-                val hitType = HitType.valueOf(hit)
+                val hitType = data.getHitType() ?: return
                 val side = AttackHelper.getBoxSide(entity, data.damageBox)
                 val posSide = (entity as Entity).getSideOf(sourcePos)
                 val damagedBone = data.damageBone

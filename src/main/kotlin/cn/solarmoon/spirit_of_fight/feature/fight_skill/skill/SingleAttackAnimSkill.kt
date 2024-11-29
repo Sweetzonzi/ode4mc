@@ -13,6 +13,7 @@ import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillCon
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
+import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
@@ -64,7 +65,7 @@ abstract class SingleAttackAnimSkill(
 
     override fun onBoxSummon(box: OrientedBoundingBox, anim: MixedAnimation) {
         box.extendByEntityInteractRange(entity)
-        attack(box, CompoundTag().apply { putString("hit", hitType.toString()) })
+        attack(box)
     }
 
     override fun getAttackDamageMultiplier(anim: MixedAnimation): Float? {
@@ -86,6 +87,11 @@ abstract class SingleAttackAnimSkill(
     }
 
     override fun onTargetAttacked(target: Entity) {
+        target.getAttackedData()?.setHitType(hitType)
+        addFightSpiritWhenAttack(target)
+    }
+
+    open fun addFightSpiritWhenAttack(target: Entity) {
         val fs = entity.getFightSpirit()
         var mul = damageMultiplier
         if (target.getAttackedData() == null) mul /= 2 // 没有受击数据则意味着格挡成功，数据已被清除，此时增值除以2

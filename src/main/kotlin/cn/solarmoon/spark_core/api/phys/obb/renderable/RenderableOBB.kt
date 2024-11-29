@@ -8,7 +8,7 @@ import java.awt.Color
  */
 class RenderableOBB {
 
-    var maxTime: Int = 2
+    var maxTime: Int = 1
     var defaultColor: Color = Color.WHITE
     var tick = 0
     var colorTick = 0

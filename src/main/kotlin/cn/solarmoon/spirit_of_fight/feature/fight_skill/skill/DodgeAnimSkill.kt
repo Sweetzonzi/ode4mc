@@ -1,5 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
@@ -11,6 +12,10 @@ import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.times
+import kotlin.properties.Delegates
+import kotlin.properties.ObservableProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 open class DodgeAnimSkill(
     animatable: IEntityAnimatable<*>,
@@ -38,7 +43,7 @@ open class DodgeAnimSkill(
 
     fun isMatchPrecision(anim: MixedAnimation) = !anim.isInTransition && anim.isTickIn(0.0, 0.05)
 
-    fun getMoveVector(): Vec3 = Vec3(dodgeMoveVector.x * moveSpeed, entity.deltaMovement.y, dodgeMoveVector.z * moveSpeed)
+    fun getMoveVector(mul: Double): Vec3 = Vec3(dodgeMoveVector.x * moveSpeed * mul, entity.deltaMovement.y, dodgeMoveVector.z * moveSpeed * mul)
 
     fun start(direction: MoveDirection, vector: Vec3, sync: (SyncedAnimation) -> Unit = {}) {
         preInput.setInput("dodge") {
@@ -51,7 +56,7 @@ open class DodgeAnimSkill(
 
     override fun getMove(anim: MixedAnimation): Vec3? {
         if (anim.isTickIn(0.0, dodgeTime)) {
-            return getMoveVector().times(1 - anim.tick / ((dodgeTime + 0.05) * 20))
+            return getMoveVector(1 - anim.tick / ((dodgeTime + 0.05) * 20))
         }
         return null
     }
@@ -64,15 +69,22 @@ open class DodgeAnimSkill(
         return anim.isInTransition || !anim.isTickIn(0.0, 0.42)
     }
 
+    override fun whenNotInAnim() {
+        super.whenNotInAnim()
+    }
+
     open fun onPrecisionDodge(damageSource: DamageSource, value: Float, anim: MixedAnimation) {
         if (!entity.level().isClientSide) {
             SparkVisualEffectRenderers.SHADOW.addToClient(entity.id)
         }
     }
 
+    open fun onShadowSummon(damageSource: DamageSource, value: Float, anim: MixedAnimation) {
+        SparkCore.LOGGER.debug("nmsl")
+    }
+
     override fun whenInAnim(anim: MixedAnimation) {
         super.whenInAnim(anim)
-
         if (preInput.hasInput() && preInput.id != "dodge" && !HitType.isPlayingHitAnim(animatable) { !it.isCancelled } ) {
             if (anim.isTickIn(switchTime, Double.MAX_VALUE)) {
                 preInput.invokeInput()

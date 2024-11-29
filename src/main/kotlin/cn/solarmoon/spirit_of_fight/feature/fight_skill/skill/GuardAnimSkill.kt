@@ -17,7 +17,11 @@ import cn.solarmoon.spark_core.api.phys.obb.clearMountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.setMountableOBB
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.MovePayload
+import cn.solarmoon.spirit_of_fight.feature.hit.HitType
+import cn.solarmoon.spirit_of_fight.feature.hit.getHitStrength
 import net.minecraft.world.damagesource.DamageSource
+import net.minecraft.world.damagesource.DamageType
+import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
@@ -25,7 +29,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.awt.Color
 
-class GuardAnimSkill(
+open class GuardAnimSkill(
     private val controller: FightSkillController,
     val animGroup: Map<AnimType, SyncedAnimation>,
     private val guardRange: Double,
@@ -55,6 +59,7 @@ class GuardAnimSkill(
 
     val idleAnim = animGroup[AnimType.IDLE]!!
     val hurtAnim = animGroup[AnimType.HURT]!!
+    open val unblockableDamageTypes = mutableListOf(DamageTypes.EXPLOSION, DamageTypes.PLAYER_EXPLOSION)
 
     var isHoldingGuard = false
 
@@ -123,6 +128,10 @@ class GuardAnimSkill(
         if (entity.level().isClientSide) return true
         // 对于原版生物，只要在一个扇形范围内即可，对于lib的obb碰撞，则判断是否相交，同时如果受击数据不为空，那么以受击数据为准
         val attackedData = entity.getAttackedData()
+        // 对于不可阻挡的伤害类型以及击打力度大于0的情况，不会被格挡成功
+        if (unblockableDamageTypes.any { damageSource.typeHolder().`is`(it) } || (attackedData?.getHitStrength() ?: 0) > 0) {
+            return true
+        }
         // 如果受击数据里有guard，则免疫此次攻击
         val isBoxInteract = attackedData != null && attackedData.damageBone == getBoxId()
         // 如果受到box的攻击，位移以box中心为准，否则以直接攻击者的坐标位置为准

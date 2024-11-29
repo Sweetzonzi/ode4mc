@@ -4,6 +4,7 @@ import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
 import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
@@ -12,6 +13,7 @@ import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillCon
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
+import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
 import com.google.common.collect.HashBiMap
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.Entity
@@ -21,7 +23,7 @@ import org.joml.Vector3f
 /**
  * @param attackChangeNode 变招节点，int为可以变到这一招的连招序列号，比如想在第0招可以变到第1招，那么输入1即可。double为变招到下一个连招动画的起始位置（比如0.0就是从当前连招动画位置过渡到下一个连招动画的开始，0.5则过渡到下一个连招动画的0.5s处）
  */
-abstract class ComboAnimSkill( // 在我想好用什么数据包写法表示每个点的时间碰撞箱之前先用抽象的
+abstract class ComboAnimSkill(
     private val controller: FightSkillController,
     val animGroup: Map<Int, SyncedAnimation>,
     private val attackSwitchNode: Map<Int, Double>,
@@ -31,7 +33,7 @@ abstract class ComboAnimSkill( // 在我想好用什么数据包写法表示每�
 ): AnimSkill(
     controller.animatable,
     buildSet { animGroup.values.forEach { add(it.anim.name) } }
-), IBoxBoundToBoneAnimSkill {
+), IBoxBoundToBoneAnimSkill  {
 
     val baseAttackSpeed = controller.baseAttackSpeed
     override val boxSize: Vector3f = controller.commonBoxSize
@@ -68,7 +70,7 @@ abstract class ComboAnimSkill( // 在我想好用什么数据包写法表示每�
 
     override fun onBoxSummon(box: OrientedBoundingBox, anim: MixedAnimation) {
         box.extendByEntityInteractRange(entity)
-        attack(box, CompoundTag().apply { putString("hit", hitType[animBiMap.inverse()[anim.name]]!!.toString()) })
+        attack(box)
     }
 
     fun start(change: Boolean, sync: (SyncedAnimation) -> Unit = {}) {
@@ -113,9 +115,17 @@ abstract class ComboAnimSkill( // 在我想好用什么数据包写法表示每�
     }
 
     override fun onTargetAttacked(target: Entity) {
+        getPlayingAnim()?.let {
+            target.getAttackedData()?.setHitType(hitType[animBiMap.inverse()[it.name]]!!)
+        }
+        addFightSpiritWhenAttack(target)
+    }
+
+    open fun addFightSpiritWhenAttack(target: Entity) {
         getPlayingAnim()?.let { anim ->
-            val mul = getAttackDamageMultiplier(anim) ?: 1f
+            var mul = getAttackDamageMultiplier(anim) ?: 1f
             val fs = entity.getFightSpirit()
+            if (target.getAttackedData() == null) mul /= 2 // 没有受击数据则意味着格挡成功，数据已被清除，此时增值除以2
             fs.addStage(mul)
             fs.syncToClient(entity.id, FightSpiritPayload.Type.ADD)
         }

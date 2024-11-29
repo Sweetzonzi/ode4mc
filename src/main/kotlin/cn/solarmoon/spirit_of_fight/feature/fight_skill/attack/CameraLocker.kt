@@ -4,7 +4,9 @@ import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.event.EntityTurnEvent
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.util.Mth
+import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.ViewportEvent
 import org.joml.Vector2f
@@ -17,7 +19,7 @@ class CameraLocker {
     }
 
     @SubscribeEvent
-    private fun lockCamera(event: EntityTurnEvent) {
+    private fun lockHeadTurn(event: EntityTurnEvent) {
         val entity = event.entity
         val xRot = event.xRot.toFloat()
         val yRot = event.yRot.toFloat()
@@ -29,7 +31,7 @@ class CameraLocker {
                 ((skill.isAttacking { !it.isInTransition } && skill.getPlayingSkillAnim{ !it.isCancelled }!!.tick != 0.0) || skill.guard.isBacking { !it.isInTransition })
                 || HitType.isPlayingHitAnim(entity) { !it.isCancelled }
                 ) {
-                CAMERA_TURN.add(xRot, yRot)
+                if (entity is LocalPlayer) CAMERA_TURN.add(xRot, yRot)
                 event.isCanceled = true
             } else if (CAMERA_TURN != Vector2f()) {
                 val x = CAMERA_TURN.x.toDouble()

@@ -5,6 +5,12 @@ import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
 import cn.solarmoon.spark_core.api.entity.attack.AttackHelper
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.AttributeModifier
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.monster.Husk
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.Vec3
@@ -36,6 +42,15 @@ class EntityStateModifier {
                 entity.setJumpingState(false)
             }
         }
+
+//        if (entity is LivingEntity) {
+//            if (entity.isMoveFreezing()) {
+//                entity.getAttribute(Attributes.MOVEMENT_SPEED)?.addOrReplacePermanentModifier(AttributeModifier(
+//                    ResourceLocation.fromNamespaceAndPath(SparkCore.MOD_ID, "freezing"), -Double.MAX_VALUE, AttributeModifier.Operation.ADD_VALUE))
+//            } else {
+//                entity.getAttribute(Attributes.MOVEMENT_SPEED)?.removeModifier(ResourceLocation.fromNamespaceAndPath(SparkCore.MOD_ID, "freezing"))
+//            }
+//        }
     }
 
     @SubscribeEvent

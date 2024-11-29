@@ -7,6 +7,8 @@ import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.phys.Vec3
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
@@ -77,6 +79,14 @@ fun Entity.getState(flag: Int): Boolean {
 fun Entity.isFalling(): Boolean {
     return !onGround() && deltaMovement.y != 0.0
 }
+
+//fun Entity.isMoveFreezing(): Boolean {
+//    return persistentData.getBoolean("freezing")
+//}
+//
+//fun Entity.setMoveFreezing(value: Boolean) {
+//    persistentData.putBoolean("freezing", value)
+//}
 
 /**
  * 判断目标实体是否在输入实体朝向的一个扇形角度范围内（输入量都是角度制）

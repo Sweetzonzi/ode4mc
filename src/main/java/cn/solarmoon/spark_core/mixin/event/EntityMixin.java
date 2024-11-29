@@ -1,11 +1,14 @@
 package cn.solarmoon.spark_core.mixin.event;
 
+import cn.solarmoon.spark_core.api.entity.state.EntityStateHelperKt;
 import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent;
 import cn.solarmoon.spark_core.api.event.EntityTurnEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

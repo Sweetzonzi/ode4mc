@@ -6,10 +6,12 @@ import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.Items
 import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import kotlin.properties.Delegates
 
 interface IAnimatable<T: IAttachmentHolder> {
 

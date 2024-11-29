@@ -185,8 +185,8 @@ abstract class AnimSkill(
      */
     open fun getAttackItem(originWeapon: ItemStack?, anim: MixedAnimation): ItemStack? = originWeapon
 
-    fun attack(box: OrientedBoundingBox, extraAttackData: CompoundTag = CompoundTag()) {
-        entity.boxAttack(box, getBoxId(), extraAttackData) { it.id !in attackedEntities }.forEach { target ->
+    fun attack(box: OrientedBoundingBox) {
+        entity.boxAttack(box, getBoxId()) { it.id !in attackedEntities }.forEach { target ->
             if (entity is Player) entity.attack(target)
             else if (entity is LivingEntity) entity.doHurtTarget(target)
             onTargetAttacked(target)

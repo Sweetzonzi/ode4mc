@@ -23,6 +23,6 @@ abstract class ConcentrationAttackAnimSkill(
         entity.getFightSpirit().clear()
     }
 
-    override fun onTargetAttacked(target: Entity) {}
+    override fun addFightSpiritWhenAttack(target: Entity) {}
 
 }
