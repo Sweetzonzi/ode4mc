@@ -2,14 +2,11 @@ package cn.solarmoon.spark_core.mixin.animation;
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModel;
-import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModelPart;
 import cn.solarmoon.spark_core.api.animation.vanilla.VanillaModelHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.world.entity.LivingEntity;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -47,12 +44,12 @@ public class HumanoidModelMixin<T extends LivingEntity> implements ITransformMod
                 VanillaModelHelper.setRoot(rightArm, body);
                 VanillaModelHelper.setRoot(head, body);
                 VanillaModelHelper.setPivot(animatable.getAnimData(), "waist", body);
-                VanillaModelHelper.applyStartTransform(animData, "leftArm", leftArm, partialTicks);
-                VanillaModelHelper.applyStartTransform(animData, "rightArm", rightArm, partialTicks);
-                VanillaModelHelper.applyStartTransform(animData, "leftLeg", leftLeg, partialTicks);
-                VanillaModelHelper.applyStartTransform(animData, "rightLeg", rightLeg, partialTicks);
-                VanillaModelHelper.applyStartTransform(animData, "waist", body, partialTicks);
-                VanillaModelHelper.applyStartTransform(animData, "head", head, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "leftArm", leftArm, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "rightArm", rightArm, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "leftLeg", leftLeg, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "rightLeg", rightLeg, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "waist", body, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "head", head, partialTicks);
             } else {
                 setShouldTransform(true);
             }
@@ -60,25 +57,15 @@ public class HumanoidModelMixin<T extends LivingEntity> implements ITransformMod
     }
 
     private void setDefault() {
-        leftLeg.setPos(1.9F, 12.0F, 0.0F);
-        rightLeg.setPos(-1.9F, 12.0F, 0.0F);
+        leftLeg.setPos(1.9F, 12.0F, 0F);
+        rightLeg.setPos(-1.9F, 12.0F, 0F);
+        rightArm.setPos(-5f, 2f, 0f);
+        leftArm.setPos(5f, 2f, 0f);
         head.setPos(0.0F, 0.0F, 0.0F);
-        rightArm.z = 0.0F;
-        rightArm.x = - 5.0F;
-        leftArm.z = 0.0F;
-        leftArm.x = 5.0F;
-        body.xRot = 0.0F;
-        rightLeg.z = 0.1F;
-        leftLeg.z = 0.1F;
-        rightLeg.y = 12.0F;
-        leftLeg.y = 12.0F;
-        head.y = 0.0F;
+        body.setPos(0f, 0f, 0f);
+        head.setPos(0f, 0f, 0f);
+
         head.zRot = 0f;
-        body.y = 0.0F;
-        body.x = 0f;
-        body.z = 0f;
-        body.yRot = 0;
-        body.zRot = 0;
 
         head.xScale = ModelPart.DEFAULT_SCALE;
         head.yScale = ModelPart.DEFAULT_SCALE;

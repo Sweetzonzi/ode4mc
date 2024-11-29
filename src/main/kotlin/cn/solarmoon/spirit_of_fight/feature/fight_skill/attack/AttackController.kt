@@ -52,7 +52,10 @@ class AttackController {
             event.setSwingHand(false)
             event.isCanceled = true
         } else { // 使用技能时阻止和方块挖掘/交互
-            if (skillController.getPlayingSkillAnim() != null) event.isCanceled = true
+            if (skillController.getPlayingSkillAnim() != null) {
+                event.setSwingHand(false)
+                event.isCanceled = true
+            }
         }
     }
 

@@ -151,6 +151,9 @@ open class GuardAnimSkill(
             entity.clearAttackedData()
             return false
         }
+
+        // 当仍然受到伤害，强制结束防守动作
+        //stop { it.syncToClient(entity.id) }
         return true
     }
 

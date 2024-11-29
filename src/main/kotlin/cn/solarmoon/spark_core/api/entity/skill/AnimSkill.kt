@@ -16,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.common.damagesource.DamageContainer
 
 /**
  * @param animBounds 该技能绑定的动画组

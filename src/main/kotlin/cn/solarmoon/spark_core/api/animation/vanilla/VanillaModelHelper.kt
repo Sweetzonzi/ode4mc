@@ -37,7 +37,7 @@ object VanillaModelHelper {
     }
 
     @JvmStatic
-    fun applyStartTransform(animData: AnimData, boneName: String, part: ModelPart, partialTicks: Float) {
+    fun applyTransform(animData: AnimData, boneName: String, part: ModelPart, partialTicks: Float) {
         if (part !is ITransformModelPart) return
         val pos = animData.playData.getMixedBoneAnimPosition(boneName, partialTicks).mul(16f).apply { x = -x; y = -y }
         val rot = animData.playData.getMixedBoneAnimRotation(boneName, partialTicks).apply { x = -x; y = -y }

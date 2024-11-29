@@ -2,6 +2,7 @@ package cn.solarmoon.spark_core.mixin.animation;
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

@@ -56,7 +56,9 @@ class CameraAdjuster {
     @SubscribeEvent
     private fun renderAnimInFirstPersonWhenAttack(event: PlayerRenderAnimInFirstPersonEvent) {
         val player = event.player
-        event.shouldRender = player is IFightSkillHolder && player.skillController?.isAttacking() == true
+        if (player !is IFightSkillHolder) return
+        val sc = player.skillController ?: return
+        event.shouldRender = sc.isAttacking() || sc.guard.isPlaying()
     }
 
 }
