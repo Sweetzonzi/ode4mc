@@ -43,10 +43,11 @@ open class DodgeAnimSkill(
 
     fun isMatchPrecision(anim: MixedAnimation) = !anim.isInTransition && anim.isTickIn(0.0, 0.05)
 
-    fun getMoveVector(mul: Double): Vec3 = Vec3(dodgeMoveVector.x * moveSpeed * mul, entity.deltaMovement.y, dodgeMoveVector.z * moveSpeed * mul)
+    fun getMoveVector(mul: Double = 1.0): Vec3 = Vec3(dodgeMoveVector.x * moveSpeed * mul, entity.deltaMovement.y, dodgeMoveVector.z * moveSpeed * mul)
 
     fun start(direction: MoveDirection, vector: Vec3, sync: (SyncedAnimation) -> Unit = {}) {
         preInput.setInput("dodge") {
+            SparkCore.LOGGER.debug("233")
             dodgeMoveVector = vector
             val anim = animGroup[direction]!!
             anim.consume(animatable)
@@ -77,10 +78,6 @@ open class DodgeAnimSkill(
         if (!entity.level().isClientSide) {
             SparkVisualEffectRenderers.SHADOW.addToClient(entity.id)
         }
-    }
-
-    open fun onShadowSummon(damageSource: DamageSource, value: Float, anim: MixedAnimation) {
-        SparkCore.LOGGER.debug("nmsl")
     }
 
     override fun whenInAnim(anim: MixedAnimation) {

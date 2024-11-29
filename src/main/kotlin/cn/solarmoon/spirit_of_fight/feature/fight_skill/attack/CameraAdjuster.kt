@@ -2,16 +2,16 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.attack
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.event.EntityTurnEvent
+import cn.solarmoon.spark_core.api.event.PlayerRenderAnimInFirstPersonEvent
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.util.Mth
-import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.ViewportEvent
 import org.joml.Vector2f
 
-class CameraLocker {
+class CameraAdjuster {
 
     companion object {
         @JvmStatic
@@ -51,6 +51,12 @@ class CameraLocker {
             event.yaw = entity.yRot + f1
             event.pitch = Mth.clamp(entity.xRot + f, -90f, 90f)
         }
+    }
+
+    @SubscribeEvent
+    private fun renderAnimInFirstPersonWhenAttack(event: PlayerRenderAnimInFirstPersonEvent) {
+        val player = event.player
+        event.shouldRender = player is IFightSkillHolder && player.skillController?.isAttacking() == true
     }
 
 }

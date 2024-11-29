@@ -8,11 +8,16 @@ package cn.solarmoon.spark_core.api.entity.preinput
  */
 class PreInput {
 
+    companion object {
+        @JvmStatic
+        val DEFAULT_REMAIN_TIME = 10
+    }
+
     var id = ""
         private set
     private var hasInput = false
     private var input = {}
-    private var maxRemainTime = 10
+    private var maxRemainTime = DEFAULT_REMAIN_TIME
     private var remain = 0
 
     fun hasInput(id: String = ""): Boolean {
@@ -38,6 +43,7 @@ class PreInput {
         input = {}
         hasInput = false
         remain = 0
+        maxRemainTime = DEFAULT_REMAIN_TIME
     }
 
     /**

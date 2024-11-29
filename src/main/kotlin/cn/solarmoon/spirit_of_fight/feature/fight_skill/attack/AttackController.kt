@@ -1,5 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.attack
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.entity.state.getInputVector
 import cn.solarmoon.spark_core.api.event.KeyboardInputTickEvent
@@ -55,8 +56,6 @@ class AttackController {
         }
     }
 
-
-
     @SubscribeEvent
     private fun specialAttack(event: InputEvent.Key) {
         val player = Minecraft.getInstance().player ?: return
@@ -87,7 +86,7 @@ class AttackController {
             val skill = player.skillController ?: return
             val v = (player as LocalPlayer).getInputVector()
             skill.dodge.start(direction, v)
-            ClientOperationPayload.sendOperationToServer("dodge", skill.dodge.dodgeMoveVector, direction.id)
+            ClientOperationPayload.sendOperationToServer("dodge", v, direction.id)
             event.isCanceled = true
         }
         isDodgeKeyInstantPress = false
@@ -100,8 +99,10 @@ class AttackController {
             val skill = player.skillController ?: return
             if (SOFKeyMappings.GUARD.isDown) {
                 if (skill.preInput.id != "guard" && !skill.guard.isPlaying()) {
-                    skill.guard.start()
-                    ClientOperationPayload.sendOperationToServer("guard")
+                    skill.guard.start {
+                        // 防守检测上不是很敏感，因此需要确保客户端已经开始防守了以后再给服务端同步指令
+                        ClientOperationPayload.sendOperationToServer("guard")
+                    }
                 }
             } else {
                 if (skill.preInput.id == "guard") {
@@ -109,8 +110,9 @@ class AttackController {
                     ClientOperationPayload.sendOperationToServer("guard_clear")
                 } // 这里多加一条清除确保客户端一定取消操作
                 if (skill.guard.isPlaying { !it.isInTransition }) {
-                    skill.guard.stop()
-                    ClientOperationPayload.sendOperationToServer("guard_stop")
+                    skill.guard.stop {
+                        ClientOperationPayload.sendOperationToServer("guard_stop")
+                    }
                 }
             }
         }

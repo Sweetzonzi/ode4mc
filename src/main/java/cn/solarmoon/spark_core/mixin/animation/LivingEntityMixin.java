@@ -37,10 +37,24 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
+    /**
+     * 防止当用战技攻击时与生物贴太近影响观感
+     */
     @Redirect(method = "pushEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBoundingBox()Lnet/minecraft/world/phys/AABB;", ordinal = 0))
     private AABB push(LivingEntity instance) {
         var box = instance.getBoundingBox();
         if (instance instanceof IFightSkillHolder fighter) {
+            if (fighter.getSkillController() != null) {
+                return box.inflate(0.5);
+            }
+        }
+        return box;
+    }
+
+    @Redirect(method = "pushEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBoundingBox()Lnet/minecraft/world/phys/AABB;", ordinal = 1))
+    private AABB pus2h(LivingEntity instance) {
+        var box = instance.getBoundingBox();
+        if (entity instanceof IFightSkillHolder fighter) {
             if (fighter.getSkillController() != null) {
                 return box.inflate(0.5);
             }

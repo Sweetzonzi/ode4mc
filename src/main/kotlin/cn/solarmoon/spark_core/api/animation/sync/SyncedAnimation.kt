@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation.sync
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
@@ -66,8 +65,8 @@ class SyncedAnimation(
      * 它的总体思路是，如果操作是客户端的操作，直接在客户端执行动画，然后发送到服务端，由服务端同步动画到别的玩家电脑，这样可以增加本地操作的流畅度
      * @param modifier 可以对动画进行额外修改
      */
-    fun syncToClientExceptPresentPlayer(entity: ServerPlayer, modifier: AnimModificationData = AnimModificationData()) {
-        PacketDistributor.sendToPlayersNear(entity.serverLevel(), entity, entity.x, entity.y, entity.z, 512.0, SyncedAnimPayload(entity.id, id, modifier))
+    fun syncToClientExceptPresentPlayer(player: ServerPlayer, modifier: AnimModificationData = AnimModificationData()) {
+        PacketDistributor.sendToPlayersNear(player.serverLevel(), player, player.x, player.y, player.z, 512.0, SyncedAnimPayload(player.id, id, modifier))
     }
 
     companion object {

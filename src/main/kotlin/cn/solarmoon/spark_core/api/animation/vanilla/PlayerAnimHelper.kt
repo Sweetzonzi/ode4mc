@@ -2,11 +2,13 @@ package cn.solarmoon.spark_core.api.animation.vanilla
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
+import cn.solarmoon.spark_core.api.event.PlayerRenderAnimInFirstPersonEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.AbstractClientPlayer
 import net.minecraft.world.entity.player.Player
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
+import net.neoforged.neoforge.common.NeoForge
 
 object PlayerAnimHelper {
 
@@ -24,8 +26,8 @@ object PlayerAnimHelper {
     fun shouldRenderArmAnimInFirstPerson(player: AbstractClientPlayer): Boolean {
         val isInFirstPerson = Minecraft.getInstance().options.cameraType.isFirstPerson
         val isMainCamera = Minecraft.getInstance().cameraEntity == player
-        val isPlayingAnimWithAnyArm = player is IEntityAnimatable<*> && player.animData.playData.mixedAnims.any { !EntityStateAnim.entries.map { it.animName }.contains(it.name) }
-        return isInFirstPerson && isMainCamera && isPlayingAnimWithAnyArm
+        val renderEvent = NeoForge.EVENT_BUS.post(PlayerRenderAnimInFirstPersonEvent(player))
+        return isInFirstPerson && isMainCamera && renderEvent.shouldRender
     }
 
 }
