@@ -1,10 +1,11 @@
-package cn.solarmoon.spark_core.registry.client
+package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.api.phys.obb.renderable.OBBRenderer
+import cn.solarmoon.spark_core.api.visual_effect.common.camera_shake.CameraShaker
 import cn.solarmoon.spark_core.api.visual_effect.common.shadow.ShadowRenderer
 import cn.solarmoon.spark_core.api.visual_effect.common.trail.TrailRenderer
 
-object SparkVisualEffectRenderers {
+object SparkVisualEffects {
 
     @JvmStatic
     val OBB = OBBRenderer()
@@ -14,6 +15,9 @@ object SparkVisualEffectRenderers {
 
     @JvmStatic
     val SHADOW = ShadowRenderer()
+
+    @JvmStatic
+    val CAMERA_SHAKE = CameraShaker()
 
     @JvmStatic
     fun register() {}

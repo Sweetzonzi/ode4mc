@@ -13,9 +13,9 @@ abstract class VisualEffectRenderer {
         ALL_VISUAL_EFFECTS.add(this)
     }
 
-    abstract fun render(mc: Minecraft, camPos: Vec3, poseStack: PoseStack, bufferSource: MultiBufferSource, partialTicks: Float)
-
     abstract fun tick()
+
+    abstract fun render(mc: Minecraft, camPos: Vec3, poseStack: PoseStack, bufferSource: MultiBufferSource, partialTicks: Float)
 
     companion object {
         @JvmStatic

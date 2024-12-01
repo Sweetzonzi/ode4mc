@@ -7,15 +7,10 @@ import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.util.MoveDirection
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.phys.Vec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.times
-import kotlin.properties.Delegates
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 open class DodgeAnimSkill(
     animatable: IEntityAnimatable<*>,
@@ -76,7 +71,7 @@ open class DodgeAnimSkill(
 
     open fun onPrecisionDodge(damageSource: DamageSource, value: Float, anim: MixedAnimation) {
         if (!entity.level().isClientSide) {
-            SparkVisualEffectRenderers.SHADOW.addToClient(entity.id)
+            SparkVisualEffects.SHADOW.addToClient(entity.id)
         }
     }
 

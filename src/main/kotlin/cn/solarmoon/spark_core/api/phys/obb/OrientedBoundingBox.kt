@@ -1,12 +1,12 @@
 package cn.solarmoon.spark_core.api.phys.obb
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.phys.copy
 import cn.solarmoon.spark_core.api.phys.getScaledAxisX
 import cn.solarmoon.spark_core.api.phys.getScaledAxisY
 import cn.solarmoon.spark_core.api.phys.getScaledAxisZ
 import cn.solarmoon.spark_core.api.phys.toDegrees
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Direction
@@ -15,11 +15,9 @@ import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
-import net.neoforged.fml.loading.FMLEnvironment
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import java.awt.Color
-import java.util.UUID
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import kotlin.math.abs
 
 // Y ^       8   +-------+   7     axisY   axisZ
@@ -73,18 +71,18 @@ data class OrientedBoundingBox(
     fun getAxisFaceCenters(axis: Direction.Axis): Pair<Vector3f, Vector3f> {
         return when(axis) {
             Direction.Axis.X -> {
-                val leftCenter = vertexes[0].lerp(vertexes[7], 0.5f)
-                val rightCenter = vertexes[1].lerp(vertexes[6], 0.5f)
+                val leftCenter = vertexes[0].lerp(vertexes[7], 0.5f, Vector3f())
+                val rightCenter = vertexes[1].lerp(vertexes[6], 0.5f, Vector3f())
                 Pair(leftCenter, rightCenter)
             }
             Direction.Axis.Y -> {
-                val bottomCenter = vertexes[0].lerp(vertexes[5], 0.5f)
-                val topCenter = vertexes[3].lerp(vertexes[6], 0.5f)
+                val bottomCenter = vertexes[0].lerp(vertexes[5], 0.5f, Vector3f())
+                val topCenter = vertexes[3].lerp(vertexes[6], 0.5f, Vector3f())
                 Pair(bottomCenter, topCenter)
             }
             Direction.Axis.Z -> {
-                val backCenter = vertexes[0].lerp(vertexes[2], 0.5f)
-                val frontCenter = vertexes[4].lerp(vertexes[6], 0.5f)
+                val backCenter = vertexes[0].lerp(vertexes[2], 0.5f, Vector3f())
+                val frontCenter = vertexes[4].lerp(vertexes[6], 0.5f, Vector3f())
                 Pair(backCenter, frontCenter)
             }
         }
@@ -234,10 +232,12 @@ data class OrientedBoundingBox(
     /**
      * 按生物的触及距离进行碰撞箱范围扩张
      */
-    fun extendByEntityInteractRange(entity: Entity) {
+    fun extendByEntityInteractRange(entity: Entity, omniExpansion: Boolean = false): OrientedBoundingBox = apply {
         if (entity is LivingEntity) {
             entity.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)?.let {
-                (it.value.toFloat() - 5f).takeIf { it > 0 }?.let { add -> inflate(Vector3f(add.toFloat())) }
+                (it.value.toFloat() - 5f).takeIf { it > 0 }?.let { add ->
+                    inflate(if (omniExpansion) Vector3f(add) else Vector3f(0f, 0f, add))
+                }
             }
         }
     }

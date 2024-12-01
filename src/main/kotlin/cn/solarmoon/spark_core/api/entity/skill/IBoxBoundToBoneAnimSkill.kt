@@ -1,6 +1,8 @@
 package cn.solarmoon.spark_core.api.entity.skill
 
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.api.phys.copy
+import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import org.joml.Vector3f
 
 /**
@@ -12,12 +14,18 @@ interface IBoxBoundToBoneAnimSkill {
 
     val self get() = this as AnimSkill
 
+    val extendByEntityInteractRange get() = true
+
     val boxSize: Vector3f
 
     val boxOffset: Vector3f
 
     fun getBoundBoneName(anim: MixedAnimation): String
 
-    fun getBoundBox(anim: MixedAnimation, partialTicks: Float = 0f) = self.animatable.createCollisionBoxBoundToBone(getBoundBoneName(anim), boxSize, boxOffset, partialTicks)
+    fun getBoundBox(anim: MixedAnimation, partialTicks: Float = 0f): OrientedBoundingBox {
+        val box = self.animatable.createCollisionBoxBoundToBone(getBoundBoneName(anim), boxSize.copy(), boxOffset.copy(), partialTicks)
+        return if (extendByEntityInteractRange) box.extendByEntityInteractRange(self.entity) else box
+    }
+
 
 }

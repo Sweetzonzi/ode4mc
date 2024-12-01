@@ -3,9 +3,11 @@ package cn.solarmoon.spark_core.api.entity.state
 import cn.solarmoon.spark_core.api.phys.toRadians
 import cn.solarmoon.spark_core.api.util.Side
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.commands.arguments.EntityAnchorArgument
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
@@ -17,6 +19,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 object EntityStateHelper {
 
@@ -80,14 +83,6 @@ fun Entity.isFalling(): Boolean {
     return !onGround() && deltaMovement.y != 0.0
 }
 
-//fun Entity.isMoveFreezing(): Boolean {
-//    return persistentData.getBoolean("freezing")
-//}
-//
-//fun Entity.setMoveFreezing(value: Boolean) {
-//    persistentData.putBoolean("freezing", value)
-//}
-
 /**
  * 判断目标实体是否在输入实体朝向的一个扇形角度范围内（输入量都是角度制）
  * @param targetPos 目标实体位置
@@ -123,6 +118,16 @@ fun Entity.getSideOf(targetPos: Vec3): Side {
         isInRangeFrontOf(targetPos, 45.0, 270f) -> Side.RIGHT
         else -> Side.FRONT
     }
+}
+
+fun Entity.smoothLookAt(target: Vec3, partialTicks: Float = 1f) {
+    val vec3 = EntityAnchorArgument.Anchor.EYES.apply(this)
+    val d0 = target.x - vec3.x
+    val d1 = target.y - vec3.y
+    val d2 = target.z - vec3.z
+    val d3 = sqrt(d0 * d0 + d2 * d2)
+    this.xRot = Mth.rotLerp(partialTicks, xRotO, Mth.wrapDegrees((-(Mth.atan2(d1, d3) * 180.0F / PI))).toFloat())
+    this.yRot = Mth.rotLerp(partialTicks, yRotO, Mth.wrapDegrees((Mth.atan2(d2, d0) * 180.0F / PI) - 90.0F).toFloat())
 }
 
 /**

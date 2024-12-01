@@ -13,6 +13,7 @@ import cn.solarmoon.spirit_of_fight.registry.client.SOFKeyMappings
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.InputEvent
@@ -53,7 +54,7 @@ class AttackController {
             event.isCanceled = true
         } else { // 使用技能时阻止和方块挖掘/交互
             if (skillController.getPlayingSkillAnim() != null) {
-                event.setSwingHand(false)
+                event.setSwingHand(false) // 很重要，防抖动
                 event.isCanceled = true
             }
         }

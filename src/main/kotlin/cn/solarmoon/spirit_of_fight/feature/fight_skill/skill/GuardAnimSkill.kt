@@ -1,6 +1,5 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
@@ -8,7 +7,7 @@ import cn.solarmoon.spark_core.api.entity.attack.clearAttackedData
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.phys.obb.MountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.entity.skill.IBoxBoundToBoneAnimSkill
@@ -17,10 +16,8 @@ import cn.solarmoon.spark_core.api.phys.obb.clearMountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.setMountableOBB
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.MovePayload
-import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import cn.solarmoon.spirit_of_fight.feature.hit.getHitStrength
 import net.minecraft.world.damagesource.DamageSource
-import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
@@ -125,7 +122,7 @@ open class GuardAnimSkill(
 
     override fun whenAttackedInAnim(damageSource: DamageSource, value: Float, anim: MixedAnimation): Boolean {
         val entity = entity
-        if (entity.level().isClientSide) return true
+        SparkVisualEffects.CAMERA_SHAKE.shakeToClient(entity, 2, 0.5f)
         // 对于原版生物，只要在一个扇形范围内即可，对于lib的obb碰撞，则判断是否相交，同时如果受击数据不为空，那么以受击数据为准
         val attackedData = entity.getAttackedData()
         // 对于不可阻挡的伤害类型以及击打力度大于0的情况，不会被格挡成功
@@ -139,7 +136,7 @@ open class GuardAnimSkill(
         // 如果受到box的攻击，按防守盒是否被碰撞为准，否则以攻击者的坐标位置是否在指定扇形范围内为准
         val attackedCheck = if (attackedData != null) isBoxInteract else entity.isInRangeFrontOf(targetPos, guardRange)
         if (attackedCheck && isHoldingGuard) {
-            SparkVisualEffectRenderers.OBB.syncBoxToClient(getBoxId(), Color.RED, null)
+            SparkVisualEffects.OBB.syncBoxToClient(getBoxId(), Color.RED, null)
             if (getPlayingAnim{ !it.isCancelled }?.name == idleAnim.anim.name) {
                 if (entity is LivingEntity) {
                     hurtAnim.consume(animatable)

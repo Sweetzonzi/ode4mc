@@ -42,15 +42,6 @@ class EntityStateModifier {
                 entity.setJumpingState(false)
             }
         }
-
-//        if (entity is LivingEntity) {
-//            if (entity.isMoveFreezing()) {
-//                entity.getAttribute(Attributes.MOVEMENT_SPEED)?.addOrReplacePermanentModifier(AttributeModifier(
-//                    ResourceLocation.fromNamespaceAndPath(SparkCore.MOD_ID, "freezing"), -Double.MAX_VALUE, AttributeModifier.Operation.ADD_VALUE))
-//            } else {
-//                entity.getAttribute(Attributes.MOVEMENT_SPEED)?.removeModifier(ResourceLocation.fromNamespaceAndPath(SparkCore.MOD_ID, "freezing"))
-//            }
-//        }
     }
 
     @SubscribeEvent

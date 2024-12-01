@@ -1,18 +1,9 @@
 package cn.solarmoon.spark_core.api.phys
 
 import net.minecraft.world.phys.Vec3
-import org.checkerframework.checker.units.qual.kg
 import org.joml.Matrix3f
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import java.util.TreeMap
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
 
 fun Vec3.toRadians(): Vec3 {
     return Vec3(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z))

@@ -12,8 +12,9 @@ abstract class JumpAttackAnimSkill(
     attackAnim: SyncedAnimation,
     damageMultiplier: Float,
     switchTime: Double,
-    hitType: HitType
-): SingleAttackAnimSkill(controller, attackAnim, damageMultiplier, switchTime, hitType) {
+    hitType: HitType,
+    hitStrength: Int
+): SingleAttackAnimSkill(controller, attackAnim, damageMultiplier, switchTime, hitType, hitStrength) {
 
     override val isMetCondition: Boolean
         get() = entity.isFalling() && !isPlaying() // 跳跃不能预输入，因为必须保证只能在空中释放

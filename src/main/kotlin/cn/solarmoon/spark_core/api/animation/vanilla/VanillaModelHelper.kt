@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.world.entity.Entity
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
+import org.joml.Vector3f
 
 @OnlyIn(Dist.CLIENT)
 object VanillaModelHelper {
@@ -34,6 +35,11 @@ object VanillaModelHelper {
     @JvmStatic
     fun setPivot(animData: AnimData, boneName: String, model: ModelPart) {
         (model as ITransformModelPart).pivot.set(animData.model.getBone(boneName).pivot.toVector3f())
+    }
+
+    @JvmStatic
+    fun setPivot(pivot: Vector3f, model: ModelPart) {
+        (model as ITransformModelPart).pivot.set(pivot)
     }
 
     @JvmStatic

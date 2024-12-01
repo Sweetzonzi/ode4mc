@@ -1,14 +1,11 @@
 package cn.solarmoon.spark_core.api.entity.skill
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.boxAttack
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.phys.obb.popBox
-import cn.solarmoon.spark_core.api.phys.obb.renderable.RenderableOBB
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers
-import net.minecraft.nbt.CompoundTag
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
@@ -16,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.common.damagesource.DamageContainer
 
 /**
  * @param animBounds 该技能绑定的动画组
@@ -40,7 +36,7 @@ abstract class AnimSkill(
     protected var shouldClearAttackedEntities = false
     private var lastBoxAmount = 0
 
-    val debugBox get() = SparkVisualEffectRenderers.OBB.getRenderableBox(getBoxId())
+    val debugBox get() = SparkVisualEffects.OBB.getRenderableBox(getBoxId())
 
     /**
      * 根据该生物的攻速以及输入的基础攻速进行差值，以此获取一个基于攻速的动画速度
@@ -119,10 +115,10 @@ abstract class AnimSkill(
         val level = entity.level()
         getBox(anim).takeIf { it.isNotEmpty() }?.let {
             it.forEachIndexed { index, box ->
-                onBoxSummon(box, anim)
                 if (level.isClientSide) {
                     debugBox.refresh(box)
                 }
+                onBoxSummon(box, anim)
                 entity.popBox(getBoxId(index), box)
             }
             lastBoxAmount = it.size
@@ -191,6 +187,7 @@ abstract class AnimSkill(
             if (entity is Player) entity.attack(target)
             else if (entity is LivingEntity) entity.doHurtTarget(target)
             onTargetAttacked(target)
+            if (attackedEntities.isEmpty()) onFirstTargetAttacked(target)
             target.invulnerableTime = 0
             attackedEntities.add(target.id)
         }
@@ -200,5 +197,12 @@ abstract class AnimSkill(
      * 当[attack]方法确定攻击某个实体时调用
      */
     open fun onTargetAttacked(target: Entity) {}
+
+    /**
+     * 当在一次攻击中攻击到第一个生物的瞬间调用此方法
+     *
+     * 此处一次攻击不是指一次调用[attack]，而是指在一轮连续的攻击刷新可再击打生物前也就是[attackedEntities]为空时，详细可见[shouldClearAttackedEntities]
+     */
+    open fun onFirstTargetAttacked(target: Entity) {}
 
 }

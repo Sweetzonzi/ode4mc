@@ -11,6 +11,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     // 其它mod
     runtimeOnly files(fileTree(dir: 'lib', includes: ['*.jar']))
+
+    // 兼容
+    // geckolib
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    // azurelib
+    implementation "mod.azure.azurelib:azurelib-neo-${minecraft_version}:${azurelib_version}"
 }
 
 repositories {
@@ -57,6 +63,16 @@ repositories {
     maven {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
+    maven {
+        url = 'https://maven.azuredoom.com/mods'
     }
     flatDir {
         dir 'lib'

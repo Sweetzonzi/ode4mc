@@ -58,6 +58,8 @@ enum class HitType {
 
     val isKnockDown get() = this in listOf(KNOCKDOWN_STAB, KNOCKDOWN_CHOP, KNOCKDOWN_SWIPE)
 
+    val isHeavy get() = this in listOf(HEAVY_CHOP, HEAVY_SWIPE, HEAVY_STAB)
+
     private fun lowercase() = toString().lowercase()
 
     companion object {

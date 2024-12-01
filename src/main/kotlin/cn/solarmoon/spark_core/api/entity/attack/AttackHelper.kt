@@ -5,11 +5,9 @@ import cn.solarmoon.spark_core.api.util.Side
 import cn.solarmoon.spark_core.api.phys.obb.MountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.phys.obb.pushBox
-import cn.solarmoon.spark_core.api.phys.obb.renderable.RenderableOBB
 import cn.solarmoon.spark_core.api.phys.obb.toOBB
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
@@ -30,7 +28,7 @@ object AttackHelper {
         target.animatable.getData(SparkAttachments.MOUNTABLE_OBB).entries.forEach { (name, mOBB) ->
             if (mOBB.type == MountableOBB.Type.STRIKABLE_BONE) {
                 box.connectionIntersects(mOBB.box, cacheBox, boxTickDensity)?.let {
-                    SparkVisualEffectRenderers.OBB.syncBoxToClient(name, Color.RED, mOBB.box)
+                    SparkVisualEffects.OBB.syncBoxToClient(name, Color.RED, mOBB.box)
                     return Pair(it, name)
                 }
             }
@@ -40,7 +38,7 @@ object AttackHelper {
                 bone.cubes.forEach { cube0 ->
                     val cube = cube0.toOBB(target.getBoneMatrix(bone.name))
                     box.connectionIntersects(cube, cacheBox, boxTickDensity)?.let { hit ->
-                        SparkVisualEffectRenderers.OBB.syncBoxToClient("${target.animatable.id}:${bone.name}", Color.RED, cube)
+                        SparkVisualEffects.OBB.syncBoxToClient("${target.animatable.id}:${bone.name}", Color.RED, cube)
                         return Pair(hit, bone.name)
                     }
                 }
@@ -100,13 +98,13 @@ fun Entity.boxAttack(
                     hitBox = hitBox2
                     hitBone = bone
                     attackFlag = true
-                    SparkVisualEffectRenderers.OBB.syncBoxToClient(boxId, Color.RED, null)
+                    SparkVisualEffects.OBB.syncBoxToClient(boxId, Color.RED, null)
                 }
             } else {
                 box.connectionIntersects(target.boundingBox.toOBB(), boxCache)?.let { hitBox2 ->
                     hitBox = hitBox2
                     attackFlag = true
-                    SparkVisualEffectRenderers.OBB.syncBoxToClient(boxId, Color.RED, null)
+                    SparkVisualEffects.OBB.syncBoxToClient(boxId, Color.RED, null)
                 }
             }
             if (attackFlag) {
@@ -117,7 +115,7 @@ fun Entity.boxAttack(
             }
         }
     }
-    boxId?.let { SparkVisualEffectRenderers.OBB.getRenderableBox(it) }?.refresh(box)
+    boxId?.let { SparkVisualEffects.OBB.getRenderableBox(it) }?.refresh(box)
     return list
 }
 

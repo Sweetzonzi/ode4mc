@@ -2,15 +2,12 @@ package cn.solarmoon.spark_core;
 
 import cn.solarmoon.spark_core.api.entry_builder.ObjectRegister;
 import cn.solarmoon.spark_core.registry.client.SparkClientEvents;
-import cn.solarmoon.spark_core.registry.client.SparkVisualEffectRenderers;
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects;
 import cn.solarmoon.spark_core.registry.common.*;
 import cn.solarmoon.spirit_of_fight.registry.client.SOFClientEvents;
 import cn.solarmoon.spirit_of_fight.registry.client.SOFGuis;
 import cn.solarmoon.spirit_of_fight.registry.client.SOFKeyMappings;
-import cn.solarmoon.spirit_of_fight.registry.common.SOFAttachments;
-import cn.solarmoon.spirit_of_fight.registry.common.SOFCommonEvents;
-import cn.solarmoon.spirit_of_fight.registry.common.SOFSyncedAnimReg;
-import cn.solarmoon.spirit_of_fight.registry.common.SOFNetworks;
+import cn.solarmoon.spirit_of_fight.registry.common.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -34,7 +31,7 @@ public class SparkCore {
             SOFKeyMappings.register();
         }
 
-        SparkVisualEffectRenderers.register();
+        SparkVisualEffects.register();
         SparkAttachments.register();
         SparkCommonEvents.register();
         SparkPayloads.register(modEventBus);
@@ -46,6 +43,7 @@ public class SparkCore {
         SOFCommonEvents.register();
         SOFAttachments.register();
         SOFSyncedAnimReg.register();
+        SOFVisualEffects.register();
 
     }
 

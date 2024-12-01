@@ -23,7 +23,7 @@ data class MixedAnimation(
     var modelPath: ResourceLocation,
     val name: String,
     var weight: Int = 1,
-    var speed: Float = 1f,
+    private var _speed: Float = 1f,
     private var _startTransSpeed: Float = 1f,
     var endTransSpeed: Float = 1f,
     var level: Int = 0
@@ -52,11 +52,16 @@ data class MixedAnimation(
      */
     var boneBlacklist = mutableSetOf<String>()
 
+    var freeze = 1f
+
     init {
         if (startTransSpeed > MAX_TRANS_PROCESS) transTick = MAX_TRANS_PROCESS
     }
 
     val maxTick get() = animation.baseLifeTime * 20
+    var speed
+        get() = _speed * freeze.toFloat()
+        set(value) { _speed = value }
     val shouldForwardTransition get() = transTick < MAX_TRANS_PROCESS && !isCancelled
     val shouldBackwardTransition get() = transTick > 0 && isCancelled
     val isInTransition get() = shouldForwardTransition || shouldBackwardTransition

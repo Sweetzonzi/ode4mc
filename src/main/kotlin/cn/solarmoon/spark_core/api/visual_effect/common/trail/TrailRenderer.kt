@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 class TrailRenderer: VisualEffectRenderer() {
 
     private val autoAdd: MutableMap<String, (Float) -> Trail?> = mutableMapOf()
+    private val addSave: MutableMap<String, Boolean> = mutableMapOf()
     private val trails = ConcurrentLinkedQueue<Trail>()
     private val removeT = ConcurrentLinkedQueue<Trail>()
 
@@ -34,13 +35,15 @@ class TrailRenderer: VisualEffectRenderer() {
      * 为了保证拖影的连贯性，使用[add]方法根据partialTicks来在渲染tick中不断地刷新拖影顶点，而不是在游戏tick中添加间断地添加顶点，以达到近似圆的平滑效果
      *
      * **此方法只能在客户端侧调用**
+     * @param toggle toggle为false的情况下，在拖影渲染后会立即清除拖影列表，为true时则只有当调用[clear]方法时才会清除拖影
      */
-    fun setAdd(id: String, add: (Float) -> Trail? = { null }) {
+    fun setAdd(id: String, toggle: Boolean = false, add: (Float) -> Trail? = { null }) {
         autoAdd[id] = add
+        if (toggle) addSave[id] = true
     }
 
-    fun clearAdd(id: String) {
-        autoAdd.remove(id)
+    fun clear(id: String) {
+        addSave[id] = false
     }
 
     override fun tick() {
@@ -54,6 +57,12 @@ class TrailRenderer: VisualEffectRenderer() {
         // 延迟结算，比较高效
         trails.removeAll(removeT)
         removeT.clear()
+
+        // 如果是开关性质的则为true时不删除
+        autoAdd.entries.removeIf {
+            val toggle = addSave[it.key]
+            toggle == null || !toggle
+        }
     }
 
     override fun render(
@@ -63,7 +72,7 @@ class TrailRenderer: VisualEffectRenderer() {
         bufferSource: MultiBufferSource,
         partialTicks: Float
     ) {
-        autoAdd.forEach { _, add ->
+        autoAdd.forEach { id, add ->
             add.invoke(partialTicks)?.let {
                 trails.add(it)
             }

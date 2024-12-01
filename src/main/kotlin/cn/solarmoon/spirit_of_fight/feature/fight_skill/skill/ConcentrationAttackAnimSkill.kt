@@ -13,13 +13,15 @@ abstract class ConcentrationAttackAnimSkill(
     attackAnim: SyncedAnimation,
     damageMultiplier: Float,
     switchTime: Double,
-    hitType: HitType
-): SingleAttackAnimSkill(controller, attackAnim, damageMultiplier, switchTime, hitType) {
+    hitType: HitType,
+    hitStrength: Int
+): SingleAttackAnimSkill(controller, attackAnim, damageMultiplier, switchTime, hitType, hitStrength) {
 
     override val isMetCondition: Boolean
         get() = entity.getFightSpirit().isFull
 
     override fun onStart() {
+        super.onStart()
         entity.getFightSpirit().clear()
     }
 

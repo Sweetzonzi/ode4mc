@@ -5,6 +5,7 @@ import cn.solarmoon.spark_core.api.event.EntityTurnEvent
 import cn.solarmoon.spark_core.api.event.PlayerRenderAnimInFirstPersonEvent
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
+import cn.solarmoon.spirit_of_fight.feature.lock_on.LockOnController
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.util.Mth
 import net.neoforged.bus.api.SubscribeEvent
@@ -31,7 +32,7 @@ class CameraAdjuster {
                 ((skill.isAttacking { !it.isInTransition } && skill.getPlayingSkillAnim{ !it.isCancelled }!!.tick != 0.0) || skill.guard.isBacking { !it.isInTransition })
                 || HitType.isPlayingHitAnim(entity) { !it.isCancelled }
                 ) {
-                if (entity is LocalPlayer) CAMERA_TURN.add(xRot, yRot)
+                if (entity is LocalPlayer && !LockOnController.hasTarget) CAMERA_TURN.add(xRot, yRot)
                 event.isCanceled = true
             } else if (CAMERA_TURN != Vector2f()) {
                 val x = CAMERA_TURN.x.toDouble()
