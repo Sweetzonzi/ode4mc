@@ -6,8 +6,9 @@ import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ComboAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ConcentrationAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.DodgeAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.GuardAnimSkill
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.CommonGuardAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.JumpAttackAnimSkill
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ParryAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SingleAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SprintAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 
-class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillController(
+class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSkillController(
     animatable,
     NAME,
     1.6f,
@@ -31,7 +32,7 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillCon
         @JvmStatic
         val COMBO_ANIMS = ComboAnimSkill.createComboConsumeAnims(NAME, 3)
         @JvmStatic
-        val GUARD_ANIMS = GuardAnimSkill.createGuardConsumeAnim(NAME)
+        val GUARD_ANIMS = CommonGuardAnimSkill.createGuardSyncedAnim(NAME)
         @JvmStatic
         val DODGE_ANIMS = DodgeAnimSkill.createDodgeConsumeAnims(NAME)
         @JvmStatic
@@ -40,6 +41,8 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillCon
         val SPRINTING_ATTACK_ANIM = SingleAttackAnimSkill.createSingleAttackConsumeAnim(NAME, "sprinting")
         @JvmStatic
         val SPECIAL_ATTACK_ANIM = SingleAttackAnimSkill.createSingleAttackConsumeAnim(NAME, "special")
+        @JvmStatic
+        val PARRY_ANIM = ParryAnimSkill.createParrySyncedAnim(NAME)
     }
 
     override val isAvailable: Boolean
@@ -80,13 +83,19 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillCon
         }
     }
 
-    override val dodge: DodgeAnimSkill = DodgeAnimSkill(animatable, DODGE_ANIMS, 0.35)
+    override val dodge: DodgeAnimSkill = DodgeAnimSkill(this, animatable, DODGE_ANIMS, 0.35)
 
-    override val guard: GuardAnimSkill = GuardAnimSkill(this@SwordFightSkillController, GUARD_ANIMS, 150.0)
+    override val guard: CommonGuardAnimSkill = CommonGuardAnimSkill(this, GUARD_ANIMS, 150.0)
+
+    override val parry: ParryAnimSkill = object : ParryAnimSkill(this@SwordFightSkillController, PARRY_ANIM, 150.0) {
+        override fun shouldSummonBox(anim: MixedAnimation): Boolean {
+            return anim.isTickIn(0.0, 0.25)
+        }
+    }
 
     override val jumpAttack = object : JumpAttackAnimSkill(this@SwordFightSkillController, JUMP_ATTACK_ANIM, 1.25f, 0.55, HitType.LIGHT_CHOP, 0) {
         override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.15, 0.45)) super.getBox(anim) else listOf()
+            return if (anim.isTickIn(0.15, 0.45)) listOf(getBoxBoundToBone(anim)) else listOf()
         }
 
         override fun getMove(anim: MixedAnimation): Vec3? {
@@ -96,7 +105,7 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillCon
 
     override val sprintAttack = object : SprintAttackAnimSkill(this@SwordFightSkillController, SPRINTING_ATTACK_ANIM, 1.25f, 0.55, HitType.LIGHT_SWIPE, 0) {
         override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.25, 0.55)) super.getBox(anim) else listOf()
+            return if (anim.isTickIn(0.25, 0.55)) listOf(getBoxBoundToBone(anim)) else listOf()
         }
 
         override fun getMove(anim: MixedAnimation): Vec3? {
@@ -106,7 +115,7 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): FightSkillCon
 
     val specialAttack = object : ConcentrationAttackAnimSkill(this@SwordFightSkillController, SPECIAL_ATTACK_ANIM, 1.5f, 1.6, HitType.HEAVY_CHOP, 1) {
         override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.1, 0.5) || anim.isTickIn(0.95, 1.25)) super.getBox(anim) else listOf()
+            return if (anim.isTickIn(0.1, 0.5) || anim.isTickIn(0.95, 1.25)) listOf(getBoxBoundToBone(anim)) else listOf()
         }
 
         override fun getMove(anim: MixedAnimation): Vec3? {

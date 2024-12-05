@@ -1,19 +1,8 @@
 package cn.solarmoon.spark_core.api.entity.state
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
-import cn.solarmoon.spark_core.api.entity.attack.AttackHelper
-import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.effect.MobEffectInstance
-import net.minecraft.world.effect.MobEffects
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.AttributeModifier
-import net.minecraft.world.entity.ai.attributes.Attributes
-import net.minecraft.world.entity.monster.Husk
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.phys.Vec3
+import net.minecraft.client.player.AbstractClientPlayer
+import net.minecraft.client.player.LocalPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
@@ -41,6 +30,8 @@ class EntityStateModifier {
             if (entity.isJumping()) {
                 entity.setJumpingState(false)
             }
+
+            entity.setServerMoveSpeed(entity.getMoveSpeed().toFloat())
         }
     }
 

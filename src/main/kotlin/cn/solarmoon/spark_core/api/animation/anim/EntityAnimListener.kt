@@ -4,6 +4,8 @@ import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
+import cn.solarmoon.spark_core.api.animation.anim.part.InterpolationType
+import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.data.SimpleJsonListener
 import cn.solarmoon.spark_core.api.phys.toRadians
 import com.google.gson.JsonArray
@@ -22,6 +24,7 @@ class EntityAnimListener: SimpleJsonListener("geo/animation") {
         profiler: ProfilerFiller
     ) {
         reads.forEach { id, json ->
+            val root = ResourceLocation.parse(id.toString().substringBefore("/"))
             val animations = json.asJsonObject.getAsJsonObject("animations")
             val animationList = arrayListOf<Animation>()
             animations.entrySet().forEach { anim ->
@@ -50,11 +53,9 @@ class EntityAnimListener: SimpleJsonListener("geo/animation") {
                 }
                 animationList.add(Animation(animName, loop, baseLifeTime, boneList))
             }
-            AnimationSet.ORIGINS[id] = AnimationSet(animationList)
+            AnimationSet.ORIGINS.compute(root) { key, value -> value?.apply { this.animations.addAll(animationList) } ?: AnimationSet(animationList) }
         }
-        val playerAnimations = AnimationSet.ORIGINS.filter { (id, _) -> id.path == "player" }.flatMap { (_, anims) -> anims.animations }
-        AnimationSet.PLAYER_ORIGINS.animations.addAll(playerAnimations)
-        SparkCore.LOGGER.info("已加载 ${AnimationSet.ORIGINS.size} 种类型的动画文件，并在其中加载了 ${AnimationSet.PLAYER_ORIGINS.animations.size} 个玩家动画")
+        SparkCore.LOGGER.info("已加载 ${AnimationSet.ORIGINS.size} 种类型的动画文件，并在其中加载了 ${AnimationSet.get(ResourceLocation.withDefaultNamespace("player")).animations.size} 个玩家动画")
     }
 
     fun getLoopAsString(animJson: JsonObject): String {

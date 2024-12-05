@@ -2,16 +2,15 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.controller
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkillController
-import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ComboAnimSkill
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.CommonGuardAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.DodgeAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.GuardAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.JumpAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SingleAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SprintAttackAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import org.joml.Vector3f
 
 /**
@@ -26,11 +25,10 @@ abstract class FightSkillController(
 ): AnimSkillController() {
 
     val entity get() = animatable.animatable
-    val preInput get() = entity.getPreInput()
 
     abstract val combo: ComboAnimSkill
     abstract val dodge: DodgeAnimSkill
-    abstract val guard: GuardAnimSkill
+    abstract val guard: CommonGuardAnimSkill
     abstract val jumpAttack: JumpAttackAnimSkill
     abstract val sprintAttack: SprintAttackAnimSkill
 
@@ -48,18 +46,15 @@ abstract class FightSkillController(
     override fun tick() {
         super.tick()
         // 不在播放任何动画，直接进行预输入释放
-        if (!isPlayingSkill { !it.isCancelled } || (preInput.hasInput("dodge") && guard.isStanding())) { // 格挡时可以不预输入直接闪避
-            // 但是都不能在受击硬直时输入
-            if (!HitType.isPlayingHitAnim(animatable) { !it.isCancelled }) {
-                combo.index = 0
-                if (preInput.hasInput()) preInput.invokeInput()
-            }
+        if (!isPlayingSkill { !it.isCancelled }) {
+            combo.index = 0
+            entity.getPreInput().execute()
         }
     }
 
     override fun onDisabledMoment() {
         super.onDisabledMoment()
-        if (preInput.hasInput()) preInput.clear()
+        entity.getPreInput().clear()
     }
 
 }

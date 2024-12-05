@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.kotlinImpl;
 
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityStateAutoAnim;
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload;

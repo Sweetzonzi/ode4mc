@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core.api.animation.sync
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.AnimationSet
 import cn.solarmoon.spark_core.api.animation.model.CommonModel
 import net.minecraft.network.FriendlyByteBuf
@@ -15,7 +16,7 @@ import java.util.function.Consumer
 class ModelDataSendingTask(): ICustomConfigurationTask {
 
     override fun run(sender: Consumer<CustomPacketPayload?>) {
-        val modelData = ModelDataPayload(CommonModel.ORIGINS, AnimationSet.ORIGINS, AnimationSet.PLAYER_ORIGINS)
+        val modelData = ModelDataPayload(CommonModel.ORIGINS, AnimationSet.ORIGINS)
         sender.accept(modelData)
     }
 
@@ -37,6 +38,7 @@ class ModelDataSendingTask(): ICustomConfigurationTask {
             @JvmStatic
             fun onAct(payload: Return, context: IPayloadContext) {
                 context.finishCurrentTask(ModelDataSendingTask.TYPE)
+                (context.player() as IEntityAnimatable<*>).syncAnimDataToClient(null)
             }
 
             @JvmStatic

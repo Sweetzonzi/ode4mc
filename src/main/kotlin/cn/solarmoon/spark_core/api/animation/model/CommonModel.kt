@@ -41,6 +41,10 @@ data class CommonModel(
         }
     }
 
+    fun hasBone(name: String): Boolean {
+        return bones.any { it.name == name }
+    }
+
     /**
      * @param normal3f 法线的矩阵，从当前poseStack获取
      */

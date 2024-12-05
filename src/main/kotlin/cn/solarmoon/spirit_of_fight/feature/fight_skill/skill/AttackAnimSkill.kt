@@ -3,7 +3,7 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
-import cn.solarmoon.spark_core.api.entity.skill.IBoxBoundToBoneAnimSkill
+import cn.solarmoon.spark_core.api.entity.skill.BoneBoxAnimSkill
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.visual_effect.common.trail.Trail
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
@@ -14,6 +14,7 @@ import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
 import net.minecraft.core.Direction
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 import java.awt.Color
 
@@ -27,20 +28,14 @@ import java.awt.Color
  * - 碰撞箱生成时自动攻击
  * - 自动根据生物触及距离拓展攻击碰撞箱
  * - 攻击力度（力度大于0时为不可格挡的攻击，然后数值越大将获得越大的屏幕震动）
+ * - 强制位移（在控制器中按住s会阻止水平位移）
  */
 abstract class AttackAnimSkill(
-    protected val controller: FightSkillController,
+    controller: FightSkillController,
     animBounds: Set<String>,
-): AnimSkill(
-    controller.animatable,
-    animBounds
-), IBoxBoundToBoneAnimSkill {
+): ItemBoxAnimSkill(controller, animBounds) {
 
     val baseAttackSpeed = controller.baseAttackSpeed
-    override val boxSize: Vector3f = controller.commonBoxSize
-    override val boxOffset: Vector3f = controller.commonBoxOffset
-
-    override fun getBoundBoneName(anim: MixedAnimation): String = "rightItem"
 
     abstract fun getHitType(anim: MixedAnimation): HitType
 
@@ -51,7 +46,7 @@ abstract class AttackAnimSkill(
         attack(box)
         if (entity.level().isClientSide) SparkVisualEffects.TRAIL.setAdd(getBoxId()) {
             val color = if (getHitStrength(anim) > 0) Color.RED else Color.WHITE
-            Trail(getBoundBox(anim, it), Direction.Axis.Z, color).apply {
+            Trail(getBoxBoundToBone(anim, it), Direction.Axis.Z, color).apply {
                 if (entity is LivingEntity) getAttackItem(entity.weaponItem, anim)?.let { setTexture(it) }
             }
         }

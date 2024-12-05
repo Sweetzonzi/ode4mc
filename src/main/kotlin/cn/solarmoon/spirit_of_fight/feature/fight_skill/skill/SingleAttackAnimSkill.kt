@@ -1,16 +1,17 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.entity.skill.IBoxBoundToBoneAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec3
 
@@ -27,14 +28,14 @@ abstract class SingleAttackAnimSkill(
 ): AttackAnimSkill(
     controller,
     setOf(attackAnim.anim.name)
-), IBoxBoundToBoneAnimSkill {
+) {
 
     companion object {
         @JvmStatic
         fun createSingleAttackConsumeAnim(prefix: String, attackName: String): SyncedAnimation = SyncedAnimation(MixedAnimation("$prefix:attack_$attackName", startTransSpeed = 5f))
     }
 
-    abstract val isMetCondition: Boolean
+    abstract val canRelease: Boolean
 
     val preInput get() = entity.getPreInput()
 
@@ -74,10 +75,8 @@ abstract class SingleAttackAnimSkill(
     override fun whenInAnim(anim: MixedAnimation) {
         super.whenInAnim(anim)
 
-        if (preInput.hasInput() && !HitType.isPlayingHitAnim(animatable) { !it.isCancelled } ) {
-            if (anim.isTickIn(switchTime, anim.maxTick)) {
-                preInput.invokeInput()
-            }
+        if (anim.isTickIn(switchTime, anim.maxTick)) {
+            preInput.execute()
         }
     }
 

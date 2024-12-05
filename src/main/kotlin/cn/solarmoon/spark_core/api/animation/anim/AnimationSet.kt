@@ -43,8 +43,7 @@ data class AnimationSet(
          */
         @JvmStatic
         fun get(res: ResourceLocation): AnimationSet {
-            return if (res == ResourceLocation.withDefaultNamespace("player")) PLAYER_ORIGINS
-            else ORIGINS[res] ?: EMPTY
+            return ORIGINS[res] ?: EMPTY
         }
 
         @JvmStatic
@@ -52,9 +51,6 @@ data class AnimationSet(
 
         @JvmStatic
         var ORIGINS = mutableMapOf<ResourceLocation, AnimationSet>()
-
-        @JvmStatic
-        val PLAYER_ORIGINS = EMPTY
 
         @JvmStatic
         val ORIGIN_MAP_STREAM_CODEC = object : StreamCodec<FriendlyByteBuf, MutableMap<ResourceLocation, AnimationSet>> {

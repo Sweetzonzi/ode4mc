@@ -13,7 +13,7 @@
 			"bones": [
 				{
 					"name": "root",
-					"pivot": [0, 16, 0]
+					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "body",
@@ -39,7 +39,7 @@
 				{
 					"name": "leftItem",
 					"parent": "leftArm",
-					"pivot": [6, 14, 0]
+					"pivot": [5.5, 13, 0]
 				},
 				{
 					"name": "rightArm",
@@ -52,7 +52,7 @@
 				{
 					"name": "rightItem",
 					"parent": "rightArm",
-					"pivot": [-6, 14, 0]
+					"pivot": [-5.5, 13, 0]
 				},
 				{
 					"name": "head",

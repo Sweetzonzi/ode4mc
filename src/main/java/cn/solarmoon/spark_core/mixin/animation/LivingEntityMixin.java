@@ -1,9 +1,8 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityAutoAnim;
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -32,7 +30,8 @@ public abstract class LivingEntityMixin extends Entity {
     private void tick(CallbackInfo ci) {
         if (entity instanceof IEntityAnimatable<?> animatable) {
             // 播放指定动画时将身体转到目视方向
-            if (animatable.getTurnBodyAnims().stream().anyMatch(i -> animatable.getAnimController().isPlaying(i, in -> true))) {
+            if (animatable.getTurnBodyAnims().stream().anyMatch(i -> animatable.getAnimController().isPlaying(i, in -> true))
+            || animatable.getAutoAnims().stream().anyMatch(i -> i instanceof EntityAutoAnim e && e.getShouldTurnBody() && e.isPlaying(0, wi -> true))) {
                 tickHeadTurn(getYRot(), 100);
             }
         }

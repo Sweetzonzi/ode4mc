@@ -44,7 +44,7 @@ object SparkAttachments {
     @JvmStatic
     val PREINPUT = SparkCore.REGISTER.attachment<PreInput>()
         .id("preinput")
-        .defaultValue { PreInput() }
+        .defaultValue { PreInput(it) }
         .build()
 
 }

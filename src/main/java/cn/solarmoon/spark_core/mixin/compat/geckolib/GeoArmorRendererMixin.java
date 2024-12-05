@@ -21,6 +21,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.util.RenderUtil;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mixin(GeoArmorRenderer.class)
@@ -53,7 +54,10 @@ public class GeoArmorRendererMixin<T extends Item & GeoItem> {
     )
     public void renderRecursively(PoseStack poseStack, T animatable0, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour, CallbackInfo ci) {
         if (currentEntity instanceof IEntityAnimatable<?> animatable && VanillaModelHelper.shouldSwitchToAnim(animatable)) {
-            if (List.of(leftArm, rightArm, head).contains(bone)) RenderUtil.prepMatrixForBone(poseStack, body);
+            List<Object> bodyParts = Arrays.asList(leftArm, rightArm, head);
+            if (bodyParts.contains(bone) && body != null) {
+                RenderUtil.prepMatrixForBone(poseStack, body);
+            }
         }
     }
 

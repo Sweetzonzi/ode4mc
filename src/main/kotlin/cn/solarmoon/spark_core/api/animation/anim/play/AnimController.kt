@@ -1,19 +1,15 @@
 package cn.solarmoon.spark_core.api.animation.anim.play
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.InterpolationType
-import cn.solarmoon.spark_core.api.animation.anim.Loop
+import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.animation.sync.AnimFreezingPayload
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.neoforged.neoforge.network.PacketDistributor
 import kotlin.collections.contains
 
 /**
- * 必须注意的是，为了保证能够在服务端使用动画数据，此处内容最好在双端同时进行调用
- *
- * 在客户端中如果要获取当前控制器的数据，就不要调用控制器获取了，使用[AnimData]来获取同步后的数据，这样也在操作上分为两端，防止双端问题
+ * ### 动画控制器
+ * > 动画控制器是动画数据的总控中心，可以通过它来调配动画的播放与暂停，以及其它如动画冻结等对动画的控制功能。
  */
 class AnimController<T: IAnimatable<*>>(private val animatable: T) {
 
@@ -22,7 +18,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
     var freezeSpeedPercent = 1f
 
     /**
-     * 把所有动画加入删除队列并添加动画到动画组
+     * 把所有动画加入删除队列并添加新动画到动画组
      * @param filter 会对每一个正在组里的动画进行遍历，可根据它们的属性选择一个boolean值来决定是否暂停它们
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
@@ -39,6 +35,10 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
 
     fun stopAnimation(vararg name: String) {
         animatable.animData.playData.mixedAnims.forEach { if (it.name in name) it.isCancelled = true }
+    }
+
+    fun stopAnimation(filter: (MixedAnimation) -> Boolean) {
+        animatable.animData.playData.mixedAnims.filter(filter).forEach { it.isCancelled = true }
     }
 
     fun stopAllAnimation() {
@@ -62,7 +62,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
         return anim != null
     }
 
-    fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.05f, freezeTime: Int = 2) {
+    fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.1f, freezeTime: Int = 2) {
         freezeTick = freezeTime
         maxFreezeTick = freezeTime
         freezeSpeedPercent = speedPercent
@@ -76,7 +76,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
     /**
      * 动画的tick，默认情况下会自动在接入了IAnimatable的生物的tick中调用此方法
      *
-     * 此方法是双端调用的，主要使用的是在客户端模拟预测服务端的操作，单独进行渲染，直到数据差异和服务端过大，则强制接受服务端信息。
+     * 此方法是双端调用的，主要使用的是在客户端模拟预测服务端的操作，单独进行渲染
      */
     fun animTick() {
         val playData = animatable.animData.playData

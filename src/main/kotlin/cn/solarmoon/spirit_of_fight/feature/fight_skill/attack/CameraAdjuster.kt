@@ -1,6 +1,7 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.attack
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.isPlayingHitAnim
 import cn.solarmoon.spark_core.api.event.EntityTurnEvent
 import cn.solarmoon.spark_core.api.event.PlayerRenderAnimInFirstPersonEvent
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
@@ -25,13 +26,7 @@ class CameraAdjuster {
         val xRot = event.xRot.toFloat()
         val yRot = event.yRot.toFloat()
         if (entity is IFightSkillHolder && entity is IEntityAnimatable<*>) {
-            val skill = entity.skillController
-            if (
-                skill != null &&
-                // 0tick可以转，这样可以在切换动作时变向不至于连招时方向一定定死了
-                ((skill.isAttacking { !it.isInTransition } && skill.getPlayingSkillAnim{ !it.isCancelled }!!.tick != 0.0) || skill.guard.isBacking { !it.isInTransition })
-                || HitType.isPlayingHitAnim(entity) { !it.isCancelled }
-                ) {
+            if (entity.shouldOperateFreezing() && entity.skillController?.getPlayingSkillAnim{ !it.isCancelled }?.tick != 0.0) {
                 if (entity is LocalPlayer && !LockOnController.hasTarget) CAMERA_TURN.add(xRot, yRot)
                 event.isCanceled = true
             } else if (CAMERA_TURN != Vector2f()) {
@@ -42,6 +37,8 @@ class CameraAdjuster {
             }
         }
     }
+
+    //skill.getPlayingSkillAnim{ !it.isCancelled }!!.tick != 0.0)
 
     @SubscribeEvent
     private fun offsetCameraWhenLock(event: ViewportEvent.ComputeCameraAngles) {

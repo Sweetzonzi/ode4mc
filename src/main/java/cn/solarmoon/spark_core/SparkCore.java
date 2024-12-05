@@ -36,14 +36,14 @@ public class SparkCore {
         SparkCommonEvents.register();
         SparkPayloads.register(modEventBus);
         SparkDatas.register();
-        SparkSyncedAnimReg.register();
+        SparkAnimRegister.register();
 
         SOFNetworks.register(modEventBus);
         SOFGuis.register(modEventBus);
         SOFCommonEvents.register();
         SOFAttachments.register();
-        SOFSyncedAnimReg.register();
         SOFVisualEffects.register();
+        SOFAnimRegister.register();
 
     }
 

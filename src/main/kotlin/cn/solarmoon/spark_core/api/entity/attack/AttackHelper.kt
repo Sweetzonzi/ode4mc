@@ -28,7 +28,6 @@ object AttackHelper {
         target.animatable.getData(SparkAttachments.MOUNTABLE_OBB).entries.forEach { (name, mOBB) ->
             if (mOBB.type == MountableOBB.Type.STRIKABLE_BONE) {
                 box.connectionIntersects(mOBB.box, cacheBox, boxTickDensity)?.let {
-                    SparkVisualEffects.OBB.syncBoxToClient(name, Color.RED, mOBB.box)
                     return Pair(it, name)
                 }
             }
@@ -38,29 +37,12 @@ object AttackHelper {
                 bone.cubes.forEach { cube0 ->
                     val cube = cube0.toOBB(target.getBoneMatrix(bone.name))
                     box.connectionIntersects(cube, cacheBox, boxTickDensity)?.let { hit ->
-                        SparkVisualEffects.OBB.syncBoxToClient("${target.animatable.id}:${bone.name}", Color.RED, cube)
                         return Pair(hit, bone.name)
                     }
                 }
             }
         }
         return null
-    }
-
-    /**
-     * 获取输入box相对于目标实体朝向的左右方向
-     */
-    @JvmStatic
-    fun getBoxSide(target: Entity, box: OrientedBoundingBox): Side {
-        // 水平朝向向量的垂直向量
-        val viewVector = Vec3.directionFromRotation(0f, target.yRot).toVector3f().rotateY(PI.toFloat() / 2).toVec3()
-        val boxCenter = box.center.toVec3()
-        // 计算目标到 box 的向量
-        val targetPosition = target.position()
-        val boxToTarget = boxCenter.subtract(targetPosition).normalize()
-        // 点乘计算夹角的余弦值
-        val dotProduct = viewVector.dot(boxToTarget)
-        return if (dotProduct >= 0) Side.LEFT else Side.RIGHT
     }
 
 }

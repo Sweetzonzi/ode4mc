@@ -1,16 +1,29 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
+import cn.solarmoon.spark_core.SparkCore;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects;
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.attack.AttackController;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ArmedModel;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,23 +31,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(ItemInHandLayer.class)
-public class ItemInHandLayerMixin {
+public abstract class ItemInHandLayerMixin<T extends LivingEntity, M extends EntityModel<T> & ArmedModel> extends RenderLayer<T, M> {
 
-    @Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
+    @Shadow @Final private ItemInHandRenderer itemInHandRenderer;
+
+    public ItemInHandLayerMixin(RenderLayerParent<T, M> renderer) {
+        super(renderer);
+    }
+
+    @Inject(method = "renderArmWithItem", at = @At(value = "HEAD"), cancellable = true)
     private void render(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         if (livingEntity instanceof IEntityAnimatable<?> animatable) {
-            var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
-            var boneName = arm == HumanoidArm.LEFT ? "leftItem" : "rightItem";
-            var animData = animatable.getAnimData();
-            var play = animData.getPlayData();
-            var rot = play.getMixedBoneAnimRotation(boneName, partialTicks);
-            var pos = play.getMixedBoneAnimPosition(boneName, partialTicks);
-            var ma = new Matrix4f().translate(pos.x, -pos.z, pos.y)
-                    .rotateZYX(rot.y, -rot.z, rot.x + (float) Math.toRadians(10))
-                    .scale(play.getMixedBoneAnimScale(boneName, partialTicks));
-            poseStack.translate(0f, -2/16f, 1/16f);
-            poseStack.mulPose(ma);
-            poseStack.translate(0f, 2/16f, -1/16f);
+            var boneName = arm.getSerializedName() + "Item";
+            if (!itemStack.isEmpty() && animatable.getAnimData().getModel().hasBone(boneName)) {
+                var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+                var p = new PoseStack();
+                var cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+                p.translate(-cam.x, -cam.y, -cam.z);
+                var ma = animatable.getBoneMatrix(boneName, partialTicks);
+                var pivot = animatable.getAnimData().getModel().getBone(boneName).getPivot();
+                p.mulPose(ma);
+                p.translate(pivot.x, pivot.y - 1/16f, pivot.z - 1.75/16f);
+                p.mulPose(Axis.XP.rotationDegrees(-80.0F));
+                this.itemInHandRenderer.renderItem(livingEntity, itemStack, displayContext, arm == HumanoidArm.LEFT, p, buffer, packedLight);
+                ci.cancel();
+            }
         }
     }
 

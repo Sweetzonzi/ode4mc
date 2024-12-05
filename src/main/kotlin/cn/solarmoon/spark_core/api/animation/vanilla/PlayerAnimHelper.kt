@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.vanilla
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
 import cn.solarmoon.spark_core.api.event.PlayerRenderAnimInFirstPersonEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.AbstractClientPlayer

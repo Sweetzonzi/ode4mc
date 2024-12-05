@@ -1,17 +1,17 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.entity.skill.IBoxBoundToBoneAnimSkill
+import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import com.google.common.collect.HashBiMap
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
 
@@ -29,7 +29,7 @@ abstract class ComboAnimSkill(
 ): AttackAnimSkill(
     controller,
     buildSet { animGroup.values.forEach { add(it.anim.name) } }
-), IBoxBoundToBoneAnimSkill  {
+) {
 
     companion object {
         @JvmStatic
@@ -40,8 +40,6 @@ abstract class ComboAnimSkill(
         }
     }
 
-    val preInput get() = entity.getPreInput()
-
     val animBiMap = HashBiMap.create(buildMap { animGroup.forEach { key, value -> put(key, value.anim.name) } })
 
     var index = 0
@@ -51,7 +49,7 @@ abstract class ComboAnimSkill(
     abstract fun getMoveByIndex(index: Int, anim: MixedAnimation): Vec3?
 
     override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-        return if (shouldBoxSummon(animBiMap.inverse()[anim.name]!!, anim)) super.getBox(anim) else listOf()
+        return if (shouldBoxSummon(animBiMap.inverse()[anim.name]!!, anim)) listOf(getBoxBoundToBone(anim)) else listOf()
     }
 
     override fun getMove(anim: MixedAnimation): Vec3? {
@@ -66,39 +64,44 @@ abstract class ComboAnimSkill(
         return hitStrength[animBiMap.inverse()[anim.name]] ?: 0
     }
 
-    fun start(change: Boolean, sync: (SyncedAnimation) -> Unit = {}) {
+    fun start(changeTack: Boolean, sync: (SyncedAnimation) -> Unit = {}) {
         // 最后一段只在结束过渡时才能预输入，同时保证了index不会超过size值
-        if (index <= animGroup.size - 1) preInput.setInput("combo") {
+        if (index <= animGroup.size - 1) entity.getPreInput().setInput("combo") {
             animGroup[index]?.let {
-                it.consume(animatable, getAnimModifier(change))
+                it.consume(animatable, getAnimModifier(changeTack))
                 sync.invoke(it)
             }
             index++
         }
     }
 
-    fun getAnimModifier(change: Boolean): AnimModificationData = AnimModificationData(
+    fun getAnimModifier(changeTack: Boolean): AnimModificationData = AnimModificationData(
         getAttackAnimSpeed(baseAttackSpeed),
-        if (change) 2f else if (controller.isAttacking { !it.isCancelled } && !isPlaying()) 2f else -1f, // 特殊攻击到普通攻击的过渡时间上升
-        if (change) attackChangeNode[index]!!.toFloat() * 20 else -1f
+        if (changeTack) 2f else if (controller.isAttacking { !it.isCancelled } && !isPlaying()) 2f else -1f, // 特殊攻击到普通攻击的过渡时间上升
+        if (changeTack) attackChangeNode[index]!!.toFloat() * 20 else -1f
     )
 
     override fun whenInAnim(anim: MixedAnimation) {
         super.whenInAnim(anim)
 
+        val preInput = entity.getPreInput()
         val id = animBiMap.inverse()[anim.name]!!
         // 如果正在播放任何连击动画，按规定的结束点进行切换（预输入调用）
         val anim = anim.takeIf { !it.isCancelled } ?: return
         val switch = attackSwitchNode[id] ?: anim.maxTick
-        if (preInput.hasInput() && !HitType.isPlayingHitAnim(animatable) { !it.isCancelled } ) {
-            // 这一段使得连招在50-150ms之间可以变招
-            val changeNode = attackChangeNode[index]
-            if (preInput.id == "combo" && changeNode != null && !anim.isInTransition && anim.isTickIn(0.05, 0.15)) {
-                start(true)
-                preInput.invokeInput()
-            } else if (anim.isTickIn(switch, anim.maxTick)) { // 这一段则是到特定时间不用等动画结束可以直接执行下一个操作
-                preInput.invokeInput()
+        // 这一段使得连招在50-150ms之间可以变招
+        val changeNode = attackChangeNode[index]
+        if (preInput.hasInput("combo") && changeNode != null && !anim.isInTransition && anim.isTickIn(0.05, 0.15)) {
+            start(true) {
+                if (!entity.level().isClientSide) {
+                    if (entity is ServerPlayer) {
+                        it.syncToClientExceptPresentPlayer(entity, getAnimModifier(true))
+                    } else it.syncToClient(entity.id, getAnimModifier(true))
+                }
             }
+            preInput.executeIfPresent("combo")
+        } else if (anim.isTickIn(switch, anim.maxTick)) {
+            preInput.execute()
         }
     }
 

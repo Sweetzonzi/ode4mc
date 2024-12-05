@@ -1,10 +1,8 @@
-package cn.solarmoon.spark_core.api.animation.anim
+package cn.solarmoon.spark_core.api.animation.anim.part
 
-import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.phys.copy
 import com.mojang.serialization.Codec
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.util.Mth
 import org.joml.Vector3f

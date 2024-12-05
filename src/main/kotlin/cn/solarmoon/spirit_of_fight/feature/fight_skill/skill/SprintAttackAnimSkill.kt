@@ -15,7 +15,7 @@ abstract class SprintAttackAnimSkill(
     hitStrength: Int
 ): SingleAttackAnimSkill(controller, attackAnim, damageMultiplier, switchTime, hitType, hitStrength) {
 
-    override val isMetCondition: Boolean
+    override val canRelease: Boolean
         get() = entity.isSprinting
 
 }

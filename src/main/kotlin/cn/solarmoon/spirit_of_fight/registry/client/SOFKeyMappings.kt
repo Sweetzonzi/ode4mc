@@ -29,6 +29,13 @@ object SOFKeyMappings {
         .build()
 
     @JvmStatic
+    val PARRY = SparkCore.REGISTER.keyMapping()
+        .id("parry")
+        .bound(GLFW.GLFW_MOUSE_BUTTON_RIGHT)
+        .type(InputConstants.Type.MOUSE)
+        .build()
+
+    @JvmStatic
     val LOCK_ON = SparkCore.REGISTER.keyMapping()
         .id("lock_on")
         .bound(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)

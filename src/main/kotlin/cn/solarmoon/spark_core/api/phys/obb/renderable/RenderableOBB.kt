@@ -38,9 +38,14 @@ class RenderableOBB {
         }
     }
 
-    fun refresh(box: OrientedBoundingBox) {
+    /**
+     * 注意：刷新最好选用当前动画+speed处的box，因为动画的partialticks是为了补齐从这一tick到下一tick的空缺，而这里的partialtick则是为了补齐上一tick到这一tick的空缺，因此调用当前
+     * 动画对应的生成的box必然导致box滞后1tick
+     */
+    fun refresh(box: OrientedBoundingBox, straight: Boolean = false) {
         tick = 0
         this.box = box
+        if (straight) lastBox = box
     }
 
     fun getBox(partialTicks: Float): OrientedBoundingBox? {

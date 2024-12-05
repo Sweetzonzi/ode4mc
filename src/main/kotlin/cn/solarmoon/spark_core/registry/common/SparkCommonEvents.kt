@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimTicker
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnimApplier
 import cn.solarmoon.spark_core.api.entity.attack.AttackedDataController
 import cn.solarmoon.spark_core.api.entity.preinput.PreInputApplier
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkillApplier
@@ -16,6 +17,7 @@ object SparkCommonEvents {
         add(AnimSkillApplier())
         add(EntityStateModifier())
         add(PreInputApplier())
+        add(AutoAnimApplier())
     }
 
     private fun add(event: Any) {

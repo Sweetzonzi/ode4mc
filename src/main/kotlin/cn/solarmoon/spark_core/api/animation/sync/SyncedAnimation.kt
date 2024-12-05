@@ -51,6 +51,10 @@ class SyncedAnimation(
         }
     }
 
+    fun isPlaying(animatable: IAnimatable<*>, level: Int = 0, filter: (MixedAnimation) -> Boolean = { true }): Boolean {
+        return animatable.animController.isPlaying(anim.name, level, filter)
+    }
+
     /**
      * 如果动画是由非玩家的生物所播放的，使用此方法进行同步，将会从服务端同步动画到所有客户端玩家
      * @param modifier 可以对动画进行额外修改

@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation.anim.part
 
-import cn.solarmoon.spark_core.api.animation.anim.InterpolationType
 import cn.solarmoon.spark_core.api.data.SerializeHelper.VECTOR3F_STREAM_CODEC
 import cn.solarmoon.spark_core.api.phys.copy
 import com.mojang.serialization.Codec

@@ -1,11 +1,12 @@
 package cn.solarmoon.spark_core.api.entry_builder.common
 
 import net.neoforged.neoforge.attachment.AttachmentType
+import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
-class AttachmentBuilder<A>(private val attachmentDeferredRegister: DeferredRegister<AttachmentType<*>>) {//
+class AttachmentBuilder<A>(private val attachmentDeferredRegister: DeferredRegister<AttachmentType<*>>) {
 
     private var id: String = ""
     private var builder: AttachmentType.Builder<A>? = null
@@ -15,7 +16,7 @@ class AttachmentBuilder<A>(private val attachmentDeferredRegister: DeferredRegis
     /**
      * 为空时返回的默认值，必填
      */
-    fun defaultValue(value: Supplier<A>) = apply {
+    fun defaultValue(value: (IAttachmentHolder) -> A) = apply {
         this.builder = AttachmentType.builder(value)
     }
 

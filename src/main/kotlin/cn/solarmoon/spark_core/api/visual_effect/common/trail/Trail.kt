@@ -2,12 +2,14 @@ package cn.solarmoon.spark_core.api.visual_effect.common.trail
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import net.minecraft.client.Minecraft
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.joml.Vector3f
 import java.awt.Color
+import java.io.FileNotFoundException
 
 class Trail(
     val box: OrientedBoundingBox,
@@ -15,7 +17,7 @@ class Trail(
     val color: Color = Color.WHITE
 ) {
 
-    var textureLocation = ResourceLocation.withDefaultNamespace("textures/block/dirt.png")
+    private var textureLocation = DEFAULT_TEXTURE
     val start: Vector3f get() = box.getAxisFaceCenters(axis).first
     val end: Vector3f get() = box.getAxisFaceCenters(axis).second
 
@@ -36,7 +38,19 @@ class Trail(
     }
 
     fun setTexture(location: ResourceLocation) {
-        textureLocation = location
+        try {
+            Minecraft.getInstance().resourceManager.getResourceOrThrow(location)
+            textureLocation = location
+        } catch (e: FileNotFoundException) {
+            textureLocation = DEFAULT_TEXTURE
+        }
+    }
+
+    fun getTexture() = textureLocation
+
+    companion object {
+        @JvmStatic
+        val DEFAULT_TEXTURE = ResourceLocation.withDefaultNamespace("textures/item/iron_ingot.png")
     }
 
 }

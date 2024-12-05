@@ -21,6 +21,7 @@ import net.neoforged.neoforge.client.model.data.ModelData
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.awt.Color
+import java.io.FileNotFoundException
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -90,7 +91,7 @@ class TrailRenderer: VisualEffectRenderer() {
             val overlay = OverlayTexture.NO_OVERLAY
             fun p(p: Trail): Float = 1 - p.getProgress(partialTicks)
             val normal = Vector3f(0f, 1f, 0f).normalize()
-            val buffer = bufferSource.getBuffer(RenderTypeUtil.transparentRepair(trail.textureLocation))
+            val buffer = bufferSource.getBuffer(RenderTypeUtil.transparentRepair(trail.getTexture()))
             buffer.addVertex(pot1s.x, pot1s.y, pot1s.z).setColor(color[0], color[1], color[2], p(dT1)).setLight(light).setUv(1f, 0f).setOverlay(overlay).setNormal(normal.x, normal.y, normal.z)
             buffer.addVertex(pot1e.x, pot1e.y, pot1e.z).setColor(color[0], color[1], color[2], p(dT1)).setLight(light).setUv(0f, 1f).setOverlay(overlay).setNormal(normal.x, normal.y, normal.z)
             buffer.addVertex(pot2e.x, pot2e.y, pot2e.z).setColor(color[0], color[1], color[2], p(dT2)).setLight(light).setUv(0f, 1f).setOverlay(overlay).setNormal(normal.x, normal.y, normal.z)

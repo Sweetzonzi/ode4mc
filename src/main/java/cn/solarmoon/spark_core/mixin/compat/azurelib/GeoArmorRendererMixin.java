@@ -22,8 +22,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import software.bernie.geckolib.util.RenderUtil;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(GeoArmorRenderer.class)
 public abstract class GeoArmorRendererMixin<T extends Item & GeoItem> extends HumanoidModel implements GeoRenderer<T> {
@@ -58,7 +61,17 @@ public abstract class GeoArmorRendererMixin<T extends Item & GeoItem> extends Hu
     )
     public void renderRecursively(PoseStack poseStack, T animatable0, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour, CallbackInfo ci) {
         if (currentEntity instanceof IEntityAnimatable<?> animatable && VanillaModelHelper.shouldSwitchToAnim(animatable)) {
-            if (List.of(leftArm, rightArm, head).contains(bone)) RenderUtils.prepMatrixForBone(poseStack, body);
+            apply(leftArm, bone, poseStack);
+            apply(rightArm, bone, poseStack);
+            apply(head, bone, poseStack);
+        }
+    }
+
+    private void apply(GeoBone bound, GeoBone bone, PoseStack poseStack) {
+        if (body == null) return;
+        if (bound == null) return;
+        if (Objects.equals(bound.getName(), bone.getName())) {
+            RenderUtils.prepMatrixForBone(poseStack, body);
         }
     }
 

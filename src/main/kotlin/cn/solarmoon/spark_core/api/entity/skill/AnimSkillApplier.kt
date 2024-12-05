@@ -45,8 +45,8 @@ class AnimSkillApplier {
             if (skillController != null) {
                 if (!switch) entity.persistentData.putBoolean("SkillSwitch", true)
             } else {
-                // 一旦战技从有到无则刷新所有动作
-                if (switch) {
+                // 一旦技能从有到无并且正在播放技能动作则刷新所有动作
+                if (switch && entity.getAllSkills().any { !it.isAvailable && it.isPlayingSkill() }) {
                     entity.persistentData.putBoolean("SkillSwitch", false)
                     entity.animController.stopAllAnimation()
                 }

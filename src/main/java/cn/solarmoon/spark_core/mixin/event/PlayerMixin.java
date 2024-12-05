@@ -1,7 +1,9 @@
 package cn.solarmoon.spark_core.mixin.event;
 
+import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent;
 import cn.solarmoon.spark_core.api.event.PlayerGetAttackStrengthEvent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +21,14 @@ public class PlayerMixin {
         var event = new PlayerGetAttackStrengthEvent(player, adjustTicks, origin);
         NeoForge.EVENT_BUS.post(event);
         cir.setReturnValue(event.getAttackStrengthScale());
+    }
+
+    @Inject(method = "getWeaponItem", at = @At("RETURN"), cancellable = true)
+    private void getWeapon(CallbackInfoReturnable<ItemStack> cir) {
+        var origin = cir.getReturnValue();
+        var event = new EntityGetWeaponEvent(player, origin);
+        NeoForge.EVENT_BUS.post(event);
+        cir.setReturnValue(event.getWeapon());
     }
 
 }

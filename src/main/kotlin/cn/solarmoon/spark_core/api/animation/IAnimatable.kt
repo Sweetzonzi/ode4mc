@@ -2,18 +2,15 @@ package cn.solarmoon.spark_core.api.animation
 
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimController
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
-import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.item.Items
-import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import kotlin.properties.Delegates
 
-interface IAnimatable<T: IAttachmentHolder> {
+interface IAnimatable<T> {
 
     /**
      * 一般而言输入this即可，用于调用该生物的位置信息等
@@ -26,8 +23,11 @@ interface IAnimatable<T: IAttachmentHolder> {
     val animController: AnimController<IAnimatable<T>>
 
     var animData: AnimData
-        get() = animatable.getData(SparkAttachments.ANIM_DATA)
-        set(value) { animatable.setData(SparkAttachments.ANIM_DATA, value) }
+
+    /**
+     * 自动播放的动画，但是此处直接传入一个空列表即可，将会在生物初始化时自动加入所有的自动动画，并且不要写成getter形式以免动画无法加入
+     */
+    val autoAnims: MutableSet<AutoAnim<*>>
 
     /**
      * 获取位移到当前坐标并应用了基础旋转的变换矩阵
@@ -37,22 +37,22 @@ interface IAnimatable<T: IAttachmentHolder> {
     /**
      * 对指定骨骼进行的额外变换
      */
-    fun getExtraTransform(partialTick: Float = 0f): Map<String, Matrix4f> = mapOf()
+    fun getExtraTransform(partialTick: Float = 1f): Map<String, Matrix4f> = mapOf()
 
     /**
      * 获取该生物指定骨骼在世界坐标系中的枢轴点
      */
-    fun getBonePivot(name: String, partialTick: Float = 0f): Vector3f
+    fun getBonePivot(name: String, partialTick: Float = 1f): Vector3f
 
     /**
      * 获取指定骨骼的变换
      */
-    fun getBoneMatrix(name: String, partialTick: Float = 0f): Matrix4f
+    fun getBoneMatrix(name: String, partialTick: Float = 1f): Matrix4f
 
     /**
      * 创建和骨骼绑定的碰撞箱
      */
-    fun createCollisionBoxBoundToBone(boneName: String, size: Vector3f = Vector3f(), offset: Vector3f = Vector3f(), partialTicks: Float = 0f): OrientedBoundingBox {
+    fun createCollisionBoxBoundToBone(boneName: String, size: Vector3f = Vector3f(), offset: Vector3f = Vector3f(), partialTicks: Float = 1f): OrientedBoundingBox {
         return OrientedBoundingBox(getBonePivot(boneName, partialTicks), size)
             .apply { rotation.setFromUnnormalized(getBoneMatrix(boneName)) }
             .apply { offsetCenter(offset) }
@@ -69,10 +69,5 @@ interface IAnimatable<T: IAttachmentHolder> {
                 PacketDistributor.sendToAllPlayers(data)
             }
     }
-
-    /**
-     * 在使用[cn.solarmoon.spark_core.api.entity.attack.AttackHelper.getDamageBone]时，将会过滤掉该列表中的骨骼，也就是不会击中这些过滤掉的骨骼
-     */
-    val passableBones: List<String> get() = listOf()
 
 }

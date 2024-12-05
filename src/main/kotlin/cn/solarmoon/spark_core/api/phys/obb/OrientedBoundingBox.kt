@@ -11,10 +11,12 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Direction
 import net.minecraft.network.codec.StreamCodec
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.player.Player
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
@@ -235,7 +237,9 @@ data class OrientedBoundingBox(
     fun extendByEntityInteractRange(entity: Entity, omniExpansion: Boolean = false): OrientedBoundingBox = apply {
         if (entity is LivingEntity) {
             entity.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)?.let {
-                (it.value.toFloat() - 5f).takeIf { it > 0 }?.let { add ->
+                var differ = it.baseValue.toFloat()
+                if (entity is Player && entity.isCreative) differ += 2
+                (it.value.toFloat() - differ).takeIf { it > 0 }?.let { add ->
                     inflate(if (omniExpansion) Vector3f(add) else Vector3f(0f, 0f, add))
                 }
             }

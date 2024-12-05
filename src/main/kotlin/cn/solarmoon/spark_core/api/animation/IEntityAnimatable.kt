@@ -1,8 +1,10 @@
 package cn.solarmoon.spark_core.api.animation
 
-import cn.solarmoon.spark_core.api.animation.anim.template.EntityStateAnim
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityStateAutoAnim
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.toRadians
+import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.neoforged.neoforge.network.PacketDistributor
@@ -17,10 +19,19 @@ import kotlin.math.PI
  */
 interface IEntityAnimatable<T: Entity>: IAnimatable<T> {
 
+    override var animData: AnimData
+        get() = animatable.getData(SparkAttachments.ANIM_DATA)
+        set(value) { animatable.setData(SparkAttachments.ANIM_DATA, value) }
+
     /**
      * 在此组中的动画播放时，会强制让生物的yRot逐渐旋转到目视方向
      */
     val turnBodyAnims: List<String> get() = listOf()
+
+    /**
+     * 在使用[cn.solarmoon.spark_core.api.entity.attack.AttackHelper.getDamageBone]时，将会过滤掉该列表中的骨骼，也就是不会击中这些过滤掉的骨骼
+     */
+    val passableBones: List<String> get() = listOf()
 
     override fun getPositionMatrix(partialTick: Float): Matrix4f {
         return Matrix4f().translate(animatable.getPosition(partialTick).toVector3f()).rotateY(PI.toFloat() - animatable.getPreciseBodyRotation(partialTick).toRadians())
@@ -47,7 +58,9 @@ interface IEntityAnimatable<T: Entity>: IAnimatable<T> {
     override fun getExtraTransform(partialTick: Float): Map<String, Matrix4f> {
         val pitch = -animatable.getViewXRot(partialTick).toRadians()
         val yaw = -animatable.getViewYRot(partialTick).toRadians() + animatable.getPreciseBodyRotation(partialTick).toRadians()
-        return mapOf(Pair("head", Matrix4f().rotateZYX(0f, yaw, pitch)))
+        return mapOf(
+            "head" to Matrix4f().rotateZYX(0f, yaw, pitch)
+        )
     }
 
     override fun syncAnimDataToClient(playerExcept: ServerPlayer?) {
@@ -59,12 +72,5 @@ interface IEntityAnimatable<T: Entity>: IAnimatable<T> {
                 }
         }
     }
-
-    /**
-     * 状态动画，比如待机行走一类的动画，可用的所有状态都可在[EntityStateAnim]中找到，所有状态的判断目前暂时使用统一逻辑
-     *
-     * 如果想方便的在各个状态添加动画，可以直接放入该状态到此方法返回的列表中，一键放入所有可以使用[EntityStateAnim.ALL_STATES]
-     */
-    val statusAnims: List<EntityStateAnim> get() = listOf()
 
 }

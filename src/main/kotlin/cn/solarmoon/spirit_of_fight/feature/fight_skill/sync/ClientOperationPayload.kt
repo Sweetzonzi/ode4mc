@@ -2,13 +2,16 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.SerializeHelper
+import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.util.MoveDirection
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
@@ -52,7 +55,12 @@ data class ClientOperationPayload(
                     }
                 }
                 "guard_clear" -> {
-                    skill.preInput.clear()
+                    (player as Entity).getPreInput().clear()
+                }
+                "parry" -> {
+                    if (skill is CommonFightSkillController) skill.parry.start {
+                        it.syncToClientExceptPresentPlayer(player)
+                    }
                 }
                 else -> {
                     val operation = payload.operation.toIntOrNull() ?: return

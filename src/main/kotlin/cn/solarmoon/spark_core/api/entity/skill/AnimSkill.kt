@@ -146,8 +146,7 @@ abstract class AnimSkill(
      * 获取各个条件下的检测箱，会在不返回空时生成给定的碰撞箱
      */
     open fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-        return if (this is IBoxBoundToBoneAnimSkill) listOf(getBoundBox(anim))
-        else listOf()
+        return listOf()
     }
 
     /**

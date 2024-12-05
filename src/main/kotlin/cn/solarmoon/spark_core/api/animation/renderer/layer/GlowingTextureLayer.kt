@@ -36,7 +36,7 @@ class GlowingTextureLayer<T: IAttachmentHolder>(renderer: IGeoRenderer<T>): Rend
         val animData = sth.animData
         val model = animData.model
         poseStack.pushPose()
-        val overlay = if (sth is LivingEntity && sth.hurtTime > 0) 0 else OverlayTexture.NO_OVERLAY // 受击变红
+        val overlay = OverlayTexture.NO_OVERLAY
         val matrix = sth.getPositionMatrix(partialTick)
         model.renderBones(animData.playData, matrix, sth.getExtraTransform(partialTick), poseStack.last().normal(), buffer, packedLight, overlay, -1, partialTick)
         poseStack.popPose()

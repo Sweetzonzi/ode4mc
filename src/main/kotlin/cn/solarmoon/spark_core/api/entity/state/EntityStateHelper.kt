@@ -9,8 +9,6 @@ import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.phys.Vec3
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
@@ -26,6 +24,9 @@ object EntityStateHelper {
     @JvmStatic
     val DATA_STATE_FLAGS_ID: Lazy<EntityDataAccessor<Byte>> = lazy { SynchedEntityData.defineId(Entity::class.java, EntityDataSerializers.BYTE) }
 
+    @JvmStatic
+    val DATA_STATE_SPEED: Lazy<EntityDataAccessor<Float>> = lazy { SynchedEntityData.defineId(Entity::class.java, EntityDataSerializers.FLOAT) }
+
 }
 
 fun Entity.moveCheck(): Boolean {
@@ -33,6 +34,17 @@ fun Entity.moveCheck(): Boolean {
     val avgV = (abs(v.x) + abs(v.z)) / 2f
     return avgV >= 0.015
 }
+
+fun Entity.getMoveSpeed(): Double {
+    val v = knownMovement
+    return v.horizontalDistance()
+}
+
+fun Entity.setServerMoveSpeed(value: Float) {
+    entityData[EntityStateHelper.DATA_STATE_SPEED.value] = value
+}
+
+fun Entity.getServerMoveSpeed() = entityData[EntityStateHelper.DATA_STATE_SPEED.value]
 
 fun Entity.moveBackCheck(): Boolean {
     val v = knownMovement
@@ -43,7 +55,7 @@ fun Entity.moveBackCheck(): Boolean {
 }
 
 fun Entity.isMoving(): Boolean {
-    return getState(1)
+    return get(1)
 }
 
 fun Entity.setMoving(set: Boolean) {
@@ -51,7 +63,7 @@ fun Entity.setMoving(set: Boolean) {
 }
 
 fun Entity.isMovingBack(): Boolean {
-    return getState(2)
+    return get(2)
 }
 
 fun Entity.setMovingBack(set: Boolean) {
@@ -59,7 +71,7 @@ fun Entity.setMovingBack(set: Boolean) {
 }
 
 fun Entity.isJumping(): Boolean {
-    return getState(3)
+    return get(3)
 }
 
 fun Entity.setJumpingState(set: Boolean) {
@@ -75,7 +87,7 @@ fun Entity.setState(flag: Int, set: Boolean) {
     }
 }
 
-fun Entity.getState(flag: Int): Boolean {
+fun Entity.get(flag: Int): Boolean {
     return (this.entityData.get(EntityStateHelper.DATA_STATE_FLAGS_ID.value).toInt() and (1 shl flag)) != 0
 }
 
@@ -83,12 +95,14 @@ fun Entity.isFalling(): Boolean {
     return !onGround() && deltaMovement.y != 0.0
 }
 
+fun Entity.getState(): EntityState = EntityState.get(this)
+
 /**
- * 判断目标实体是否在输入实体朝向的一个扇形角度范围内（输入量都是角度制）
+ * 判断输入坐标是否在当前实体朝向的一个扇形角度范围内（输入量都是角度制）
  * @param targetPos 目标实体位置
  * @param rotateY 将扇形区域绕目标中心点进行整体旋转
  */
-fun Entity.isInRangeFrontOf(targetPos: Vec3, rangeDegrees: Double, rotateY: Float = 0f): Boolean {
+fun Entity.canSee(targetPos: Vec3, rangeDegrees: Double, rotateY: Float = 0f): Boolean {
     val entityPos = position()
 
     // 朝向
@@ -108,15 +122,27 @@ fun Entity.isInRangeFrontOf(targetPos: Vec3, rangeDegrees: Double, rotateY: Floa
 }
 
 /**
- * 根据扇形角度划分该实体在目标实体的哪个方向，其中前后为135度扇形，左右为45度扇形
+ * 根据扇形角度划分目标位置在该实体的哪个相对方向上，其中前后为135度扇形，左右为45度扇形
  */
-fun Entity.getSideOf(targetPos: Vec3): Side {
+fun Entity.getSide(targetPos: Vec3): Side {
     return when {
-        isInRangeFrontOf(targetPos, 135.0, 0f) -> Side.FRONT
-        isInRangeFrontOf(targetPos, 45.0, 90f) -> Side.LEFT
-        isInRangeFrontOf(targetPos, 135.0, 180f) -> Side.BACK
-        isInRangeFrontOf(targetPos, 45.0, 270f) -> Side.RIGHT
+        canSee(targetPos, 135.0, 0f) -> Side.FRONT
+        canSee(targetPos, 45.0, 90f) -> Side.LEFT
+        canSee(targetPos, 135.0, 180f) -> Side.BACK
+        canSee(targetPos, 45.0, 270f) -> Side.RIGHT
         else -> Side.FRONT
+    }
+}
+
+/**
+ * 只判断左右侧的[getSide]
+ * @param invert 是否反转输出结果
+ */
+fun Entity.getLateralSide(targetPos: Vec3, invert: Boolean = false): Side {
+    return when {
+        canSee(targetPos, 180.0, 90f) -> if (!invert) Side.LEFT else Side.RIGHT
+        canSee(targetPos, 180.0, 270f) -> if (!invert) Side.RIGHT else Side.LEFT
+        else -> Side.RIGHT
     }
 }
 

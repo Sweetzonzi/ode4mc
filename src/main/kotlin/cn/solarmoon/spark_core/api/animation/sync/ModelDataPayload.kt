@@ -12,8 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 
 data class ModelDataPayload(
     val models: MutableMap<ResourceLocation, CommonModel>,
-    val animationSets: MutableMap<ResourceLocation, AnimationSet>,
-    val playerAnimationSet: AnimationSet
+    val animationSets: MutableMap<ResourceLocation, AnimationSet>
 ): CustomPacketPayload {
 
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload?> {
@@ -26,14 +25,12 @@ data class ModelDataPayload(
             context.enqueueWork {
                 CommonModel.ORIGINS.clear()
                 AnimationSet.ORIGINS.clear()
-                AnimationSet.PLAYER_ORIGINS.animations.clear()
                 payload.models.forEach { id, model ->
                     CommonModel.ORIGINS[id] = model
                 }
                 payload.animationSets.forEach { id, anim ->
                     AnimationSet.ORIGINS[id] = anim
                 }
-                AnimationSet.PLAYER_ORIGINS.animations.addAll(payload.playerAnimationSet.animations)
                 SparkCore.LOGGER.info("已从服务器接收所有模型动画数据")
             }.exceptionally {
                 context.disconnect(Component.literal("未能成功接受模型和动画数据"))
@@ -50,7 +47,6 @@ data class ModelDataPayload(
         val STREAM_CODEC: StreamCodec<FriendlyByteBuf, ModelDataPayload> = StreamCodec.composite(
             CommonModel.ORIGIN_MAP_STREAM_CODEC, ModelDataPayload::models,
             AnimationSet.ORIGIN_MAP_STREAM_CODEC, ModelDataPayload::animationSets,
-            AnimationSet.STREAM_CODEC, ModelDataPayload::playerAnimationSet,
             ::ModelDataPayload
         )
     }
