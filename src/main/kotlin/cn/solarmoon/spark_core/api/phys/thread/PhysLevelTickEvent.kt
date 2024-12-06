@@ -2,10 +2,8 @@ package cn.solarmoon.spark_core.api.phys.thread
 
 import net.neoforged.bus.api.Event
 
-abstract class PhysLevelTickEvent: Event() {
+open class PhysLevelTickEvent(val level: PhysLevel): Event() {
 
-    class Entity(val entity: net.minecraft.world.entity.Entity): PhysLevelTickEvent() {
-
-    }
+    class Entity(level: PhysLevel, val entity: net.minecraft.world.entity.Entity): PhysLevelTickEvent(level)
 
 }

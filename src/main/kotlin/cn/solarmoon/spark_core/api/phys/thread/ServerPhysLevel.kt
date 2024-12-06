@@ -9,7 +9,7 @@ class ServerPhysLevel(
 
     override fun frequencyTick() {
         level.allEntities.forEach {
-            NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(it))
+            NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(this, it))
         }
     }
 

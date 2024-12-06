@@ -7,6 +7,7 @@ import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.entity.state.getInputVector
 import cn.solarmoon.spark_core.api.event.KeyboardInputTickEvent
 import cn.solarmoon.spark_core.api.event.OnPreInputExecuteEvent
+import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import cn.solarmoon.spark_core.api.util.MoveDirection
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController

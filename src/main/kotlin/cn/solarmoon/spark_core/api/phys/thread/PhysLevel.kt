@@ -12,11 +12,14 @@ import cn.solarmoon.spark_core.api.phys.toQuaternion
 import cn.solarmoon.spark_core.api.phys.toVector3f
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.common.NeoForge
@@ -29,12 +32,16 @@ abstract class PhysLevel(
     companion object {
         @JvmStatic
         val TICK_STEP = 20L
+        @JvmStatic
+        val TICKS_PRE_SECOND = (1000.0 / TICK_STEP).toInt()
     }
 
-    val thread = CoroutineScope(Dispatchers.Default)
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
+    val scope = CoroutineScope(newSingleThreadContext("Phys$level.toString()"))
     val world = OdeHelper.createWorld()
     val entitySpace = OdeHelper.createHashSpace()
     val contactGroup = OdeHelper.createJointGroup()
+    protected var lastTickTime = System.nanoTime()
 
     init {
         world.setGravity(0.0, -9.81, 0.0) //设置重力
@@ -49,14 +56,16 @@ abstract class PhysLevel(
         OdeHelper.createPlane(entitySpace, 0.0, 1.0, 0.0, -60.0)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun load() {
-        thread.launch {
+        scope.launch {
             while (isActive) {
                 val startTime = System.nanoTime()
 
                 frequencyTick()
 
                 val endTime = System.nanoTime()
+                lastTickTime = endTime
                 val executionTime = (endTime - startTime) / 1_000_000
                 val remainingDelay = TICK_STEP - executionTime
                 if (remainingDelay > 0) {
@@ -66,8 +75,9 @@ abstract class PhysLevel(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun unLoad() {
-        thread.cancel()
+        scope.cancel()
     }
 
     abstract fun frequencyTick()

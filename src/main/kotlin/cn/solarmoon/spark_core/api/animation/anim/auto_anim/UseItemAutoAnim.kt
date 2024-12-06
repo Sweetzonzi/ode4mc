@@ -29,7 +29,7 @@ open class UseItemAutoAnim(
         return BuiltInRegistries.ITEM.getKey(entity.useItem.item).toString()
     }
 
-    override fun tick() {
+    override fun frequencyTick() {
         if (entity is IEntityAnimatable<*>) {
             animTrigger = tryPlay { it.startTransSpeed = 4f }
 

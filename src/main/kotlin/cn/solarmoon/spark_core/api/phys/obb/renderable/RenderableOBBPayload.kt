@@ -2,7 +2,9 @@ package cn.solarmoon.spark_core.api.phys.obb.renderable
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
+import kotlinx.coroutines.launch
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -24,9 +26,13 @@ data class RenderableOBBPayload(
     companion object {
         @JvmStatic
         fun handleInClient(payload: RenderableOBBPayload, context: IPayloadContext) {
-            val debug = SparkVisualEffects.OBB.getRenderableBox(payload.id)
-            payload.color?.let { debug.setColor(Color(it)) }
-            payload.box?.let { debug.box = it }
+            context.player().level().getPhysLevel()?.let {
+                it.scope.launch {
+                    val debug = SparkVisualEffects.OBB.getRenderableBox(payload.id)
+                    payload.color?.let { debug.setColor(Color(it)) }
+                    payload.box?.let { debug.box = it }
+                }
+            }
         }
 
         @JvmStatic

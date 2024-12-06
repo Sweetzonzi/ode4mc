@@ -21,7 +21,7 @@ class Trail(
     val end: Vector3f get() = box.getAxisFaceCenters(axis).second
 
     var tick = 0
-    var maxTick = 5
+    var maxTick = 50
 
     val isFinished get() = tick > maxTick
     fun getProgress(partialTicks: Float = 0f) = ((tick + partialTicks) / maxTick).coerceIn(0f, 1f)

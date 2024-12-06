@@ -3,6 +3,7 @@ package cn.solarmoon.spark_core.api.entity.skill
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent
 import cn.solarmoon.spark_core.api.event.PlayerGetAttackStrengthEvent
+import cn.solarmoon.spark_core.api.phys.thread.PhysLevelTickEvent
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
@@ -29,7 +30,7 @@ class AnimSkillApplier {
     }
 
     @SubscribeEvent
-    private fun entityTick(event: EntityTickEvent.Pre) {
+    private fun entityTick(event: PhysLevelTickEvent.Entity) {
         val entity = event.entity
         if (entity is IAnimSkillHolder<*> && entity is IEntityAnimatable<*>) {
             val skillController = entity.skillController

@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core.api.phys.thread
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.phys.math.DVector3
 import cn.solarmoon.spark_core.api.phys.ode.DContactBuffer
 import cn.solarmoon.spark_core.api.phys.ode.OdeHelper
@@ -57,12 +58,11 @@ class PhysThreadApplier {
     @SubscribeEvent
     private fun test(event: PhysLevelTickEvent.Entity) {
         val entity = event.entity
+        if (entity is IEntityAnimatable<*>) {
+            entity.animController.animTick()
+        }
         entity.getPhysLevel()?.let {
-            val entityBox = OdeHelper.createBox(5.0, 5.0, 5.0).apply { position = entity.position().toDVector3() }
-            val box = OdeHelper.createBox(DVector3(5.0, 5.0, 5.0)).apply { position = Vec3.ZERO.toDVector3(); }
-            if (OdeHelper.collide(entityBox, box, 1, DContactBuffer(64).geomBuffer) > 0) {
 
-            }
         }
     }
 

@@ -5,6 +5,7 @@ import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.state.EntityState
 import cn.solarmoon.spark_core.api.entity.state.getServerMoveSpeed
 import cn.solarmoon.spark_core.api.entity.state.getState
+import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import net.minecraft.world.entity.Entity
 import kotlin.math.log
 
@@ -52,7 +53,7 @@ class EntityStateAutoAnim(
     }
 
     override fun isValid(): Boolean {
-        val mixAnimations = animatable.animData.playData.mixedAnims
+        val mixAnimations = animatable.animData.playData.getMixedAnims()
         val isPlayingOtherAnim = !mixAnimations.isEmpty() && mixAnimations.any { it.name !in getAllAnimNames() && !it.isCancelled }
         val jump = animatable.animData.playData.getMixedAnimation(playData[EntityState.JUMP]!!)
         return !isPlayingOtherAnim && (jump == null || jump.isTickIn(0.4, jump.maxTick))
@@ -62,7 +63,7 @@ class EntityStateAutoAnim(
         return playData[getState()]!!.substringAfter("/")
     }
 
-    override fun tick() {
+    override fun frequencyTick() {
         if (tryPlay({ getState() == EntityState.JUMP || it.name != playData[EntityState.JUMP]!! })) {
             modify()
         }
@@ -70,6 +71,7 @@ class EntityStateAutoAnim(
 
     fun modify() {
         if (entity !is IEntityAnimatable<*>) return
+        val level = entity.level().getPhysLevel() ?: return
         val factor = when(getState()) {
             EntityState.WALK -> 1f / 215
             EntityState.WALK_BACK -> 1f / 215
@@ -89,8 +91,12 @@ class EntityStateAutoAnim(
         if (result > 1f) result = log(result, fc) + 1f
 
         if (factor != 0f) {
-            entity.animData.playData.mixedAnims.filter { it.name == getAnimName() }.forEach {
-                it.speed = result.coerceAtLeast(0.5f)
+            entity.animData.playData.modifyAnims(level) {
+                synchronized(it) {
+                    it.filter { it.name == getAnimName() }.forEach {
+                        it.speed = result.coerceAtLeast(0.5f)
+                    }
+                }
             }
         }
     }

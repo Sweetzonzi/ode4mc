@@ -3,6 +3,7 @@ package cn.solarmoon.spark_core.api.animation.anim.play
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.AnimationSet
 import cn.solarmoon.spark_core.api.data.SerializeHelper
+import cn.solarmoon.spark_core.api.phys.thread.PhysLevel
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -58,7 +59,7 @@ data class MixedAnimation(
         if (startTransSpeed > MAX_TRANS_PROCESS) transTick = MAX_TRANS_PROCESS
     }
 
-    val maxTick get() = animation.baseLifeTime * 20
+    val maxTick get() = animation.baseLifeTime * PhysLevel.TICKS_PRE_SECOND
     var speed
         get() = _speed * freeze.toFloat()
         set(value) { _speed = value }
@@ -84,7 +85,7 @@ data class MixedAnimation(
      * 判断tick是否在两个时间段之间，此方法会考虑到动画速度的影响和tick本身的时间间隔，因此只需填入动画里默认的时间段即可
      */
     fun isTickIn(time1: Double, time2: Double): Boolean {
-        return tick in time1 * 20 .. time2 * 20
+        return tick in time1 * PhysLevel.TICKS_PRE_SECOND .. time2 * PhysLevel.TICKS_PRE_SECOND
     }
 
     // 比较名字保证只有一种该动画，同时比较cancelled保证同种动画的切换之间存在过渡

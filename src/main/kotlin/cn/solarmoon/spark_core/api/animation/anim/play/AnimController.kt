@@ -3,7 +3,9 @@ package cn.solarmoon.spark_core.api.animation.anim.play
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.animation.sync.AnimFreezingPayload
+import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import net.minecraft.world.entity.Entity
+import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import kotlin.collections.contains
 
@@ -22,27 +24,30 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
      * @param filter 会对每一个正在组里的动画进行遍历，可根据它们的属性选择一个boolean值来决定是否暂停它们
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
-        val mixes = animatable.animData.playData.mixedAnims
-        val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
-        mixes.forEach {
-            if (filter.invoke(it)) {
-                if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
-                it.isCancelled = true
+        (animatable as IAttachmentHolder).getPhysLevel()?.let {
+            animatable.animData.playData.modifyAnims(it) {
+                val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
+                it.forEach {
+                    if (filter.invoke(it)) {
+                        if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
+                        it.isCancelled = true
+                    }
+                }
+                it.addAll(mixedAnimation)
             }
         }
-        mixes.addAll(mixedAnimation)
     }
 
     fun stopAnimation(vararg name: String) {
-        animatable.animData.playData.mixedAnims.forEach { if (it.name in name) it.isCancelled = true }
+        animatable.animData.playData.getMixedAnims().forEach { if (it.name in name) it.isCancelled = true }
     }
 
     fun stopAnimation(filter: (MixedAnimation) -> Boolean) {
-        animatable.animData.playData.mixedAnims.filter(filter).forEach { it.isCancelled = true }
+        animatable.animData.playData.getMixedAnims().filter(filter).forEach { it.isCancelled = true }
     }
 
     fun stopAllAnimation() {
-        animatable.animData.playData.mixedAnims.forEach { it.isCancelled = true }
+        animatable.animData.playData.getMixedAnims().forEach { it.isCancelled = true }
     }
 
     /**
@@ -57,7 +62,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
 
     fun isPlaying(name: String?, level: Int, filter: (MixedAnimation) -> Boolean = { true }): Boolean {
         val play = animatable.animData.playData
-        if (name == null) return play.mixedAnims.isEmpty()
+        if (name == null) return play.getMixedAnims().isEmpty()
         val anim = play.getMixedAnimation(name, level, filter)
         return anim != null
     }
@@ -79,33 +84,37 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
      * 此方法是双端调用的，主要使用的是在客户端模拟预测服务端的操作，单独进行渲染
      */
     fun animTick() {
-        val playData = animatable.animData.playData
+        (animatable as IAttachmentHolder).getPhysLevel()?.let { level ->
+            val playData = animatable.animData.playData
 
-        // 播放
-        playData.mixedAnims.forEach {
-            if (it.shouldBackwardTransition) {
-                it.transTick -= it.endTransSpeed
-            } else if (it.shouldForwardTransition) {
-                it.transTick += it.startTransSpeed
-            } else {
-                if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
-                else {
-                    when(it.animation.loop) {
-                        Loop.TRUE -> it.tick = 0.00001
-                        Loop.ONCE -> it.isCancelled = true
-                        Loop.HOLD_ON_LAST_FRAME -> Unit
+            // 播放
+            playData.modifyAnims(level) {
+                it.forEach {
+                    if (it.shouldBackwardTransition) {
+                        it.transTick -= it.endTransSpeed
+                    } else if (it.shouldForwardTransition) {
+                        it.transTick += it.startTransSpeed
+                    } else {
+                        if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
+                        else {
+                            when (it.animation.loop) {
+                                Loop.TRUE -> it.tick = 0.00001
+                                Loop.ONCE -> it.isCancelled = true
+                                Loop.HOLD_ON_LAST_FRAME -> Unit
+                            }
+                        }
                     }
+                    it.freeze = freezeSpeedPercent
                 }
+                it.removeIf { it.isCancelled && it.transTick <= 0 }
             }
-            it.freeze = freezeSpeedPercent
-        }
-        playData.mixedAnims.removeIf { it.isCancelled && (it.transTick <= 0) }
 
-        // 冻结（模拟打肉的顿感）
-        if (freezeTick > 0) freezeTick--
-        else {
-            freezeTick = 0
-            freezeSpeedPercent = 1f
+            // 冻结（模拟打肉的顿感）
+            if (freezeTick > 0) freezeTick--
+            else {
+                freezeTick = 0
+                freezeSpeedPercent = 1f
+            }
         }
     }
 

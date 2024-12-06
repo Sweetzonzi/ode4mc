@@ -38,7 +38,6 @@ class ModelDataSendingTask(): ICustomConfigurationTask {
             @JvmStatic
             fun onAct(payload: Return, context: IPayloadContext) {
                 context.finishCurrentTask(ModelDataSendingTask.TYPE)
-                (context.player() as IEntityAnimatable<*>).syncAnimDataToClient(null)
             }
 
             @JvmStatic

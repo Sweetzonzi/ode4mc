@@ -1,7 +1,11 @@
 package cn.solarmoon.spark_core.api.animation.anim.play
 
+import cn.solarmoon.spark_core.api.phys.thread.PhysLevel
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import org.joml.Vector3f
@@ -13,12 +17,20 @@ import kotlin.math.PI
  * 在动画混合中，为了简化动画的标识，这里以主动画+次要动画的形式存储动画，当在需要的地方查找动画时，以主动画列表进行查找，这样可以保证查找出来的动画不是一个动画列表，从而简化代码逻辑
  */
 data class AnimPlayData(
-    val mixedAnims: MutableSet<MixedAnimation>,
+    private val mixedAnims: MutableSet<MixedAnimation>,
 ) {
+
+    fun modifyAnims(physLevel: PhysLevel, modifier: (MutableSet<MixedAnimation>) -> Unit) {
+        physLevel.scope.launch {
+            modifier.invoke(mixedAnims)
+        }
+    }
+
+    fun getMixedAnims() = mixedAnims
 
     fun getMixedBoneAnimRotation(boneName: String, partialTick: Float = 0f): Vector3f {
         val mixed = Vector3f()
-        mixedAnims.forEach {
+        getMixedAnims().forEach {
             if (boneName in it.boneBlacklist) return@forEach
             val weight = getMixedWeight(it, boneName, partialTick)
             it.animation.getBoneAnim(boneName)?.getPresentAnimRot(it, partialTick)?.let { rot ->
@@ -45,7 +57,7 @@ data class AnimPlayData(
 
     fun getMixedBoneAnimPosition(boneName: String, partialTick: Float = 0f): Vector3f {
         val mixed = Vector3f()
-        mixedAnims.forEach {
+        getMixedAnims().forEach {
             if (boneName in it.boneBlacklist) return@forEach
             val weight = getMixedWeight(it, boneName, partialTick)
             it.animation.getBoneAnim(boneName)?.getPresentAnimPos(it, partialTick)?.let { pos ->
@@ -59,7 +71,7 @@ data class AnimPlayData(
         var mixed = Vector3f(1f)
         var totalWeight = 0f
 
-        mixedAnims.forEach {
+        getMixedAnims().forEach {
             if (boneName in it.boneBlacklist) return@forEach
             val weight = getMixedWeight(it, boneName, partialTick).takeIf { it > 0 } ?: return@forEach
             it.animation.getBoneAnim(boneName)?.getPresentAnimScale(it, partialTick)?.let { scale ->
@@ -77,7 +89,7 @@ data class AnimPlayData(
      * 获取输入动画的指定骨骼在本播放中的权重
      */
     fun getMixedWeight(mixedAnimation: MixedAnimation, boneName: String, partialTick: Float = 0f): Float {
-        val totalWeight = mixedAnims.sumOf { if (boneName !in it.boneBlacklist) (it.getWeight(partialTick)).toDouble() else 0.0 }
+        val totalWeight = getMixedAnims().sumOf { if (boneName !in it.boneBlacklist) (it.getWeight(partialTick)).toDouble() else 0.0 }
         var weight = mixedAnimation.getWeight(partialTick)
         return (
                 if (totalWeight > 0) weight.toFloat() / totalWeight.toFloat()
@@ -99,7 +111,7 @@ data class AnimPlayData(
      * @param filter 额外的过滤条件，因为默认情况动画只要存在列表就会视为正在播放，于是可以通过filter过滤掉一些诸如已被设定为删除的动画
      */
     fun getMixedAnimation(name: String, level: Int, filter: (MixedAnimation) -> Boolean = {true}): MixedAnimation? {
-        val matches = mixedAnims.filter { it.name == name && filter.invoke(it) && it.level == level }.toList()
+        val matches = getMixedAnims().filter { it.name == name && filter.invoke(it) && it.level == level }.toList()
         return if (matches.size >= 2) matches.firstOrNull { it.isCancelled == false }
         else if (matches.size == 1) matches[0]
         else null
@@ -107,7 +119,7 @@ data class AnimPlayData(
 
     fun copy(): AnimPlayData {
         val set = mutableSetOf<MixedAnimation>()
-        mixedAnims.forEach { set.add(it.copy()) }
+        getMixedAnims().forEach { set.add(it.copy()) }
         return AnimPlayData(set)
     }
 

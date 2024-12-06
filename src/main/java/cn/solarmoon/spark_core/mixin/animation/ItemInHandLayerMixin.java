@@ -1,6 +1,8 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
+import cn.solarmoon.spark_core.api.phys.thread.ClientPhysLevel;
+import cn.solarmoon.spark_core.api.phys.thread.ThreadHelperKt;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -36,17 +38,19 @@ public abstract class ItemInHandLayerMixin<T extends LivingEntity, M extends Ent
         if (livingEntity instanceof IEntityAnimatable<?> animatable) {
             var boneName = arm.getSerializedName() + "Item";
             if (!itemStack.isEmpty() && animatable.getAnimData().getModel().hasBone(boneName)) {
-                var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
-                var p = new PoseStack();
-                var cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-                p.translate(-cam.x, -cam.y, -cam.z);
-                var ma = animatable.getBoneMatrix(boneName, partialTicks);
-                var pivot = animatable.getAnimData().getModel().getBone(boneName).getPivot();
-                p.mulPose(ma);
-                p.translate(pivot.x, pivot.y - 1/16f, pivot.z - 1.75/16f);
-                p.mulPose(Axis.XP.rotationDegrees(-80.0F));
-                this.itemInHandRenderer.renderItem(livingEntity, itemStack, displayContext, arm == HumanoidArm.LEFT, p, buffer, packedLight);
-                ci.cancel();
+                if (ThreadHelperKt.getPhysLevel(livingEntity) instanceof ClientPhysLevel cl) {
+                    var partialTicks = cl.getPartialTicks();
+                    var p = new PoseStack();
+                    var cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+                    p.translate(-cam.x, -cam.y, -cam.z);
+                    var ma = animatable.getBoneMatrix(boneName, partialTicks);
+                    var pivot = animatable.getAnimData().getModel().getBone(boneName).getPivot();
+                    p.mulPose(ma);
+                    p.translate(pivot.x, pivot.y - 1 / 16f, pivot.z - 1.75 / 16f);
+                    p.mulPose(Axis.XP.rotationDegrees(-80.0F));
+                    this.itemInHandRenderer.renderItem(livingEntity, itemStack, displayContext, arm == HumanoidArm.LEFT, p, buffer, packedLight);
+                    ci.cancel();
+                }
             }
         }
     }

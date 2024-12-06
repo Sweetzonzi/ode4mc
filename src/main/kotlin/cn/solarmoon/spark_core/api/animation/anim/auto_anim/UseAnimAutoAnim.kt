@@ -29,7 +29,7 @@ open class UseAnimAutoAnim(
         return entity.useItem.useAnimation.toString().lowercase()
     }
 
-    override fun tick() {
+    override fun frequencyTick() {
         if (entity is IEntityAnimatable<*>) {
             animTrigger = tryPlay { it.startTransSpeed = 4f }
 

@@ -8,11 +8,11 @@ import java.awt.Color
  */
 class RenderableOBB {
 
-    var maxTime: Int = 1
+    var maxTime: Int = 5
     var defaultColor: Color = Color.WHITE
     var tick = 0
     var colorTick = 0
-    var maxColorTick = 5
+    var maxColorTick = 15
     var color: Color = defaultColor
         private set
     var box: OrientedBoundingBox? = null
