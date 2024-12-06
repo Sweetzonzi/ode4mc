@@ -23,11 +23,11 @@ class PhysThreadApplier {
 
         if (level.isClientSide) {
             val pl = ClientPhysLevel(level as ClientLevel)
-            level.setData(SparkAttachments.PHYS_LEVEL, Optional.of(pl))
+            level.setPhysLevel(pl)
             pl.load()
         } else {
             val pl = ServerPhysLevel(level as ServerLevel)
-            level.setData(SparkAttachments.PHYS_LEVEL, Optional.of(pl))
+            level.setPhysLevel(pl)
             pl.load()
         }
     }
@@ -38,32 +38,32 @@ class PhysThreadApplier {
 
         if (level.isClientSide) {
             val pl = ClientPhysLevel(level as ClientLevel)
-            level.setData(SparkAttachments.PHYS_LEVEL, Optional.of(pl))
+            level.setPhysLevel(pl)
             pl.unLoad()
         } else {
             val pl = ServerPhysLevel(level as ServerLevel)
-            level.setData(SparkAttachments.PHYS_LEVEL, Optional.of(pl))
+            level.setPhysLevel(pl)
             pl.unLoad()
         }
     }
 
     @SubscribeEvent
     private fun addEntity(event: EntityJoinLevelEvent) {
-        event.level.getData(SparkAttachments.PHYS_LEVEL).let {
-            event.entity.setData(SparkAttachments.PHYS_LEVEL, it)
+        event.level.getPhysLevel().let {
+            event.entity.setPhysLevel(it)
         }
     }
 
     @SubscribeEvent
     private fun test(event: PhysLevelTickEvent.Entity) {
         val entity = event.entity
-//        entity.getPhysLevel()?.let {
-//            val entityBox = OdeHelper.createBox(5.0, 5.0, 5.0).apply { position = entity.position().toDVector3() }
-//            val box = OdeHelper.createBox(DVector3(5.0, 5.0, 5.0)).apply { position = Vec3.ZERO.toDVector3(); }
-//            if (OdeHelper.collide(entityBox, box, 1, DContactBuffer(64).geomBuffer) > 0) {
-//
-//            }
-//        }
+        entity.getPhysLevel()?.let {
+            val entityBox = OdeHelper.createBox(5.0, 5.0, 5.0).apply { position = entity.position().toDVector3() }
+            val box = OdeHelper.createBox(DVector3(5.0, 5.0, 5.0)).apply { position = Vec3.ZERO.toDVector3(); }
+            if (OdeHelper.collide(entityBox, box, 1, DContactBuffer(64).geomBuffer) > 0) {
+
+            }
+        }
     }
 
     @SubscribeEvent
