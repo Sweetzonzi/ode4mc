@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import org.joml.Vector3f
-import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.PI
 
 /**

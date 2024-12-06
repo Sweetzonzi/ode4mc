@@ -6,6 +6,8 @@ import cn.solarmoon.spark_core.api.entity.attack.AttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.PreInput
 import cn.solarmoon.spark_core.api.phys.obb.MountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import cn.solarmoon.spark_core.api.phys.thread.PhysLevel
+import cn.solarmoon.spark_core.api.phys.thread.PhysSyncedData
 import java.util.Optional
 
 
@@ -45,6 +47,18 @@ object SparkAttachments {
     val PREINPUT = SparkCore.REGISTER.attachment<PreInput>()
         .id("preinput")
         .defaultValue { PreInput(it) }
+        .build()
+
+    @JvmStatic
+    val PHYS_LEVEL = SparkCore.REGISTER.attachment<Optional<PhysLevel>>()
+        .id("phys_level")
+        .defaultValue { Optional.empty() }
+        .build()
+
+    @JvmStatic
+    val PHYS_SYNCED_DATA = SparkCore.REGISTER.attachment<PhysSyncedData>()
+        .id("phys_synced_data")
+        .defaultValue { PhysSyncedData.EMPTY }
         .build()
 
 }

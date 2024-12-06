@@ -1,14 +1,11 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.FightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.Entity
-import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
 
 data class FightSpiritPayload(

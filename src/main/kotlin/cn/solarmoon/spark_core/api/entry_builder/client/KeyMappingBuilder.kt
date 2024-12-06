@@ -2,9 +2,7 @@ package cn.solarmoon.spark_core.api.entry_builder.client
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.model.geom.ModelLayerLocation
 import net.neoforged.bus.api.IEventBus
-import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier

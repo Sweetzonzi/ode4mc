@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.anim.auto_anim
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity

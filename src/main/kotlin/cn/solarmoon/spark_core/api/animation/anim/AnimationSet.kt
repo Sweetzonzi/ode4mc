@@ -3,13 +3,10 @@ package cn.solarmoon.spark_core.api.animation.anim
 import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.EntityType
 
 /**
  * 动画集合，代表一个模型的所有动画

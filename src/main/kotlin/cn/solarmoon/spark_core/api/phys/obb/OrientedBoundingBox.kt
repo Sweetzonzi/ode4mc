@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.phys.obb
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.phys.copy
 import cn.solarmoon.spark_core.api.phys.getScaledAxisX
@@ -11,7 +10,6 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Direction
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
@@ -19,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import kotlin.math.abs
 
 // Y ^       8   +-------+   7     axisY   axisZ

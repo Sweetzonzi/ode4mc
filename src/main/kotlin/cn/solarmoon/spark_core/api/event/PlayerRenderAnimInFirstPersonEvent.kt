@@ -2,7 +2,6 @@ package cn.solarmoon.spark_core.api.event
 
 import net.minecraft.client.player.AbstractClientPlayer
 import net.neoforged.bus.api.Event
-import net.neoforged.bus.api.IEventBus
 
 /**
  * 此事件用于调控动画是否在第一人称下渲染，比如武器/手臂的挥动等

@@ -1,9 +1,6 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
-import cn.solarmoon.spark_core.SparkCore;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects;
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.attack.AttackController;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -18,17 +15,12 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Map;
 
 @Mixin(ItemInHandLayer.class)
 public abstract class ItemInHandLayerMixin<T extends LivingEntity, M extends EntityModel<T> & ArmedModel> extends RenderLayer<T, M> {

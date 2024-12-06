@@ -1,8 +1,8 @@
 package cn.solarmoon.spark_core.api.animation
 
+import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimController
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import net.minecraft.server.level.ServerPlayer

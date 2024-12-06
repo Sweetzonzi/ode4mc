@@ -2,7 +2,6 @@ package cn.solarmoon.spark_core.api.animation.sync
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec

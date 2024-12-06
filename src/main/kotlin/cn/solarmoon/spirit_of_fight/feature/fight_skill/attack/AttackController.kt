@@ -1,5 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.attack
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.auto_anim.isPlayingHitAnim
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
@@ -14,6 +15,11 @@ import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ParryAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.ClientOperationPayload
 import cn.solarmoon.spirit_of_fight.registry.client.SOFKeyMappings
 import com.mojang.blaze3d.platform.InputConstants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.world.entity.Entity

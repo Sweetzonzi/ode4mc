@@ -2,9 +2,9 @@ package cn.solarmoon.spark_core.registry.common
 
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.animation.sync.AnimFreezingPayload
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimPayload
 import cn.solarmoon.spark_core.api.animation.sync.ModelDataPayload
 import cn.solarmoon.spark_core.api.animation.sync.ModelDataSendingTask
+import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimPayload
 import cn.solarmoon.spark_core.api.phys.obb.renderable.RenderableOBBPayload
 import cn.solarmoon.spark_core.api.visual_effect.common.camera_shake.CameraShakePayload
 import cn.solarmoon.spark_core.api.visual_effect.common.shadow.ShadowPayload

@@ -4,12 +4,7 @@ import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.Tag
-import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.codec.ByteBufCodecs
-import net.minecraft.network.codec.StreamCodec
 import net.minecraft.util.ExtraCodecs
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import java.util.Optional
 

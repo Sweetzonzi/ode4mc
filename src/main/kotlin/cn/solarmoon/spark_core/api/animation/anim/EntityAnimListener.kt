@@ -1,10 +1,10 @@
 package cn.solarmoon.spark_core.api.animation.anim
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.animation.anim.part.Animation
 import cn.solarmoon.spark_core.api.animation.anim.part.BoneAnim
 import cn.solarmoon.spark_core.api.animation.anim.part.InterpolationType
+import cn.solarmoon.spark_core.api.animation.anim.part.KeyFrame
 import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.data.SimpleJsonListener
 import cn.solarmoon.spark_core.api.phys.toRadians

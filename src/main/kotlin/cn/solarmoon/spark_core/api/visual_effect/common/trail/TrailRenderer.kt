@@ -1,28 +1,15 @@
 package cn.solarmoon.spark_core.api.visual_effect.common.trail
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.util.RenderTypeUtil
 import cn.solarmoon.spark_core.api.visual_effect.VisualEffectRenderer
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.FightSpiritGui
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
-import net.minecraft.client.resources.model.ModelResourceLocation
-import net.minecraft.core.particles.ItemParticleOption
-import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.client.model.data.ModelData
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import java.awt.Color
-import java.io.FileNotFoundException
-
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class TrailRenderer: VisualEffectRenderer() {

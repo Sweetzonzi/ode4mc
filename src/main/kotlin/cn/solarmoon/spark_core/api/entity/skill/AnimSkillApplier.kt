@@ -1,15 +1,10 @@
 package cn.solarmoon.spark_core.api.entity.skill
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent
 import cn.solarmoon.spark_core.api.event.PlayerGetAttackStrengthEvent
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import net.neoforged.bus.api.SubscribeEvent
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
-import net.neoforged.neoforge.event.entity.player.CriticalHitEvent
-import net.neoforged.neoforge.event.entity.player.SweepAttackEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
 
 class AnimSkillApplier {

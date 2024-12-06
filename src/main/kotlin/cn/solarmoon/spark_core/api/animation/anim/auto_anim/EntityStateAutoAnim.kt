@@ -1,13 +1,10 @@
 package cn.solarmoon.spark_core.api.animation.anim.auto_anim
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.state.EntityState
-import cn.solarmoon.spark_core.api.entity.state.getMoveSpeed
 import cn.solarmoon.spark_core.api.entity.state.getServerMoveSpeed
 import cn.solarmoon.spark_core.api.entity.state.getState
-import cn.solarmoon.spark_core.api.entity.state.setServerMoveSpeed
 import net.minecraft.world.entity.Entity
 import kotlin.math.log
 

@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation
 
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityStateAutoAnim
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.toRadians

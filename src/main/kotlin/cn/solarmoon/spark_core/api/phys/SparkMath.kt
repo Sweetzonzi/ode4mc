@@ -1,5 +1,15 @@
 package cn.solarmoon.spark_core.api.phys
 
+import cn.solarmoon.spark_core.api.phys.math.DQuaternion
+import cn.solarmoon.spark_core.api.phys.math.DQuaternionC
+import cn.solarmoon.spark_core.api.phys.math.DVector3
+import cn.solarmoon.spark_core.api.phys.math.DVector3C
+import cn.solarmoon.spark_core.api.phys.ode.DSpace
+import cn.solarmoon.spark_core.api.phys.ode.OdeHelper
+import cn.solarmoon.spark_core.api.phys.ode.internal.DxBox
+import cn.solarmoon.spark_core.api.phys.ode.internal.DxSpace
+import net.minecraft.world.level.levelgen.structure.BoundingBox
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix3f
 import org.joml.Quaternionf
@@ -51,3 +61,11 @@ fun Quaternionf.getScaledAxisZ(): Vector3f {
 }
 
 fun Quaternionf.copy(): Quaternionf = Quaternionf(this)
+
+fun Vec3.toDVector3() = DVector3(x, y ,z)
+
+fun AABB.toDBox(space: DSpace) = OdeHelper.createBox(space, xsize, ysize, zsize).apply { position = center.toDVector3() }
+
+fun DVector3C.toVector3f() = Vector3f(get0().toFloat(), get1().toFloat(), get2().toFloat())
+
+fun DQuaternionC.toQuaternion() = Quaternionf(get0(), get1(), get2(), get3())

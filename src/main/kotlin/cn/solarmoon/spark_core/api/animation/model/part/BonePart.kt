@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation.model.part
 
-import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimPlayData
 import cn.solarmoon.spark_core.api.animation.model.CommonModel
 import cn.solarmoon.spark_core.api.data.SerializeHelper

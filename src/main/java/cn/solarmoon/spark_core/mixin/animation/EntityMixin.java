@@ -1,10 +1,9 @@
 package cn.solarmoon.spark_core.mixin.animation;
 
-import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim;
 import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnimRegisterEvent;
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityAutoAnim;
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.entity.state.EntityStateHelper;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -24,8 +23,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.animation.anim.auto_anim
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import kotlin.properties.Delegates

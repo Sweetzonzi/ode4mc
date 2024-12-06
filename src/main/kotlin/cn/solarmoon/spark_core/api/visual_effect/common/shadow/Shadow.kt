@@ -1,21 +1,16 @@
 package cn.solarmoon.spark_core.api.visual_effect.common.shadow
 
-import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.phys.toRadians
 import cn.solarmoon.spark_core.api.util.ColorUtil
 import cn.solarmoon.spark_core.api.util.RenderTypeUtil
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.VertexConsumer
-import com.sun.xml.internal.stream.Entity
-import net.minecraft.client.Minecraft
 import net.minecraft.client.player.AbstractClientPlayer
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f

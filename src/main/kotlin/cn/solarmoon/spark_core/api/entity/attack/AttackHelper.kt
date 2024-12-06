@@ -1,20 +1,16 @@
 package cn.solarmoon.spark_core.api.entity.attack
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.util.Side
 import cn.solarmoon.spark_core.api.phys.obb.MountableOBB
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.phys.obb.pushBox
 import cn.solarmoon.spark_core.api.phys.obb.toOBB
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.phys.Vec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.awt.Color
 import java.util.Optional
-import kotlin.math.PI
 
 object AttackHelper {
 

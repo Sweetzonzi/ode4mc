@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.resources.ResourceLocation
-import java.awt.Color
 
 
 fun GuiGraphics.blitTransparent(location: ResourceLocation, x: Float, y: Float, uMin: Float, uMax: Float, vMin: Float, vMax: Float, width: Float, height: Float, color: Int, alpha: Float = 1f) {

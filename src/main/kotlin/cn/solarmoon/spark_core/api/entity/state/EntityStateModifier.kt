@@ -1,8 +1,5 @@
 package cn.solarmoon.spark_core.api.entity.state
 
-import cn.solarmoon.spark_core.SparkCore
-import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.client.player.LocalPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent

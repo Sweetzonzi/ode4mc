@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.visual_effect.common.trail
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import net.minecraft.client.Minecraft
 import net.minecraft.core.Direction

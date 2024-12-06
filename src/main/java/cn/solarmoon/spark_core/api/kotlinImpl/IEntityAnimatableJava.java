@@ -1,8 +1,7 @@
 package cn.solarmoon.spark_core.api.kotlinImpl;
 
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityStateAutoAnim;
-import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
+import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload;
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;

@@ -2,7 +2,6 @@ package cn.solarmoon.spark_core.api.phys.obb
 
 import cn.solarmoon.spark_core.api.animation.model.part.CubePart
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
-import net.minecraft.nbt.NbtOps
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
 import org.joml.Matrix4f

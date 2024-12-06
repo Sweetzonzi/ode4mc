@@ -1,11 +1,5 @@
 package cn.solarmoon.spirit_of_fight.feature.hit
 
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.util.Side
-import com.mojang.serialization.Codec
-
 /**
  * 受到的攻击类型
  */
