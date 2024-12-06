@@ -26,13 +26,9 @@ data class RenderableOBBPayload(
     companion object {
         @JvmStatic
         fun handleInClient(payload: RenderableOBBPayload, context: IPayloadContext) {
-            context.player().level().getPhysLevel()?.let {
-                it.scope.launch {
-                    val debug = SparkVisualEffects.OBB.getRenderableBox(payload.id)
-                    payload.color?.let { debug.setColor(Color(it)) }
-                    payload.box?.let { debug.box = it }
-                }
-            }
+            val debug = SparkVisualEffects.OBB.getRenderableBox(payload.id)
+            payload.color?.let { debug.setColor(Color(it)) }
+            payload.box?.let { debug.box = it }
         }
 
         @JvmStatic

@@ -20,13 +20,21 @@ data class AnimPlayData(
     private val mixedAnims: MutableSet<MixedAnimation>,
 ) {
 
+    private var safeMixedAnims: Set<MixedAnimation> = emptySet()
+
     fun modifyAnims(physLevel: PhysLevel, modifier: (MutableSet<MixedAnimation>) -> Unit) {
         physLevel.scope.launch {
             modifier.invoke(mixedAnims)
         }
     }
 
-    fun getMixedAnims() = mixedAnims
+    fun getMixedAnims() = safeMixedAnims
+
+    fun syncAnimsToSafeCopy(level: PhysLevel) {
+        level.scope.launch {
+            safeMixedAnims = mixedAnims.map { it.copy() }.toSet()
+        }
+    }
 
     fun getMixedBoneAnimRotation(boneName: String, partialTick: Float = 0f): Vector3f {
         val mixed = Vector3f()

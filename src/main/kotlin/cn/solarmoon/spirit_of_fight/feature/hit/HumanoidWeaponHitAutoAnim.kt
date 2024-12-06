@@ -131,7 +131,7 @@ class HumanoidWeaponHitAutoAnim(
         }
 
         @JvmStatic
-        val ALL_SYNCED_ANIMATIONS = buildMap { ALL_ANIM_NAMES.forEach { put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 5f))) } }
+        val ALL_SYNCED_ANIMATIONS = buildMap { ALL_ANIM_NAMES.forEach { put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 10f))) } }
 
         @JvmStatic
         val ALL_KNOCKDOWN_ANIM_NAMES: Set<String> = buildSet {

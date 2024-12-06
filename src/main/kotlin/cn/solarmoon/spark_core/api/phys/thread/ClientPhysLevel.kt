@@ -20,6 +20,7 @@ class ClientPhysLevel(
         level.getEntities(null, player.boundingBox.inflate(100.0)).forEach {
             NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(this, it))
         }
+        NeoForge.EVENT_BUS.post(PhysLevelTickEvent.FrequencyInput(this))
     }
 
 }

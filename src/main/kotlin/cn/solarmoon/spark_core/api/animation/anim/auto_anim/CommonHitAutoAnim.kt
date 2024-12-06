@@ -43,7 +43,7 @@ class CommonHitAutoAnim(
         @JvmStatic
         val ALL_SYNCED_ANIMS = buildMap {
             ALL_ANIM_NAMES.values.forEach {
-                put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 5f)))
+                put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 10f)))
             }
         }
 

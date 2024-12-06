@@ -1,9 +1,11 @@
 package cn.solarmoon.spark_core.api.animation.anim.play
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.animation.sync.AnimFreezingPayload
 import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
+import kotlinx.coroutines.launch
 import net.minecraft.world.entity.Entity
 import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
@@ -25,6 +27,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
         (animatable as IAttachmentHolder).getPhysLevel()?.let {
+            SparkCore.LOGGER.info("233")
             animatable.animData.playData.modifyAnims(it) {
                 val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
                 it.forEach {
@@ -39,15 +42,19 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
     }
 
     fun stopAnimation(vararg name: String) {
-        animatable.animData.playData.getMixedAnims().forEach { if (it.name in name) it.isCancelled = true }
+        (animatable as IAttachmentHolder).getPhysLevel()?.let {
+            animatable.animData.playData.modifyAnims(it) {
+                it.forEach { if (it.name in name) it.isCancelled = true }
+            }
+        }
     }
 
-    fun stopAnimation(filter: (MixedAnimation) -> Boolean) {
-        animatable.animData.playData.getMixedAnims().filter(filter).forEach { it.isCancelled = true }
-    }
-
-    fun stopAllAnimation() {
-        animatable.animData.playData.getMixedAnims().forEach { it.isCancelled = true }
+    fun stopAllAnimation(filter: (MixedAnimation) -> Boolean = { true }) {
+        (animatable as IAttachmentHolder).getPhysLevel()?.let {
+            animatable.animData.playData.modifyAnims(it) {
+                it.filter(filter).forEach { it.isCancelled = true }
+            }
+        }
     }
 
     /**
@@ -67,7 +74,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
         return anim != null
     }
 
-    fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.1f, freezeTime: Int = 2) {
+    fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.1f, freezeTime: Int = 5) {
         freezeTick = freezeTime
         maxFreezeTick = freezeTime
         freezeSpeedPercent = speedPercent
@@ -108,6 +115,8 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
                 }
                 it.removeIf { it.isCancelled && it.transTick <= 0 }
             }
+
+            playData.syncAnimsToSafeCopy(level)
 
             // 冻结（模拟打肉的顿感）
             if (freezeTick > 0) freezeTick--

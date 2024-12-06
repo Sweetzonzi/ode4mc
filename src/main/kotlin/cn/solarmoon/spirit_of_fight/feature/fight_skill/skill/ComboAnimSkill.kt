@@ -35,7 +35,7 @@ abstract class ComboAnimSkill(
         @JvmStatic
         fun createComboConsumeAnims(prefix: String, maxCombo: Int): Map<Int, SyncedAnimation> = buildMap {
             for (i in 0 until maxCombo) {
-                put(i, SyncedAnimation(MixedAnimation("$prefix:attack_$i", startTransSpeed = 5f)))
+                put(i, SyncedAnimation(MixedAnimation("$prefix:attack_$i", startTransSpeed = 10f)))
             }
         }
     }

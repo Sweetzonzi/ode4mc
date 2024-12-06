@@ -116,7 +116,7 @@ data class MixedAnimation(
          * 同时他也意味着如果使用默认的过渡速度，则过渡时间为4tick
          */
         @JvmStatic
-        val MAX_TRANS_PROCESS get() = 4.0
+        val MAX_TRANS_PROCESS get() = 10.0
 
         @JvmStatic
         val CODEC: Codec<MixedAnimation> = RecordCodecBuilder.create {

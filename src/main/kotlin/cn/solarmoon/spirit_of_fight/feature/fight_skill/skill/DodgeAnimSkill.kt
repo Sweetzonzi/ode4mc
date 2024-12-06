@@ -27,7 +27,7 @@ open class DodgeAnimSkill(
         @JvmStatic
         fun createDodgeConsumeAnims(prefix: String): Map<MoveDirection, SyncedAnimation> = buildMap {
             MoveDirection.entries.forEach {
-                put(it, SyncedAnimation(MixedAnimation("$prefix:dodge_$it", startTransSpeed = 5f)))
+                put(it, SyncedAnimation(MixedAnimation("$prefix:dodge_$it", startTransSpeed = 10f)))
             }
         }
     }

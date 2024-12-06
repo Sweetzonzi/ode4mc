@@ -43,7 +43,7 @@ class EntityStateAutoAnim(
     fun getAnimation(state: EntityState): MixedAnimation {
         val modelPath = animatable.animData.modelPath
         return when(state) {
-            EntityState.JUMP -> MixedAnimation(modelPath, playData[state]!!, _startTransSpeed = 5f)
+            EntityState.JUMP -> MixedAnimation(modelPath, playData[state]!!, _startTransSpeed = 10f)
             else -> MixedAnimation(modelPath, playData[state]!!)
         }
     }
@@ -103,7 +103,7 @@ class EntityStateAutoAnim(
 
     fun blendWithoutArms(includeIdle: Boolean, stopFilter: (MixedAnimation) -> Boolean) {
         if (!includeIdle && getState() == EntityState.IDLE) {
-            animatable.animController.stopAnimation { it.level == 1 }
+            animatable.animController.stopAllAnimation { it.level == 1 }
             return
         }
         if (tryPlay(1, { (getState() == EntityState.JUMP || it.name != playData[EntityState.JUMP]!!) && it.level == 1 && stopFilter.invoke(it) }) {
