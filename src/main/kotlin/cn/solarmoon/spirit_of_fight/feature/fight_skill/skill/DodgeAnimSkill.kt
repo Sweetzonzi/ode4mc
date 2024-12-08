@@ -80,8 +80,8 @@ open class DodgeAnimSkill(
         }
     }
 
-    override fun tick() {
-        super.tick()
+    override fun physTick() {
+        super.physTick()
         // 在正常防守时可以直接按出闪避
         if (controller.guard.isStanding()) {
             entity.getPreInput().executeIfPresent("dodge")

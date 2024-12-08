@@ -1,5 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill

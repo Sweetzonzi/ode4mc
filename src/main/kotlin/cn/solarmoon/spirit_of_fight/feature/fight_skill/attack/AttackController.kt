@@ -51,14 +51,14 @@ class AttackController {
             var shouldCombo = true
             for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
                 if (skill !is ConcentrationAttackAnimSkill && skill.canRelease) {
-                    skill.start()
+                    //skill.start()
                     ClientOperationPayload.sendOperationToServer(index.toString())
                     shouldCombo = false
                     break
                 }
             }
             if (shouldCombo) {
-                skillController.combo.start(false)
+                //skillController.combo.start(false)
                 ClientOperationPayload.sendOperationToServer("combo")
             }
             event.setSwingHand(false)
@@ -74,7 +74,7 @@ class AttackController {
         while (SOFKeyMappings.SPECIAL_ATTACK.consumeClick()) {
             for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
                 if (skill is ConcentrationAttackAnimSkill && skill.canRelease) {
-                    skill.start()
+                    //skill.start()
                     ClientOperationPayload.sendOperationToServer(index.toString())
                     break
                 }

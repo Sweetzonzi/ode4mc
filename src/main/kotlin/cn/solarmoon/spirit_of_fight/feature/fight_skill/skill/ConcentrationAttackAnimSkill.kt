@@ -22,6 +22,7 @@ abstract class ConcentrationAttackAnimSkill(
 
     override fun onStart() {
         super.onStart()
+        controller.combo.index = 0
         entity.getFightSpirit().clear()
     }
 

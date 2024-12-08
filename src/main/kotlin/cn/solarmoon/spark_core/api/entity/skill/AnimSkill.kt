@@ -76,7 +76,7 @@ abstract class AnimSkill(
         return null
     }
 
-    open fun tick() {
+    open fun physTick() {
         getPlayingAnim()?.let {
             whenInAnim(it)
         } ?: run {
@@ -88,6 +88,10 @@ abstract class AnimSkill(
             shouldClearAttackedEntities = false
             attackedEntities.clear()
         }
+    }
+
+    open fun tick() {
+
     }
 
     /**
@@ -116,7 +120,7 @@ abstract class AnimSkill(
         getBox(anim).takeIf { it.isNotEmpty() }?.let {
             it.forEachIndexed { index, box ->
                 if (level.isClientSide) {
-                    debugBox.refresh(box)
+                    debugBox.refresh(box, true)
                 }
                 onBoxSummon(box, anim)
                 entity.popBox(getBoxId(index), box)

@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.phys.obb.renderable
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import java.awt.Color
 

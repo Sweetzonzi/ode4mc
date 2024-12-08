@@ -76,7 +76,7 @@ abstract class SingleAttackAnimSkill(
         super.whenInAnim(anim)
 
         if (anim.isTickIn(switchTime, anim.maxTick)) {
-            preInput.execute()
+            preInput.executeIfPresent()
         }
     }
 

@@ -18,6 +18,6 @@ abstract class HitAutoAnim(
 
     abstract fun onActualHit(event: LivingDamageEvent.Post)
 
-    override fun frequencyTick() {}
+    override fun tick() {}
 
 }

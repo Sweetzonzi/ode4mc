@@ -5,6 +5,8 @@ import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModel;
 import cn.solarmoon.spark_core.api.animation.vanilla.VanillaModelHelper;
 import cn.solarmoon.spark_core.api.phys.thread.ClientPhysLevel;
 import cn.solarmoon.spark_core.api.phys.thread.ThreadHelperKt;
+import kotlinx.coroutines.BuildersKt;
+import kotlinx.coroutines.CoroutineStart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;

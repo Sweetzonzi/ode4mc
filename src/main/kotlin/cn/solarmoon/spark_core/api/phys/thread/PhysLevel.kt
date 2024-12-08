@@ -1,29 +1,16 @@
 package cn.solarmoon.spark_core.api.phys.thread
 
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
-import cn.solarmoon.spark_core.api.phys.ode.DAABB
-import cn.solarmoon.spark_core.api.phys.ode.DAABBC
-import cn.solarmoon.spark_core.api.phys.ode.DBox
-import cn.solarmoon.spark_core.api.phys.ode.DGeom
 import cn.solarmoon.spark_core.api.phys.ode.OdeHelper
-import cn.solarmoon.spark_core.api.phys.ode.internal.DxBox
-import cn.solarmoon.spark_core.api.phys.toDBox
-import cn.solarmoon.spark_core.api.phys.toQuaternion
-import cn.solarmoon.spark_core.api.phys.toVector3f
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
+import cn.solarmoon.spark_core.api.phys.ode.internal.OdeInit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.Level
-import net.neoforged.neoforge.common.NeoForge
-import java.awt.Color
 
 abstract class PhysLevel(
     open val level: Level
@@ -37,13 +24,14 @@ abstract class PhysLevel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
-    val scope = CoroutineScope(newSingleThreadContext("Phys$level.toString()"))
+    val scope = CoroutineScope(newSingleThreadContext("Phys${level}"))
     val world = OdeHelper.createWorld()
     val entitySpace = OdeHelper.createHashSpace()
     val contactGroup = OdeHelper.createJointGroup()
     protected var lastTickTime = System.nanoTime()
 
     init {
+        OdeInit.dInitODE()
         world.setGravity(0.0, -9.81, 0.0) //设置重力
         world.setContactSurfaceLayer(0.01) //最大陷入深度，有助于防止抖振(虽然本来似乎也没)
         world.setERP(0.25)
@@ -62,7 +50,7 @@ abstract class PhysLevel(
             while (isActive) {
                 val startTime = System.nanoTime()
 
-                frequencyTick()
+                physTick()
 
                 val endTime = System.nanoTime()
                 lastTickTime = endTime
@@ -80,6 +68,6 @@ abstract class PhysLevel(
         scope.cancel()
     }
 
-    abstract fun frequencyTick()
+    abstract fun physTick()
 
 }

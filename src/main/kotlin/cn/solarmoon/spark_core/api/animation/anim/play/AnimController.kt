@@ -21,39 +21,41 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
     var maxFreezeTick = 2
     var freezeSpeedPercent = 1f
 
+    fun modifyAnims(modifier: (MutableSet<MixedAnimation>) -> Unit) {
+        (animatable.animatable as IAttachmentHolder).getPhysLevel()?.let {
+            it.scope.launch {
+                animatable.animData.playData.modifyAnims(modifier)
+            }
+        }
+    }
+
     /**
      * 把所有动画加入删除队列并添加新动画到动画组
      * @param filter 会对每一个正在组里的动画进行遍历，可根据它们的属性选择一个boolean值来决定是否暂停它们
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
-        (animatable as IAttachmentHolder).getPhysLevel()?.let {
-            SparkCore.LOGGER.info("233")
-            animatable.animData.playData.modifyAnims(it) {
-                val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
-                it.forEach {
-                    if (filter.invoke(it)) {
-                        if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
-                        it.isCancelled = true
-                    }
+        SparkCore.LOGGER.info("看看在哪个线程")
+        modifyAnims {
+            val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
+            it.forEach {
+                if (filter.invoke(it)) {
+                    if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
+                    it.isCancelled = true
                 }
-                it.addAll(mixedAnimation)
             }
+            it.addAll(mixedAnimation)
         }
     }
 
     fun stopAnimation(vararg name: String) {
-        (animatable as IAttachmentHolder).getPhysLevel()?.let {
-            animatable.animData.playData.modifyAnims(it) {
-                it.forEach { if (it.name in name) it.isCancelled = true }
-            }
+        modifyAnims {
+            it.forEach { if (it.name in name) it.isCancelled = true }
         }
     }
 
     fun stopAllAnimation(filter: (MixedAnimation) -> Boolean = { true }) {
-        (animatable as IAttachmentHolder).getPhysLevel()?.let {
-            animatable.animData.playData.modifyAnims(it) {
-                it.filter(filter).forEach { it.isCancelled = true }
-            }
+        modifyAnims {
+            it.filter(filter).forEach { it.isCancelled = true }
         }
     }
 
@@ -69,19 +71,21 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
 
     fun isPlaying(name: String?, level: Int, filter: (MixedAnimation) -> Boolean = { true }): Boolean {
         val play = animatable.animData.playData
-        if (name == null) return play.getMixedAnims().isEmpty()
+        if (name == null) return play.getSafeMixedAnims().isEmpty()
         val anim = play.getMixedAnimation(name, level, filter)
         return anim != null
     }
 
     fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.1f, freezeTime: Int = 5) {
-        freezeTick = freezeTime
-        maxFreezeTick = freezeTime
-        freezeSpeedPercent = speedPercent
+        modifyAnims {
+            freezeTick = freezeTime
+            maxFreezeTick = freezeTime
+            freezeSpeedPercent = speedPercent
 
-        val entity = animatable.animatable
-        if (syncToClient && entity is Entity) {
-            PacketDistributor.sendToAllPlayers(AnimFreezingPayload(entity.id, speedPercent, freezeTime))
+            val entity = animatable.animatable
+            if (syncToClient && entity is Entity) {
+                PacketDistributor.sendToAllPlayers(AnimFreezingPayload(entity.id, speedPercent, freezeTime))
+            }
         }
     }
 
@@ -90,41 +94,39 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
      *
      * 此方法是双端调用的，主要使用的是在客户端模拟预测服务端的操作，单独进行渲染
      */
-    fun animTick() {
-        (animatable as IAttachmentHolder).getPhysLevel()?.let { level ->
-            val playData = animatable.animData.playData
-
-            // 播放
-            playData.modifyAnims(level) {
-                it.forEach {
-                    if (it.shouldBackwardTransition) {
-                        it.transTick -= it.endTransSpeed
-                    } else if (it.shouldForwardTransition) {
-                        it.transTick += it.startTransSpeed
-                    } else {
-                        if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
-                        else {
-                            when (it.animation.loop) {
-                                Loop.TRUE -> it.tick = 0.00001
-                                Loop.ONCE -> it.isCancelled = true
-                                Loop.HOLD_ON_LAST_FRAME -> Unit
-                            }
+    fun physTick() {
+        // 播放
+        animatable.animData.playData.modifyAnims {
+            it.forEach {
+                if (it.shouldBackwardTransition) {
+                    it.transTick -= it.endTransSpeed
+                } else if (it.shouldForwardTransition) {
+                    it.transTick += it.startTransSpeed
+                } else {
+                    if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
+                    else {
+                        when (it.animation.loop) {
+                            Loop.TRUE -> it.tick = 0.00001
+                            Loop.ONCE -> it.isCancelled = true
+                            Loop.HOLD_ON_LAST_FRAME -> Unit
                         }
                     }
-                    it.freeze = freezeSpeedPercent
                 }
-                it.removeIf { it.isCancelled && it.transTick <= 0 }
+                it.freeze = freezeSpeedPercent
             }
-
-            playData.syncAnimsToSafeCopy(level)
-
-            // 冻结（模拟打肉的顿感）
-            if (freezeTick > 0) freezeTick--
-            else {
-                freezeTick = 0
-                freezeSpeedPercent = 1f
-            }
+            it.removeIf { it.isCancelled && it.transTick <= 0 }
         }
+
+        // 冻结（模拟打肉的顿感）
+        if (freezeTick > 0) freezeTick--
+        else {
+            freezeTick = 0
+            freezeSpeedPercent = 1f
+        }
+    }
+
+    fun tick() {
+
     }
 
 }

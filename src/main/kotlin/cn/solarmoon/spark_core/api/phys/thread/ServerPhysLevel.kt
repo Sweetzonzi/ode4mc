@@ -7,7 +7,7 @@ class ServerPhysLevel(
     override val level: ServerLevel
 ): PhysLevel(level) {
 
-    override fun frequencyTick() {
+    override fun physTick() {
         level.allEntities.forEach {
             NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(this, it))
         }

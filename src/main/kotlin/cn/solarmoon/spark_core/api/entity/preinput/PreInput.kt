@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.entity.preinput
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.event.OnPreInputExecuteEvent
 import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.common.NeoForge
@@ -43,6 +44,7 @@ class PreInput(
      * 调用预输入指令并清空
      */
     fun execute() {
+        SparkCore.LOGGER.info("233")
         val event = NeoForge.EVENT_BUS.post(OnPreInputExecuteEvent.Pre(holder))
         if (event.isCanceled) return
         input.invoke()
@@ -53,7 +55,7 @@ class PreInput(
     /**
      * 只在指定预输入存在的情况下调用预输入指令并清空
      */
-    fun executeIfPresent(id: String, action: () -> Unit = {}): Boolean {
+    fun executeIfPresent(id: String = "", action: () -> Unit = {}): Boolean {
         return if (hasInput(id)) {
             action.invoke()
             execute()

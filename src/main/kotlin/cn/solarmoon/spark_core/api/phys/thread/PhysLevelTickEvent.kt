@@ -6,6 +6,4 @@ open class PhysLevelTickEvent(val level: PhysLevel): Event() {
 
     class Entity(level: PhysLevel, val entity: net.minecraft.world.entity.Entity): PhysLevelTickEvent(level)
 
-    class FrequencyInput(level: PhysLevel): PhysLevelTickEvent(level)
-
 }

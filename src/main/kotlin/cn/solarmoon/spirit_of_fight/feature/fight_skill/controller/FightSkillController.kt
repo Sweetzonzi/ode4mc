@@ -43,12 +43,12 @@ abstract class FightSkillController(
         return combo.isPlaying(filter) || specialAttackSkillGroup.any { it.isPlaying(filter) }
     }
 
-    override fun tick() {
-        super.tick()
+    override fun physTick() {
+        super.physTick()
         // 不在播放任何动画，直接进行预输入释放
         if (!isPlayingSkill { !it.isCancelled }) {
             combo.index = 0
-            entity.getPreInput().execute()
+            entity.getPreInput().executeIfPresent()
         }
     }
 

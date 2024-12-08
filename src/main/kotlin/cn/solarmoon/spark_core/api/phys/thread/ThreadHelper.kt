@@ -10,5 +10,3 @@ import kotlin.jvm.optionals.getOrNull
 fun IAttachmentHolder.getPhysLevel() = getData(SparkAttachments.PHYS_LEVEL).getOrNull()
 
 fun IAttachmentHolder.setPhysLevel(physLevel: PhysLevel?) = setData(SparkAttachments.PHYS_LEVEL, Optional.ofNullable(physLevel))
-
-fun Entity.getPhysSyncedData() = getData(SparkAttachments.PHYS_SYNCED_DATA)

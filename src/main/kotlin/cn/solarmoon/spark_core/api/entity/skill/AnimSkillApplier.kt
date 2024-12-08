@@ -30,13 +30,13 @@ class AnimSkillApplier {
     }
 
     @SubscribeEvent
-    private fun entityTick(event: PhysLevelTickEvent.Entity) {
+    private fun physTick(event: PhysLevelTickEvent.Entity) {
         val entity = event.entity
         if (entity is IAnimSkillHolder<*> && entity is IEntityAnimatable<*>) {
             val skillController = entity.skillController
             val switch = entity.persistentData.getBoolean("SkillSwitch")
 
-            entity.getAllSkills().forEach { it.tick() }
+            entity.getAllSkills().forEach { it.physTick() }
 
             if (skillController != null) {
                 if (!switch) entity.persistentData.putBoolean("SkillSwitch", true)
@@ -47,6 +47,14 @@ class AnimSkillApplier {
                     entity.animController.stopAllAnimation()
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    private fun entityTick(event: EntityTickEvent.Pre) {
+        val entity = event.entity
+        if (entity is IAnimSkillHolder<*> && entity is IEntityAnimatable<*>) {
+            entity.getAllSkills().forEach { it.tick() }
         }
     }
 

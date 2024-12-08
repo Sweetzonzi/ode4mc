@@ -44,8 +44,6 @@ public class SparkCore {
         SOFAttachments.register();
         SOFVisualEffects.register();
         SOFAnimRegister.register();
-
-        OdeInit.dInitODE();
     }
 
 }

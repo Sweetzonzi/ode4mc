@@ -46,7 +46,7 @@ class SyncedAnimation(
     fun consume(animatable: IAnimatable<*>, modifier: AnimModificationData = AnimModificationData()) {
         command?.invoke(animatable) ?: run {
             animatable.animController.stopAndAddAnimation(anim.apply {
-                modelPath = animatable.animData.modelPath;
+                modelPath = animatable.animData.modelPath
                 modifier.speed.takeIf { it != -1f }?.let { speed = it }
                 modifier.startTransSpeed.takeIf { it != -1f }?.let { startTransSpeed = it }
                 modifier.tick.takeIf { it != -1f }?.let { tick = it.toDouble() }
@@ -73,7 +73,7 @@ class SyncedAnimation(
      * @param modifier 可以对动画进行额外修改
      */
     fun syncToClientExceptPresentPlayer(player: ServerPlayer, modifier: AnimModificationData = AnimModificationData()) {
-        PacketDistributor.sendToPlayersNear(player.serverLevel(), player, player.x, player.y, player.z, 512.0, SyncedAnimPayload(player.id, id, modifier))
+        PacketDistributor.sendToPlayersNear(player.serverLevel(), null, player.x, player.y, player.z, 512.0, SyncedAnimPayload(player.id, id, modifier))
     }
 
     companion object {

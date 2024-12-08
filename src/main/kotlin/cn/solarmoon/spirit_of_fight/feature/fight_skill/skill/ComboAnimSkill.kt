@@ -101,7 +101,7 @@ abstract class ComboAnimSkill(
             }
             preInput.executeIfPresent("combo")
         } else if (anim.isTickIn(switch, anim.maxTick)) {
-            preInput.execute()
+            preInput.executeIfPresent()
         }
     }
 

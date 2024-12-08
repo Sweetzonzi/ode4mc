@@ -11,6 +11,6 @@ abstract class EntityAutoAnim(
 
     abstract val shouldTurnBody: Boolean
 
-    abstract fun frequencyTick()
+    abstract fun tick()
 
 }

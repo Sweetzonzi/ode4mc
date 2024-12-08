@@ -34,6 +34,12 @@ abstract class AnimSkillController {
     }
 
     open fun tick() {
+        if (isAvailable) {
+            skillGroup.forEach { it.tick() }
+        }
+    }
+
+    open fun physTick() {
         if (!isAvailable) {
             isLoadedMoment = false
             isDisabledMoment = true
@@ -44,7 +50,7 @@ abstract class AnimSkillController {
         isLoadedMoment = true
         isDisabledMoment = false
 
-        skillGroup.forEach { it.tick() }
+        skillGroup.forEach { it.physTick() }
     }
 
     /**

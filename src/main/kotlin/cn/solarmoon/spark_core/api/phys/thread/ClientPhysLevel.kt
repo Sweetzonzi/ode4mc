@@ -15,12 +15,11 @@ class ClientPhysLevel(
         return (deltaTime / TICK_STEP).toFloat().coerceIn(0f, 1f)
     }
 
-    override fun frequencyTick() {
+    override fun physTick() {
         val player = Minecraft.getInstance().player ?: return
         level.getEntities(null, player.boundingBox.inflate(100.0)).forEach {
             NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(this, it))
         }
-        NeoForge.EVENT_BUS.post(PhysLevelTickEvent.FrequencyInput(this))
     }
 
 }
