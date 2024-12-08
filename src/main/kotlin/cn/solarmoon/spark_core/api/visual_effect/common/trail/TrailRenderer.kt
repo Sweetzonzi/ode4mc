@@ -35,7 +35,22 @@ class TrailRenderer: VisualEffectRenderer() {
     }
 
     override fun tick() {
+        // 基本tick，让其流转到生命周期结束
+        trails.forEach { trail ->
+            trail.tick()
+            if (trail.isFinished) {
+                removeT.add(trail)
+            }
+        }
+        // 延迟结算，比较高效
+        trails.removeAll(removeT)
+        removeT.clear()
 
+        // 如果是开关性质的则为true时不删除
+        autoAdd.entries.removeIf {
+            val toggle = addSave[it.key]
+            toggle == null || !toggle
+        }
     }
 
     override fun render(
@@ -45,28 +60,14 @@ class TrailRenderer: VisualEffectRenderer() {
         bufferSource: MultiBufferSource,
         partialTicks: Float
     ) {
-        // 基本tick，让其流转到生命周期结束
-        trails.forEach { trail ->
-            trail.tick()
-            if (trail.isFinished) {
-                removeT.add(trail)
-            }
-        }
-
         autoAdd.toMap().forEach { id, add ->
             add.invoke(partialTicks)?.let {
                 trails.add(it)
             }
         }
 
-        // 如果是开关性质的则为true时不删除
-        autoAdd.entries.removeIf {
-            val toggle = addSave[it.key]
-            toggle == null || !toggle
-        }
-
         // 对缓存的拖影进行渲染，显然，越新的拖影越在列表之后，因此可用当前序列和下一个序列的拖影组成单位长方形，如此混合便可以遍历全部轨迹（也就是分成了微元）
-        trails.forEachIndexed { index, trail ->
+        trails.toList().forEachIndexed { index, trail ->
             // 四个点组成单位长方形
             val dT1 = trails.elementAt(index)
             val dT2 = if (index + 1 < trails.size) trails.elementAt(index + 1) else trails.elementAt(index)
@@ -83,10 +84,6 @@ class TrailRenderer: VisualEffectRenderer() {
             buffer.addVertex(pot2e.x, pot2e.y, pot2e.z).setColor(color[0], color[1], color[2], p(dT2)).setLight(light).setUv(0f, 1f).setOverlay(overlay).setNormal(normal.x, normal.y, normal.z)
             buffer.addVertex(pot2s.x, pot2s.y, pot2s.z).setColor(color[0], color[1], color[2], p(dT2)).setLight(light).setUv(1f, 0f).setOverlay(overlay).setNormal(normal.x, normal.y, normal.z)
         }
-
-        // 延迟结算，比较高效
-        trails.removeAll(removeT)
-        removeT.clear()
     }
 
 }
