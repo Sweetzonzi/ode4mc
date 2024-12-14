@@ -8,6 +8,7 @@ import cn.solarmoon.spark_core.api.entity.attack.clearAttackedData
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.state.getLateralSide
 import cn.solarmoon.spark_core.api.entity.state.getSide
+import cn.solarmoon.spark_core.api.phys.toVec3
 import cn.solarmoon.spark_core.api.util.Side
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType.*
 import net.minecraft.world.entity.Entity
@@ -50,7 +51,7 @@ class HumanoidWeaponHitAutoAnim(
         entity.getAttackedData()?.let { data ->
             val sourcePos = sourcePos ?: return ""
             val hitType = data.getHitType() ?: return ""
-            val side = entity.getLateralSide(data.damageBox.center.toVec3())
+            val side = entity.getLateralSide(data.damageBox.position.toVec3())
             val posSide = entity.getSide(sourcePos)
             val damagedBone = data.damageBone
             if (damagedBone != null) {
@@ -131,7 +132,7 @@ class HumanoidWeaponHitAutoAnim(
         }
 
         @JvmStatic
-        val ALL_SYNCED_ANIMATIONS = buildMap { ALL_ANIM_NAMES.forEach { put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 10f))) } }
+        val ALL_SYNCED_ANIMATIONS = buildMap { ALL_ANIM_NAMES.forEach { put(it, SyncedAnimation(MixedAnimation(it, startTransSpeed = 6f))) } }
 
         @JvmStatic
         val ALL_KNOCKDOWN_ANIM_NAMES: Set<String> = buildSet {

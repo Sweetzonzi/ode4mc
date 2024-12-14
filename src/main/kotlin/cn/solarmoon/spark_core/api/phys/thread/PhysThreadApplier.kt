@@ -7,6 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
 import net.neoforged.neoforge.event.level.LevelEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
+import net.neoforged.neoforge.event.tick.LevelTickEvent
 
 class PhysThreadApplier {
 
@@ -48,16 +49,11 @@ class PhysThreadApplier {
     }
 
     @SubscribeEvent
-    private fun test(event: PhysLevelTickEvent.Entity) {
-        val entity = event.entity
-        if (entity is IEntityAnimatable<*>) {
-            entity.animController.physTick()
-        }
-    }
-
-    @SubscribeEvent
-    private fun eTick(event: EntityTickEvent.Pre) {
-        val entity = event.entity
+    private fun levelActionConsumer(event: LevelTickEvent.Post) {
+        val level = event.level
+        val actions = (level as IActionConsumer).getActions()
+        actions.forEach { it.invoke() }
+        actions.clear()
     }
 
 }

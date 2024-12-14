@@ -2,7 +2,6 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.controller
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ComboAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ConcentrationAttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.DodgeAnimSkill
@@ -94,30 +93,18 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSk
     }
 
     override val jumpAttack = object : JumpAttackAnimSkill(this@SwordFightSkillController, JUMP_ATTACK_ANIM, 1.25f, 0.55, HitType.LIGHT_CHOP, 0) {
-        override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.15, 0.45)) listOf(getBoxBoundToBone(anim)) else listOf()
-        }
-
         override fun getMove(anim: MixedAnimation): Vec3? {
             return null
         }
     }
 
     override val sprintAttack = object : SprintAttackAnimSkill(this@SwordFightSkillController, SPRINTING_ATTACK_ANIM, 1.25f, 0.55, HitType.LIGHT_SWIPE, 0) {
-        override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.25, 0.55)) listOf(getBoxBoundToBone(anim)) else listOf()
-        }
-
         override fun getMove(anim: MixedAnimation): Vec3? {
             return if (anim.isTickIn(0.0, 0.25)) getForwardMoveVector(1/5f) else if (anim.isTickIn(0.25, 0.55)) getForwardMoveVector(1/2.5f) else null
         }
     }
 
     val specialAttack = object : ConcentrationAttackAnimSkill(this@SwordFightSkillController, SPECIAL_ATTACK_ANIM, 1.5f, 1.6, HitType.HEAVY_CHOP, 1) {
-        override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-            return if (anim.isTickIn(0.1, 0.5) || anim.isTickIn(0.95, 1.25)) listOf(getBoxBoundToBone(anim)) else listOf()
-        }
-
         override fun getMove(anim: MixedAnimation): Vec3? {
             return null
         }

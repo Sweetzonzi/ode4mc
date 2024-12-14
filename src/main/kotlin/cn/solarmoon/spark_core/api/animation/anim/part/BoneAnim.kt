@@ -31,7 +31,7 @@ data class BoneAnim(
      * @return 进行过基础偏移后的旋转弧度角
      */
     fun getPresentAnimRot(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / PhysLevel.TICKS_PRE_SECOND
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / MixedAnimation.TICKS_PRE_SECOND
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         rotationSequence.forEachIndexed { index, keyFrame ->
             val kNow = keyFrame.copy()
@@ -57,7 +57,7 @@ data class BoneAnim(
      * @return 获取指定tick位置的位移数值，如果不在任何区间内，返回第一个位置
      */
     fun getPresentAnimPos(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / PhysLevel.TICKS_PRE_SECOND
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / MixedAnimation.TICKS_PRE_SECOND
 
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         positionSequence.forEachIndexed { index, keyFrame ->
@@ -84,7 +84,7 @@ data class BoneAnim(
      * @return 获取指定tick位置的缩放数值，如果不在任何区间内，返回第一个位置
      */
     fun getPresentAnimScale(mixedAnimation: MixedAnimation, partialTick: Float = 0F): Vector3f {
-        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / PhysLevel.TICKS_PRE_SECOND
+        val time = (mixedAnimation.tick + if (mixedAnimation.isInTransition || (mixedAnimation.isCancelled && mixedAnimation.transTick <= 0)) 0.0001f else partialTick * mixedAnimation.speed) / MixedAnimation.TICKS_PRE_SECOND
 
         // 在各个时间内两两遍历，定位到当前间隔进行变换
         scaleSequence.forEachIndexed { index, keyFrame ->

@@ -1,7 +1,6 @@
 package cn.solarmoon.spark_core.api.phys.thread
 
-import cn.solarmoon.spark_core.api.phys.ode.OdeHelper
-import cn.solarmoon.spark_core.api.phys.ode.internal.OdeInit
+import cn.solarmoon.spark_core.api.phys.PhysWorld
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,6 +10,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import net.minecraft.world.level.Level
+import org.ode4j.ode.OdeHelper
 
 abstract class PhysLevel(
     open val level: Level
@@ -20,29 +20,14 @@ abstract class PhysLevel(
         @JvmStatic
         val TICK_STEP = 20L
         @JvmStatic
-        val TICKS_PRE_SECOND = (1000.0 / TICK_STEP).toInt()
+        val TICKS_PRE_SECOND = (1000 / TICK_STEP).toInt()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     val scope = CoroutineScope(newSingleThreadContext("Phys${level}"))
-    val world = OdeHelper.createWorld()
-    val entitySpace = OdeHelper.createHashSpace()
-    val contactGroup = OdeHelper.createJointGroup()
+    val physWorld = PhysWorld(TICK_STEP)
     protected var lastTickTime = System.nanoTime()
-
-    init {
-        OdeInit.dInitODE()
-        world.setGravity(0.0, -9.81, 0.0) //设置重力
-        world.setContactSurfaceLayer(0.01) //最大陷入深度，有助于防止抖振(虽然本来似乎也没)
-        world.setERP(0.25)
-        world.setCFM(0.00005)
-        world.setAutoDisableFlag(true) //设置静止物体自动休眠以节约性能
-        world.setAutoDisableSteps(5)
-        world.setQuickStepNumIterations(40) //设定迭代次数以提高物理计算精度
-        world.setQuickStepW(1.3)
-        world.setContactMaxCorrectingVel(20.0)
-        OdeHelper.createPlane(entitySpace, 0.0, 1.0, 0.0, -60.0)
-    }
+    protected val actions = mutableListOf<() -> Unit>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun load() {
@@ -68,6 +53,12 @@ abstract class PhysLevel(
         scope.cancel()
     }
 
-    abstract fun physTick()
+    fun launch(action: () -> Unit) = actions.add(action)
+
+    open fun physTick() {
+        actions.forEach { it.invoke() }
+        actions.clear()
+        physWorld.physTick()
+    }
 
 }

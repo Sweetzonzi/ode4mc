@@ -33,7 +33,7 @@ class SyncedAnimation(
     constructor(anim: MixedAnimation) : this(nextId(), anim)
 
     val anim get() = _anim.copy()
-
+        
     init {
         ALL_CONSUME_ANIMATIONS.put(id, this)
     }
@@ -73,7 +73,7 @@ class SyncedAnimation(
      * @param modifier 可以对动画进行额外修改
      */
     fun syncToClientExceptPresentPlayer(player: ServerPlayer, modifier: AnimModificationData = AnimModificationData()) {
-        PacketDistributor.sendToPlayersNear(player.serverLevel(), null, player.x, player.y, player.z, 512.0, SyncedAnimPayload(player.id, id, modifier))
+        PacketDistributor.sendToPlayersNear(player.serverLevel(), player, player.x, player.y, player.z, 512.0, SyncedAnimPayload(player.id, id, modifier))
     }
 
     companion object {

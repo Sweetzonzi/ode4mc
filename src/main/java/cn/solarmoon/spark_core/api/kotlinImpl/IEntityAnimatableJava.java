@@ -3,7 +3,6 @@ package cn.solarmoon.spark_core.api.kotlinImpl;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData;
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload;
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -11,7 +10,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -80,14 +78,6 @@ public interface IEntityAnimatableJava<T extends Entity> extends IEntityAnimatab
         var bone = getAnimData().getModel().getBone(name);
         bone.applyTransformWithParents(getAnimData().getPlayData(), ma, getExtraTransform(partialTick), partialTick);
         return ma;
-    }
-
-    @Override
-    default @NotNull OrientedBoundingBox createCollisionBoxBoundToBone(@NotNull String boneName, @NotNull Vector3f size, @NotNull Vector3f offset, float partialTicks) {
-        var box = new OrientedBoundingBox(getBonePivot(boneName, partialTicks), size, new Quaternionf());
-        box.getRotation().setFromUnnormalized(getBoneMatrix(boneName, partialTicks));
-        box.offsetCenter(offset);
-        return box;
     }
 
 }

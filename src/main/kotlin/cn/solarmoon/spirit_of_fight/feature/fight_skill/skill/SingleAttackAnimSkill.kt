@@ -32,7 +32,7 @@ abstract class SingleAttackAnimSkill(
 
     companion object {
         @JvmStatic
-        fun createSingleAttackConsumeAnim(prefix: String, attackName: String): SyncedAnimation = SyncedAnimation(MixedAnimation("$prefix:attack_$attackName", startTransSpeed = 10f))
+        fun createSingleAttackConsumeAnim(prefix: String, attackName: String): SyncedAnimation = SyncedAnimation(MixedAnimation("$prefix:attack_$attackName", startTransSpeed = 6f))
     }
 
     abstract val canRelease: Boolean

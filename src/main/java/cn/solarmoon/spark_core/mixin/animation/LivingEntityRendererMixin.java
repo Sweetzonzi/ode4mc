@@ -4,7 +4,6 @@ import cn.solarmoon.spark_core.SparkCore;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.vanilla.VanillaModelHelper;
 import cn.solarmoon.spark_core.api.phys.thread.ClientPhysLevel;
-import cn.solarmoon.spark_core.api.phys.thread.ThreadHelperKt;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -22,15 +21,13 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     @Inject(method = "setupRotations", at = @At("RETURN"))
     private void offset(T entity, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale, CallbackInfo ci) {
         if (entity instanceof IEntityAnimatable<?> animatable && VanillaModelHelper.isHumanoidModel(entity)) {
-            if (ThreadHelperKt.getPhysLevel(entity) instanceof ClientPhysLevel cl) {
-                var partialTicks = cl.getPartialTicks();
-                var pos = animatable.getAnimData().getPlayData().getMixedBoneAnimPosition("root", partialTicks);
-                var rot = animatable.getAnimData().getPlayData().getMixedBoneAnimRotation("body", partialTicks);
-                poseStack.translate(pos.x, pos.y, pos.z);
-                poseStack.translate(0, 1, 0);
-                poseStack.mulPose(new Matrix4f().rotateZYX(rot.z, rot.y, rot.x));
-                poseStack.translate(0, -1, 0);
-            }
+            var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+            var pos = animatable.getAnimData().getPlayData().getMixedBoneAnimPosition("root", partialTicks);
+            var rot = animatable.getAnimData().getPlayData().getMixedBoneAnimRotation("body", partialTicks);
+            poseStack.translate(pos.x, pos.y, pos.z);
+            poseStack.translate(0, 1, 0);
+            poseStack.mulPose(new Matrix4f().rotateZYX(rot.z, rot.y, rot.x));
+            poseStack.translate(0, -1, 0);
         }
     }
 

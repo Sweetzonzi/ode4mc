@@ -1,11 +1,8 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
-import cn.solarmoon.spark_core.api.entity.skill.BoneBoxAnimSkill
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spark_core.api.visual_effect.common.trail.Trail
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
@@ -15,8 +12,6 @@ import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
 import net.minecraft.core.Direction
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.phys.Vec3
-import org.joml.Vector3f
 import java.awt.Color
 
 /**
@@ -32,9 +27,9 @@ import java.awt.Color
  * - 强制位移（在控制器中按住s会阻止水平位移）
  */
 abstract class AttackAnimSkill(
-    controller: FightSkillController,
+    val controller: FightSkillController,
     animBounds: Set<String>,
-): ItemBoxAnimSkill(controller, animBounds) {
+): AnimSkill(controller.animatable, animBounds) {
 
     val baseAttackSpeed = controller.baseAttackSpeed
 
@@ -42,34 +37,34 @@ abstract class AttackAnimSkill(
 
     abstract fun getHitStrength(anim: MixedAnimation): Int
 
-    override fun onBoxSummon(box: OrientedBoundingBox, anim: MixedAnimation) {
-        super.onBoxSummon(box, anim)
-        attack(box)
-        if (entity.level().isClientSide) SparkVisualEffects.TRAIL.setAdd(getBoxId()) {
-            val color = if (getHitStrength(anim) > 0) Color.RED else Color.WHITE
-            Trail(getBoxBoundToBone(anim, it), Direction.Axis.Z, color).apply {
-                if (entity is LivingEntity) getAttackItem(entity.weaponItem, anim)?.let { setTexture(it) }
-            }
-        }
-    }
-
-    override fun onFirstTargetAttacked(target: Entity) {
-        super.onFirstTargetAttacked(target)
-        animatable.animController.startFreezing(true)
-        // 重攻击可使屏幕晃动
-        getPlayingAnim()?.let {
-            if (getHitType(it).isHeavy) SparkVisualEffects.CAMERA_SHAKE.shakeToClient(entity, 2, getHitStrength(it) + 0.5f)
-        }
-    }
-
-    override fun onTargetAttacked(target: Entity) {
-        super.onTargetAttacked(target)
-        addFightSpiritWhenAttack(target)
-        getPlayingAnim()?.let {
-            target.getAttackedData()?.setHitType(getHitType(it))
-            target.getAttackedData()?.setHitStrength(getHitStrength(it))
-        }
-    }
+//    override fun onBoxSummon(box: OrientedBoundingBox, anim: MixedAnimation) {
+//        super.onBoxSummon(box, anim)
+//        attack(box)
+//        if (entity.level().isClientSide) SparkVisualEffects.TRAIL.setAdd(getBoxId()) {
+//            val color = if (getHitStrength(anim) > 0) Color.RED else Color.WHITE
+//            Trail(getBoxBoundToBone(anim, it), Direction.Axis.Z, color).apply {
+//                if (entity is LivingEntity) getAttackItem(entity.weaponItem, anim)?.let { setTexture(it) }
+//            }
+//        }
+//    }
+//
+//    override fun onFirstTargetAttacked(target: Entity) {
+//        super.onFirstTargetAttacked(target)
+//        animatable.animController.startFreezing(true)
+//        // 重攻击可使屏幕晃动
+//        getPlayingAnim()?.let {
+//            if (getHitType(it).isHeavy) SparkVisualEffects.CAMERA_SHAKE.shakeToClient(entity, 2, getHitStrength(it) + 0.5f)
+//        }
+//    }
+//
+//    override fun onTargetAttacked(target: Entity) {
+//        super.onTargetAttacked(target)
+//        addFightSpiritWhenAttack(target)
+//        getPlayingAnim()?.let {
+//            target.getAttackedData()?.setHitType(getHitType(it))
+//            target.getAttackedData()?.setHitStrength(getHitStrength(it))
+//        }
+//    }
 
     abstract fun addFightSpiritWhenAttack(target: Entity)
 

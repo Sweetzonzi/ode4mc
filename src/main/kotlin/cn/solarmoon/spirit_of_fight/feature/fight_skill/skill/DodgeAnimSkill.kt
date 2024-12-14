@@ -27,7 +27,7 @@ open class DodgeAnimSkill(
         @JvmStatic
         fun createDodgeConsumeAnims(prefix: String): Map<MoveDirection, SyncedAnimation> = buildMap {
             MoveDirection.entries.forEach {
-                put(it, SyncedAnimation(MixedAnimation("$prefix:dodge_$it", startTransSpeed = 10f)))
+                put(it, SyncedAnimation(MixedAnimation("$prefix:dodge_$it", startTransSpeed = 6f)))
             }
         }
     }
@@ -80,8 +80,8 @@ open class DodgeAnimSkill(
         }
     }
 
-    override fun physTick() {
-        super.physTick()
+    override fun tick() {
+        super.tick()
         // 在正常防守时可以直接按出闪避
         if (controller.guard.isStanding()) {
             entity.getPreInput().executeIfPresent("dodge")

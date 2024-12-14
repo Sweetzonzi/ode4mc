@@ -18,12 +18,12 @@ abstract class ParryAnimSkill(
 
     companion object {
         @JvmStatic
-        fun createParrySyncedAnim(prefix: String) = SyncedAnimation(MixedAnimation("$prefix:parry", startTransSpeed = 10f))
+        fun createParrySyncedAnim(prefix: String) = SyncedAnimation(MixedAnimation("$prefix:parry", startTransSpeed = 6f))
 
         @JvmStatic
         val PARRY_SYNCED_ANIM = buildMap {
             listOf(Side.LEFT, Side.RIGHT).forEach {
-                put(it, SyncedAnimation(MixedAnimation("parried_$it", startTransSpeed = 10f)))
+                put(it, SyncedAnimation(MixedAnimation("parried_$it", startTransSpeed = 6f)))
             }
         }
 

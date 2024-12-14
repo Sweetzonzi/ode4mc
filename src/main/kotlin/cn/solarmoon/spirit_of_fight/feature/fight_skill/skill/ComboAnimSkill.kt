@@ -5,7 +5,6 @@ import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
@@ -35,7 +34,7 @@ abstract class ComboAnimSkill(
         @JvmStatic
         fun createComboConsumeAnims(prefix: String, maxCombo: Int): Map<Int, SyncedAnimation> = buildMap {
             for (i in 0 until maxCombo) {
-                put(i, SyncedAnimation(MixedAnimation("$prefix:attack_$i", startTransSpeed = 10f)))
+                put(i, SyncedAnimation(MixedAnimation("$prefix:attack_$i", startTransSpeed = 6f)))
             }
         }
     }
@@ -48,9 +47,9 @@ abstract class ComboAnimSkill(
 
     abstract fun getMoveByIndex(index: Int, anim: MixedAnimation): Vec3?
 
-    override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-        return if (shouldBoxSummon(animBiMap.inverse()[anim.name]!!, anim)) listOf(getBoxBoundToBone(anim)) else listOf()
-    }
+//    override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
+//        return if (shouldBoxSummon(animBiMap.inverse()[anim.name]!!, anim)) listOf(getBoxBoundToBone(anim)) else listOf()
+//    }
 
     override fun getMove(anim: MixedAnimation): Vec3? {
         return getMoveByIndex(animBiMap.inverse()[anim.name]!!, anim)

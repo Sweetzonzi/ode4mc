@@ -11,6 +11,7 @@ class ServerPhysLevel(
         level.allEntities.forEach {
             NeoForge.EVENT_BUS.post(PhysLevelTickEvent.Entity(this, it))
         }
+        super.physTick()
     }
 
 }

@@ -42,7 +42,7 @@ class EntityStateAutoAnim(
     fun getAnimation(state: EntityState): MixedAnimation {
         val modelPath = animatable.animData.modelPath
         return when(state) {
-            EntityState.JUMP -> MixedAnimation(modelPath, playData[state]!!, _startTransSpeed = 10f)
+            EntityState.JUMP -> MixedAnimation(modelPath, playData[state]!!, _startTransSpeed = 6f)
             else -> MixedAnimation(modelPath, playData[state]!!)
         }
     }

@@ -16,13 +16,11 @@ import kotlin.math.PI
  * 在动画混合中，为了简化动画的标识，这里以主动画+次要动画的形式存储动画，当在需要的地方查找动画时，以主动画列表进行查找，这样可以保证查找出来的动画不是一个动画列表，从而简化代码逻辑
  */
 data class AnimPlayData(
-    private var mixedAnims: Set<MixedAnimation>,
+    private var mixedAnims: MutableSet<MixedAnimation>,
 ) {
 
     fun modifyAnims(modifier: (MutableSet<MixedAnimation>) -> Unit) {
-        val mutableCopy = mixedAnims.toMutableSet() // 创建可变副本
-        modifier.invoke(mutableCopy) // 通过传入的操作进行修改
-        mixedAnims = mutableCopy // 将修改后的结果赋值为新的不可变集合
+        modifier.invoke(mixedAnims)
     }
 
     fun getSafeMixedAnims() = mixedAnims

@@ -59,7 +59,7 @@ data class MixedAnimation(
         if (startTransSpeed > MAX_TRANS_PROCESS) transTick = MAX_TRANS_PROCESS
     }
 
-    val maxTick get() = animation.baseLifeTime * PhysLevel.TICKS_PRE_SECOND
+    val maxTick get() = animation.baseLifeTime * TICKS_PRE_SECOND
     var speed
         get() = _speed * freeze.toFloat()
         set(value) { _speed = value }
@@ -85,7 +85,7 @@ data class MixedAnimation(
      * 判断tick是否在两个时间段之间，此方法会考虑到动画速度的影响和tick本身的时间间隔，因此只需填入动画里默认的时间段即可
      */
     fun isTickIn(time1: Double, time2: Double): Boolean {
-        return tick in time1 * PhysLevel.TICKS_PRE_SECOND .. time2 * PhysLevel.TICKS_PRE_SECOND
+        return tick in time1 * TICKS_PRE_SECOND .. time2 * TICKS_PRE_SECOND
     }
 
     // 比较名字保证只有一种该动画，同时比较cancelled保证同种动画的切换之间存在过渡
@@ -116,7 +116,10 @@ data class MixedAnimation(
          * 同时他也意味着如果使用默认的过渡速度，则过渡时间为4tick
          */
         @JvmStatic
-        val MAX_TRANS_PROCESS get() = 10.0
+        val MAX_TRANS_PROCESS get() = 5.0
+
+        @JvmStatic
+        val TICKS_PRE_SECOND = 20
 
         @JvmStatic
         val CODEC: Codec<MixedAnimation> = RecordCodecBuilder.create {
@@ -169,12 +172,12 @@ data class MixedAnimation(
 
         @JvmStatic
         val SET_CODEC = Codec.list(CODEC).xmap(
-            { it.toSet() },
+            { it.toMutableSet() },
             { it.toList() }
         )
 
         @JvmStatic
-        val SET_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.collection { setOf() })
+        val SET_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.collection { mutableSetOf() })
 
         @JvmStatic
         val LIST_CODEC = CODEC.listOf().xmap(

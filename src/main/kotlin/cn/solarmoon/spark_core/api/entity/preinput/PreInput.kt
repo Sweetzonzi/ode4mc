@@ -44,7 +44,6 @@ class PreInput(
      * 调用预输入指令并清空
      */
     fun execute() {
-        SparkCore.LOGGER.info("233")
         val event = NeoForge.EVENT_BUS.post(OnPreInputExecuteEvent.Pre(holder))
         if (event.isCanceled) return
         input.invoke()

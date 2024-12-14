@@ -1,14 +1,22 @@
 package cn.solarmoon.spark_core.api.phys.obb.renderable
 
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.phys.getVertexes
 import cn.solarmoon.spark_core.api.visual_effect.VisualEffectRenderer
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Vector3f
+import org.ode4j.ode.DBody
+import org.ode4j.ode.DBox
+import org.ode4j.ode.DGeom
+import org.ode4j.ode.OdeHelper
+import org.ode4j.ode.internal.DxBody
+import org.ode4j.ode.internal.DxBox
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -29,7 +37,7 @@ class OBBRenderer(): VisualEffectRenderer() {
     /**
      * 将指定id的box渲染同步到客户端，其中color和box都为可选，只填入其中一个，另一个为null时将只同步不为null的内容
      */
-    fun syncBoxToClient(id: String?, color: Color?, box: OrientedBoundingBox?) {
+    fun syncBoxToClient(id: String?, color: Color?, box: Int?) {
         if (id == null) return
         PacketDistributor.sendToAllPlayers(RenderableOBBPayload(id, color?.rgb, box))
     }
@@ -50,18 +58,17 @@ class OBBRenderer(): VisualEffectRenderer() {
         if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) renderableBoxes.clear()
         renderableBoxes.forEach { id, manager ->
             val box = manager.getBox(partialTicks) ?: return@forEach
-            box.connections.forEach { (c1, c2) ->
-                val vs = box.vertexes
-                val v1 = vs[c1]
-                val v2 = vs[c2]
-                val normal = Vector3f(v2.x.toFloat() - v1.x.toFloat(), v2.y.toFloat() - v1.y.toFloat(), v2.z.toFloat() - v1.z.toFloat()).normalize()
-                val color = manager.color
-                buffer.addVertex(poseStack.last().pose(), v1.x.toFloat() - camPos.x.toFloat(), v1.y.toFloat() - camPos.y.toFloat(), v1.z.toFloat() - camPos.z.toFloat())
-                    .setColor(color.red, color.green, color.blue, color.alpha)
-                    .setNormal(poseStack.last(), normal.x, normal.y, normal.z) // 法线方向，影响光照，将会随着与光线夹角越小亮度越大
-                buffer.addVertex(poseStack.last().pose(), v2.x.toFloat() - camPos.x.toFloat(), v2.y.toFloat() - camPos.y.toFloat(), v2.z.toFloat() - camPos.z.toFloat())
-                    .setColor(color.red, color.green, color.blue, color.alpha)
-                    .setNormal(poseStack.last(), normal.x, normal.y, normal.z)
+            if (box is DBox) {
+                box.getVertexes().zipWithNext { v1, v2 ->
+                    val normal = Vector3f(v2.x.toFloat() - v1.x.toFloat(), v2.y.toFloat() - v1.y.toFloat(), v2.z.toFloat() - v1.z.toFloat()).normalize()
+                    val color = manager.color
+                    buffer.addVertex(poseStack.last().pose(), v1.x.toFloat() - camPos.x.toFloat(), v1.y.toFloat() - camPos.y.toFloat(), v1.z.toFloat() - camPos.z.toFloat())
+                        .setColor(color.red, color.green, color.blue, color.alpha)
+                        .setNormal(poseStack.last(), normal.x, normal.y, normal.z) // 法线方向，影响光照，将会随着与光线夹角越小亮度越大
+                    buffer.addVertex(poseStack.last().pose(), v2.x.toFloat() - camPos.x.toFloat(), v2.y.toFloat() - camPos.y.toFloat(), v2.z.toFloat() - camPos.z.toFloat())
+                        .setColor(color.red, color.green, color.blue, color.alpha)
+                        .setNormal(poseStack.last(), normal.x, normal.y, normal.z)
+                }
             }
         }
     }

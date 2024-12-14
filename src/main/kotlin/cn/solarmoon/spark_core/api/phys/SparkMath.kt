@@ -1,34 +1,19 @@
 package cn.solarmoon.spark_core.api.phys
 
-import cn.solarmoon.spark_core.api.phys.math.DQuaternion
-import cn.solarmoon.spark_core.api.phys.math.DQuaternionC
-import cn.solarmoon.spark_core.api.phys.math.DVector3
-import cn.solarmoon.spark_core.api.phys.math.DVector3C
-import cn.solarmoon.spark_core.api.phys.ode.DSpace
-import cn.solarmoon.spark_core.api.phys.ode.OdeHelper
-import cn.solarmoon.spark_core.api.phys.ode.internal.DxBox
-import cn.solarmoon.spark_core.api.phys.ode.internal.DxSpace
-import net.minecraft.world.level.levelgen.structure.BoundingBox
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import org.joml.Matrix3d
 import org.joml.Matrix3f
+import org.joml.Quaterniond
 import org.joml.Quaternionf
+import org.joml.Vector3d
 import org.joml.Vector3f
+import org.ode4j.math.DMatrix3
+import org.ode4j.math.DQuaternion
+import org.ode4j.math.DVector3
+import org.ode4j.math.DVector3C
 
 fun Vec3.toRadians(): Vec3 {
     return Vec3(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z))
-}
-
-fun Vec3.toDegrees(): Vec3 {
-    return Vec3(Math.toDegrees(x), Math.toDegrees(y), Math.toDegrees(z))
-}
-
-fun Vector3f.toRadians(): Vector3f {
-    return Vector3f(Math.toRadians(x.toDouble()).toFloat(), Math.toRadians(y.toDouble()).toFloat(), Math.toRadians(z.toDouble()).toFloat())
-}
-
-fun Vector3f.toDegrees(): Vector3f {
-    return Vector3f(Math.toDegrees(x.toDouble()).toFloat(), Math.toDegrees(y.toDouble()).toFloat(), Math.toDegrees(z.toDouble()).toFloat())
 }
 
 fun Vector3f.copy(): Vector3f = Vector3f(this)
@@ -39,10 +24,6 @@ fun Float.toRadians(): Float {
 
 fun Float.toDegrees(): Float {
     return Math.toDegrees(this.toDouble()).toFloat()
-}
-
-fun Double.toRadians(): Float {
-    return Math.toRadians(this).toFloat()
 }
 
 fun Quaternionf.getScaledAxisX(): Vector3f {
@@ -64,8 +45,14 @@ fun Quaternionf.copy(): Quaternionf = Quaternionf(this)
 
 fun Vec3.toDVector3() = DVector3(x, y ,z)
 
-fun AABB.toDBox(space: DSpace) = OdeHelper.createBox(space, xsize, ysize, zsize).apply { position = center.toDVector3() }
+fun Vector3d.toDVector3() = DVector3(x, y ,z)
 
-fun DVector3C.toVector3f() = Vector3f(get0().toFloat(), get1().toFloat(), get2().toFloat())
+fun Vector3f.toDVector3() = DVector3(x.toDouble(), y.toDouble(), z.toDouble())
 
-fun DQuaternionC.toQuaternion() = Quaternionf(get0(), get1(), get2(), get3())
+fun Quaterniond.toDQuaternion() = DQuaternion(w, x, y, z)
+
+fun Matrix3d.toDMatrix3() = DMatrix3(m00, m01, m02, m10, m11, m12, m20, m21, m22)
+
+fun DVector3C.toVector3d() = Vector3d(get0(), get1(), get2())
+
+fun DVector3C.toVec3() = Vec3(get0(), get1(), get2())

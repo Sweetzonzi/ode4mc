@@ -8,13 +8,13 @@ abstract class KeyboardInputTickEvent(
     val options: Options,
     val isSneaking: Boolean,
     val sneakingSpeedMultiplier: Float
-): Event(), ICancellableEvent {
+): Event() {
 
     class Pre(
         options: Options,
         isSneaking: Boolean,
         sneakingSpeedMultiplier: Float
-    ): KeyboardInputTickEvent(options, isSneaking, sneakingSpeedMultiplier)
+    ): KeyboardInputTickEvent(options, isSneaking, sneakingSpeedMultiplier), ICancellableEvent
 
     class Post(
         options: Options,

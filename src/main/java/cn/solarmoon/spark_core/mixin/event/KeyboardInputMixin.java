@@ -23,10 +23,9 @@ public class KeyboardInputMixin extends Input {
         if (event.isCanceled()) ci.cancel();
     }
 
-    @Inject(method = "tick", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "tick", at = @At("TAIL"))
     private void tickT(boolean isSneaking, float sneakingSpeedMultiplier, CallbackInfo ci) {
-        var event = NeoForge.EVENT_BUS.post(new KeyboardInputTickEvent.Post(options, isSneaking, sneakingSpeedMultiplier));
-        if (event.isCanceled()) ci.cancel();
+        NeoForge.EVENT_BUS.post(new KeyboardInputTickEvent.Post(options, isSneaking, sneakingSpeedMultiplier));
     }
 
 }

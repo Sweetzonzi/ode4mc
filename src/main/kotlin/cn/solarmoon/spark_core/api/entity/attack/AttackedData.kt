@@ -1,11 +1,11 @@
 package cn.solarmoon.spark_core.api.entity.attack
 
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.level.Level
+import org.ode4j.ode.DGeom
 import java.util.Optional
 
 /**
@@ -16,34 +16,12 @@ import java.util.Optional
  * @param extraData 可以附加额外数据到此次攻击
  */
 data class AttackedData(
-    val attacker: Int,
-    val damageBox: OrientedBoundingBox,
+    val attacker: Int?,
+    val damageBox: DGeom,
     val damageBone: String?,
     val extraData: CompoundTag = CompoundTag()
 ) {
 
-    /**
-     * 当将此值设为true时，将在生物的下一个tick删除该数据，以免多次调用该数据后对应的方法
-     */
-    var isCancelled = false
 
-    fun getAttacker(level: Level) = level.getEntity(attacker)
-
-    companion object {
-        @JvmStatic
-        val CODEC: Codec<AttackedData> = RecordCodecBuilder.create {
-            it.group(
-                Codec.INT.fieldOf("attacker").forGetter { it.attacker },
-                OrientedBoundingBox.CODEC.fieldOf("box").forGetter { it.damageBox },
-                Codec.STRING.optionalFieldOf("damage_bone").forGetter { Optional.ofNullable(it.damageBone) },
-                CompoundTag.CODEC.fieldOf("extra_data").forGetter { it.extraData }
-            ).apply(it) { v, b ,b2, n ->
-                AttackedData(v, b, b2.orElse(null), n)
-            }
-        }
-
-        @JvmStatic
-        val OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
-    }
 
 }

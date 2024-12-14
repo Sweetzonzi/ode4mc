@@ -3,7 +3,6 @@ package cn.solarmoon.spark_core.api.entity.skill
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent
 import cn.solarmoon.spark_core.api.event.PlayerGetAttackStrengthEvent
-import cn.solarmoon.spark_core.api.phys.thread.PhysLevelTickEvent
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
@@ -30,13 +29,13 @@ class AnimSkillApplier {
     }
 
     @SubscribeEvent
-    private fun physTick(event: PhysLevelTickEvent.Entity) {
+    private fun entityTick(event: EntityTickEvent.Pre) {
         val entity = event.entity
         if (entity is IAnimSkillHolder<*> && entity is IEntityAnimatable<*>) {
             val skillController = entity.skillController
             val switch = entity.persistentData.getBoolean("SkillSwitch")
 
-            entity.getAllSkills().forEach { it.physTick() }
+            entity.getAllSkills().forEach { it.tick() }
 
             if (skillController != null) {
                 if (!switch) entity.persistentData.putBoolean("SkillSwitch", true)
@@ -47,14 +46,6 @@ class AnimSkillApplier {
                     entity.animController.stopAllAnimation()
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    private fun entityTick(event: EntityTickEvent.Pre) {
-        val entity = event.entity
-        if (entity is IAnimSkillHolder<*> && entity is IEntityAnimatable<*>) {
-            entity.getAllSkills().forEach { it.tick() }
         }
     }
 

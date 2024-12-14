@@ -1,7 +1,8 @@
 package cn.solarmoon.spark_core.api.phys.obb.renderable
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import org.ode4j.ode.DBox
+import org.ode4j.ode.DGeom
 import java.awt.Color
 
 /**
@@ -16,8 +17,8 @@ class RenderableOBB {
     var maxColorTick = 5
     var color: Color = defaultColor
         private set
-    var box: OrientedBoundingBox? = null
-    var lastBox: OrientedBoundingBox? = null
+    var box: DGeom? = null
+    var lastBox: DGeom? = null
     var isRemoved: Boolean = false
 
     fun setColor(color: Color) {
@@ -43,16 +44,16 @@ class RenderableOBB {
      * 注意：刷新最好选用当前动画+speed处的box，因为动画的partialticks是为了补齐从这一tick到下一tick的空缺，而这里的partialtick则是为了补齐上一tick到这一tick的空缺，因此调用当前
      * 动画对应的生成的box必然导致box滞后1tick
      */
-    fun refresh(box: OrientedBoundingBox, straight: Boolean = false) {
+    fun refresh(box: DGeom, straight: Boolean = false) {
         tick = 0
         this.box = box
         if (straight) lastBox = box
     }
 
-    fun getBox(partialTicks: Float): OrientedBoundingBox? {
+    fun getBox(partialTicks: Float): DGeom? {
         if (box == null) return null
         if (lastBox == null) return box
-        return lastBox!!.lerp(partialTicks, box!!)
+        return box
     }
 
     fun remove() {

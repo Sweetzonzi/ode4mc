@@ -3,10 +3,6 @@ package cn.solarmoon.spark_core.mixin.animation;
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable;
 import cn.solarmoon.spark_core.api.animation.vanilla.ITransformModel;
 import cn.solarmoon.spark_core.api.animation.vanilla.VanillaModelHelper;
-import cn.solarmoon.spark_core.api.phys.thread.ClientPhysLevel;
-import cn.solarmoon.spark_core.api.phys.thread.ThreadHelperKt;
-import kotlinx.coroutines.BuildersKt;
-import kotlinx.coroutines.CoroutineStart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -43,19 +39,17 @@ public class HumanoidModelMixin<T extends LivingEntity> implements ITransformMod
             setDefault();
             if (shouldTransform()) {
                 var animData = animatable.getAnimData();
-                if (ThreadHelperKt.getPhysLevel(entity) instanceof ClientPhysLevel cl) {
-                    var partialTicks = cl.getPartialTicks();
-                    VanillaModelHelper.setRoot(leftArm, body);
-                    VanillaModelHelper.setRoot(rightArm, body);
-                    VanillaModelHelper.setRoot(head, body);
-                    VanillaModelHelper.setPivot(animatable.getAnimData(), "waist", body);
-                    VanillaModelHelper.applyTransform(animData, "leftArm", leftArm, partialTicks);
-                    VanillaModelHelper.applyTransform(animData, "rightArm", rightArm, partialTicks);
-                    VanillaModelHelper.applyTransform(animData, "leftLeg", leftLeg, partialTicks);
-                    VanillaModelHelper.applyTransform(animData, "rightLeg", rightLeg, partialTicks);
-                    VanillaModelHelper.applyTransform(animData, "waist", body, partialTicks);
-                    VanillaModelHelper.applyTransform(animData, "head", head, partialTicks);
-                }
+                var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+                VanillaModelHelper.setRoot(leftArm, body);
+                VanillaModelHelper.setRoot(rightArm, body);
+                VanillaModelHelper.setRoot(head, body);
+                VanillaModelHelper.setPivot(animatable.getAnimData(), "waist", body);
+                VanillaModelHelper.applyTransform(animData, "leftArm", leftArm, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "rightArm", rightArm, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "leftLeg", leftLeg, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "rightLeg", rightLeg, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "waist", body, partialTicks);
+                VanillaModelHelper.applyTransform(animData, "head", head, partialTicks);
             } else {
                 setShouldTransform(true);
             }

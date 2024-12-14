@@ -1,24 +1,24 @@
 package cn.solarmoon.spark_core.api.visual_effect.common.trail
 
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
 import net.minecraft.client.Minecraft
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import org.joml.Vector3f
+import org.ode4j.ode.DGeom
 import java.awt.Color
 import java.io.FileNotFoundException
 
 class Trail(
-    val box: OrientedBoundingBox,
+    val box: DGeom,
     val axis: Direction.Axis,
     val color: Color = Color.WHITE
 ) {
 
     private var textureLocation = DEFAULT_TEXTURE
-    val start: Vector3f get() = box.getAxisFaceCenters(axis).first
-    val end: Vector3f get() = box.getAxisFaceCenters(axis).second
+    val start: Vector3f get() = Vector3f()
+    val end: Vector3f get() = Vector3f()
 
     var tick = 0
     var maxTick = 5

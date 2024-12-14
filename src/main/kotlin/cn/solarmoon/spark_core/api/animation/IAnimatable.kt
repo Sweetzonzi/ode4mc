@@ -4,13 +4,17 @@ import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimController
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
-import cn.solarmoon.spark_core.api.phys.obb.OrientedBoundingBox
+import cn.solarmoon.spark_core.api.phys.IBoundingBone
+import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
+import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.ode4j.ode.DBody
+import org.ode4j.ode.OdeHelper
 
-interface IAnimatable<T> {
+interface IAnimatable<T: IAttachmentHolder> {
 
     /**
      * 一般而言输入this即可，用于调用该生物的位置信息等
@@ -48,15 +52,6 @@ interface IAnimatable<T> {
      * 获取指定骨骼的变换
      */
     fun getBoneMatrix(name: String, partialTick: Float = 1f): Matrix4f
-
-    /**
-     * 创建和骨骼绑定的碰撞箱
-     */
-    fun createCollisionBoxBoundToBone(boneName: String, size: Vector3f = Vector3f(), offset: Vector3f = Vector3f(), partialTicks: Float = 1f): OrientedBoundingBox {
-        return OrientedBoundingBox(getBonePivot(boneName, partialTicks), size)
-            .apply { rotation.setFromUnnormalized(getBoneMatrix(boneName)) }
-            .apply { offsetCenter(offset) }
-    }
 
     /**
      * 同步当前动画播放和定位的所有必要数据到客户端

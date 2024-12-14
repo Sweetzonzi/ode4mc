@@ -31,8 +31,8 @@ open class CommonGuardAnimSkill(
             AnimType.entries.forEach {
                 val name = it.toString().lowercase()
                 when(it) {
-                    AnimType.IDLE -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 5f)))
-                    AnimType.HURT -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 10f)))
+                    AnimType.IDLE -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 2.5f)))
+                    AnimType.HURT -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 6f)))
                 }
             }
         }
