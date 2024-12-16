@@ -205,6 +205,11 @@ public class DxBody extends DObject implements DBody {
 			return; // already destroyed
 		}
 
+		var i = getGeomIterator();
+		while (i.hasNext()) {
+			i.next().destroy();
+		}
+
 		// all geoms that link to this body must be notified that the body is about
 		// to disappear. note that the call to dGeomSetBody(geom,0) will result in
 		// dGeomGetBodyNext() returning 0 for the body, so we must get the next body

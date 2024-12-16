@@ -56,7 +56,7 @@ abstract class AnimSkill(
     fun getPlayingAnim(filter: (MixedAnimation) -> Boolean = {true}): MixedAnimation? {
         for (anim in animBounds) {
             val a = animatable.animData.playData.getMixedAnimation(anim, filter)
-            if (a != null) return animatable.animController.animsCache.firstOrNull { it.name == a.name }
+            if (a != null) return animatable.animData.playData.mixedAnims.firstOrNull { it.name == a.name }
         }
         return null
     }

@@ -1,5 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
 import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
@@ -7,6 +8,7 @@ import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.ClientOperationPayload
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.FightSpiritPayload
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType
 import com.google.common.collect.HashBiMap
@@ -21,7 +23,7 @@ abstract class ComboAnimSkill(
     controller: FightSkillController,
     val animGroup: Map<Int, SyncedAnimation>,
     private val attackSwitchNode: Map<Int, Double>,
-    private val attackChangeNode: Map<Int, Double>,
+    val attackChangeNode: Map<Int, Double>,
     private val damageMultiplier: Map<Int, Float>,
     private val hitType: Map<Int, HitType>,
     private val hitStrength: Map<Int, Int>
@@ -77,24 +79,12 @@ abstract class ComboAnimSkill(
     override fun whenInAnim(anim: MixedAnimation) {
         super.whenInAnim(anim)
 
-        val preInput = entity.getPreInput()
-        val id = animBiMap.inverse()[anim.name]!!
         // 如果正在播放任何连击动画，按规定的结束点进行切换（预输入调用）
         val anim = anim.takeIf { !it.isCancelled } ?: return
+        val id = animBiMap.inverse()[anim.name]!!
         val switch = attackSwitchNode[id] ?: anim.maxTick
-        // 这一段使得连招在50-150ms之间可以变招
-        val changeNode = attackChangeNode[index]
-        if (preInput.hasInput("combo") && changeNode != null && !anim.isInTransition && anim.isTickIn(0.05, 0.15)) {
-            start(true) {
-                if (!entity.level().isClientSide) {
-                    if (entity is ServerPlayer) {
-                        it.syncToClientExceptPresentPlayer(entity, getAnimModifier(true))
-                    } else it.syncToClient(entity.id, getAnimModifier(true))
-                }
-            }
-            preInput.executeIfPresent("combo")
-        } else if (anim.isTickIn(switch, anim.maxTick)) {
-            preInput.executeIfPresent()
+        if (anim.isTickIn(switch, anim.maxTick)) {
+            entity.getPreInput().executeIfPresent()
         }
     }
 
@@ -109,7 +99,6 @@ abstract class ComboAnimSkill(
             val fs = entity.getFightSpirit()
             if (target.getAttackedData() == null) mul /= 2 // 没有受击数据则意味着格挡成功，数据已被清除，此时增值除以2
             fs.addStage(mul)
-            fs.syncToClient(entity.id, FightSpiritPayload.Type.ADD)
         }
     }
 

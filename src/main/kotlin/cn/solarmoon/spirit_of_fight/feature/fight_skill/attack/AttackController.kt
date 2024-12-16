@@ -44,15 +44,27 @@ class AttackController {
             var shouldCombo = true
             for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
                 if (skill !is ConcentrationAttackAnimSkill && skill.canRelease) {
-                    skill.start()
-                    ClientOperationPayload.sendOperationToServer(index.toString())
+                    skill.start {
+                        ClientOperationPayload.sendOperationToServer(index.toString())
+                    }
                     shouldCombo = false
                     break
                 }
             }
             if (shouldCombo) {
-                skillController.combo.start(false)
-                ClientOperationPayload.sendOperationToServer("combo")
+                skillController.combo.start(false) {
+                    ClientOperationPayload.sendOperationToServer("combo")
+                }
+                skillController.combo.getPlayingAnim()?.let {
+                    // 这一段使得连招在50-150ms之间可以变招
+                    val changeNode = skillController.combo.attackChangeNode[skillController.combo.index]
+                    if (player.getPreInput().hasInput("combo") && changeNode != null && !it.isInTransition && it.isTickIn(0.05, 0.15)) {
+                        skillController.combo.start(true) {
+                            ClientOperationPayload.sendOperationToServer("combo_switch")
+                        }
+                        player.getPreInput().executeIfPresent("combo")
+                    }
+                }
             }
             event.setSwingHand(false)
             event.isCanceled = true
@@ -67,8 +79,9 @@ class AttackController {
         while (SOFKeyMappings.SPECIAL_ATTACK.consumeClick()) {
             for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
                 if (skill is ConcentrationAttackAnimSkill && skill.canRelease) {
-                    skill.start()
-                    ClientOperationPayload.sendOperationToServer(index.toString())
+                    skill.start {
+                        ClientOperationPayload.sendOperationToServer(index.toString())
+                    }
                     break
                 }
             }
@@ -89,8 +102,9 @@ class AttackController {
                 if (!isDodgeKeyInstantPress) return@run
                 val skill = player.skillController ?: return@run
                 val v = (player as LocalPlayer).getInputVector()
-                skill.dodge.start(direction, v)
-                ClientOperationPayload.sendOperationToServer("dodge", v, direction.id)
+                skill.dodge.start(direction, v) {
+                    ClientOperationPayload.sendOperationToServer("dodge", v, direction.id)
+                }
             }
         }
         isDodgeKeyInstantPress = false

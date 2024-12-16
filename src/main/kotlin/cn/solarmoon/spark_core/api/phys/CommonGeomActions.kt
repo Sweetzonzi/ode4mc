@@ -29,13 +29,15 @@ fun DGeom.setAttacked(o2: DGeom): Entity? {
  * @param immediateDamage 是否无视伤害的无敌时间立刻造成伤害
  * @return 碰撞到的实体
  */
-fun DGeom.livingCommonAttack(o2: DGeom, immediateDamage: Boolean): Entity? {
+fun DGeom.livingCommonAttack(o2: DGeom, immediateDamage: Boolean, actionBeforeAttack: (Entity) -> Unit = {}): Entity? {
     val target = setAttacked(o2)
     if (target != null) {
         val attacker = data().owner
         if (attacker is Player) {
+            actionBeforeAttack.invoke(target)
             attacker.attack(target)
         } else if (attacker is LivingEntity) {
+            actionBeforeAttack.invoke(target)
             attacker.doHurtTarget(target)
         }
         if (immediateDamage) target.invulnerableTime = 0

@@ -38,6 +38,12 @@ data class ClientOperationPayload(
                         it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(false))
                     }
                 }
+                "combo_switch" -> {
+                    skill.combo.start(true) {
+                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(true))
+                    }
+                    player.getPreInput().executeIfPresent("combo")
+                }
                 "dodge" -> {
                     skill.dodge.start(MoveDirection.getById(payload.id), payload.moveVector) {
                         it.syncToClientExceptPresentPlayer(player)

@@ -52,7 +52,7 @@ class EntityStateAutoAnim(
     }
 
     override fun isValid(): Boolean {
-        val mixAnimations = animatable.animData.playData.getSafeMixedAnims()
+        val mixAnimations = animatable.animData.playData.mixedAnims
         val isPlayingOtherAnim = !mixAnimations.isEmpty() && mixAnimations.any { it.name !in getAllAnimNames() && !it.isCancelled }
         val jump = animatable.animData.playData.getMixedAnimation(playData[EntityState.JUMP]!!)
         return !isPlayingOtherAnim && (jump == null || jump.isTickIn(0.4, jump.maxTick))
@@ -89,10 +89,8 @@ class EntityStateAutoAnim(
         if (result > 1f) result = log(result, fc) + 1f
 
         if (factor != 0f) {
-            entity.animController.modifyAnims {
-                it.filter { it.name == getAnimName() }.forEach {
-                    it.speed = result.coerceAtLeast(0.5f)
-                }
+            entity.animData.playData.mixedAnims.filter { it.name == getAnimName() }.forEach {
+                it.speed = result.coerceAtLeast(0.5f)
             }
         }
     }

@@ -17,37 +17,28 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
     var maxFreezeTick = 2
     var freezeSpeedPercent = 1f
 
-    fun modifyAnims(modifier: (MutableSet<MixedAnimation>) -> Unit) {
-        animatable.animData.playData.modifyAnims(modifier)
-    }
-
     /**
      * 把所有动画加入删除队列并添加新动画到动画组
      * @param filter 会对每一个正在组里的动画进行遍历，可根据它们的属性选择一个boolean值来决定是否暂停它们
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
-        modifyAnims {
-            val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
-            it.forEach {
-                if (filter.invoke(it)) {
-                    if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
-                    it.isCancelled = true
-                }
+        val it = animatable.animData.playData.mixedAnims
+        val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
+        it.forEach {
+            if (filter.invoke(it)) {
+                if (minTransSpeed != null) it.endTransSpeed = minTransSpeed
+                it.isCancelled = true
             }
-            it.addAll(mixedAnimation)
         }
+        it.addAll(mixedAnimation)
     }
 
     fun stopAnimation(vararg name: String) {
-        modifyAnims {
-            it.forEach { if (it.name in name) it.isCancelled = true }
-        }
+        animatable.animData.playData.mixedAnims.forEach { if (it.name in name) it.isCancelled = true }
     }
 
     fun stopAllAnimation(filter: (MixedAnimation) -> Boolean = { true }) {
-        modifyAnims {
-            it.filter(filter).forEach { it.isCancelled = true }
-        }
+        animatable.animData.playData.mixedAnims.filter(filter).forEach { it.isCancelled = true }
     }
 
     /**
@@ -62,44 +53,31 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
 
     fun isPlaying(name: String?, level: Int, filter: (MixedAnimation) -> Boolean = { true }): Boolean {
         val play = animatable.animData.playData
-        if (name == null) return play.getSafeMixedAnims().isEmpty()
+        if (name == null) return play.mixedAnims.isEmpty()
         val anim = play.getMixedAnimation(name, level, filter)
         return anim != null
     }
 
     fun startFreezing(syncToClient: Boolean, speedPercent: Float = 0.05f, freezeTime: Int = 2) {
-        modifyAnims {
-            freezeTick = freezeTime
-            maxFreezeTick = freezeTime
-            freezeSpeedPercent = speedPercent
+        freezeTick = freezeTime
+        maxFreezeTick = freezeTime
+        freezeSpeedPercent = speedPercent
 
-            val entity = animatable.animatable
-            if (syncToClient && entity is Entity) {
-                PacketDistributor.sendToAllPlayers(AnimFreezingPayload(entity.id, speedPercent, freezeTime))
-            }
+        val entity = animatable.animatable
+        if (syncToClient && entity is Entity) {
+            PacketDistributor.sendToAllPlayers(AnimFreezingPayload(entity.id, speedPercent, freezeTime))
         }
     }
 
-    var animsCache = setOf<MixedAnimation>()
-
-    fun updateCache() {
-        animsCache = animatable.animData.playData.getSafeMixedAnims().map { it.copy() }.toSet()
-    }
-
-    /**
-     * 动画的tick，默认情况下会自动在接入了IAnimatable的生物的tick中调用此方法
-     *
-     * 此方法是双端调用的，主要使用的是在客户端模拟预测服务端的操作，单独进行渲染
-     */
-    fun physTick() {
-        val factor = 2f / 5
-        animsCache.forEach {
+    fun tick() {
+        // 播放
+        animatable.animData.playData.mixedAnims.forEach {
             if (it.shouldBackwardTransition) {
-                it.transTick -= it.endTransSpeed * factor
+                it.transTick -= it.endTransSpeed
             } else if (it.shouldForwardTransition) {
-                it.transTick += it.startTransSpeed * factor
+                it.transTick += it.startTransSpeed
             } else {
-                if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed * factor
+                if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
                 else {
                     when (it.animation.loop) {
                         Loop.TRUE -> it.tick = 0.00001
@@ -110,30 +88,8 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
             }
             it.freeze = freezeSpeedPercent
         }
-    }
 
-    fun tick() {
-        // 播放
-        animatable.animData.playData.modifyAnims {
-            it.forEach {
-                if (it.shouldBackwardTransition) {
-                    it.transTick -= it.endTransSpeed
-                } else if (it.shouldForwardTransition) {
-                    it.transTick += it.startTransSpeed
-                } else {
-                    if (it.tick < it.maxTick - if (it.animation.loop == Loop.TRUE) it.speed else 0f) it.tick += it.speed
-                    else {
-                        when (it.animation.loop) {
-                            Loop.TRUE -> it.tick = 0.00001
-                            Loop.ONCE -> it.isCancelled = true
-                            Loop.HOLD_ON_LAST_FRAME -> Unit
-                        }
-                    }
-                }
-                it.freeze = freezeSpeedPercent
-            }
-            it.removeIf { it.isCancelled && it.transTick <= 0 }
-        }
+        animatable.animData.playData.mixedAnims.removeIf { it.isCancelled && it.transTick <= 0 }
 
         // 冻结（模拟打肉的顿感）
         if (freezeTick > 0) freezeTick--
@@ -141,8 +97,6 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
             freezeTick = 0
             freezeSpeedPercent = 1f
         }
-
-        updateCache()
     }
 
 }

@@ -172,12 +172,12 @@ data class MixedAnimation(
 
         @JvmStatic
         val SET_CODEC = Codec.list(CODEC).xmap(
-            { it.toMutableSet() },
+            { LinkedHashSet(it) },
             { it.toList() }
         )
 
         @JvmStatic
-        val SET_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.collection { mutableSetOf() })
+        val SET_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.collection { linkedSetOf() })
 
         @JvmStatic
         val LIST_CODEC = CODEC.listOf().xmap(

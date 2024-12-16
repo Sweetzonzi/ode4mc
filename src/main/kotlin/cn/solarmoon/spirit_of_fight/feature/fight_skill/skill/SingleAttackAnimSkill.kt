@@ -85,7 +85,6 @@ abstract class SingleAttackAnimSkill(
         var mul = damageMultiplier
         if (target.getAttackedData() == null) mul /= 2 // 没有受击数据则意味着格挡成功，数据已被清除，此时增值除以2
         fs.addStage(mul)
-        fs.syncToClient(entity.id, FightSpiritPayload.Type.ADD)
     }
 
 }

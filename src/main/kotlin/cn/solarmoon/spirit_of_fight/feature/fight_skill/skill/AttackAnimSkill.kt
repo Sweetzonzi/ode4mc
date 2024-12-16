@@ -67,7 +67,7 @@ abstract class AttackAnimSkill(
     }
 
     open fun onFirstTargetAttacked(target: Entity) {
-        animatable.animController.startFreezing(true)
+        animatable.animController.startFreezing(false)
         // 重攻击可使屏幕晃动
         getPlayingAnim()?.let {
             if (getHitType(it).isHeavy) SparkVisualEffects.CAMERA_SHAKE.shakeToClient(entity, 2, getHitStrength(it) + 0.5f)
@@ -84,7 +84,7 @@ abstract class AttackAnimSkill(
 
     fun createAttackBox(size: DVector3): DGeom = OdeHelper.createBox(entity.getPhysWorld().space, size).apply {
         data().onCollide { o2, buffer ->
-            livingCommonAttack(o2, true)?.let {
+            livingCommonAttack(o2, true) {
                 if (data().attackedEntities.size == 1) onFirstTargetAttacked(it)
                 onTargetAttacked(it)
             }

@@ -1,6 +1,5 @@
 package cn.solarmoon.spark_core.api.phys
 
-import cn.solarmoon.spark_core.SparkCore
 import org.ode4j.ode.DContactBuffer
 import org.ode4j.ode.DGeom
 import org.ode4j.ode.OdeHelper
@@ -14,7 +13,7 @@ class PhysWorld(val stepSize: Long) {
     val world = OdeHelper.createWorld()
     val space = OdeHelper.createHashSpace()
     val contactGroup = OdeHelper.createJointGroup()
-    val delayActions = mutableListOf<() -> Unit>()
+    val delayActions = ArrayDeque<() -> Unit>()
 
     init {
         world.setGravity(0.0, -9.81, 0.0) //设置重力
@@ -29,10 +28,13 @@ class PhysWorld(val stepSize: Long) {
     }
 
     fun physTick() {
+        while (delayActions.isNotEmpty()) {
+            delayActions.removeFirst().invoke()
+        }
+
         world.quickStep(1000.0 / stepSize)
         space.collide(Any(), ::nearCallback)
         contactGroup.empty()
-        delayActions.forEach { it.invoke() }
     }
 
     fun nearCallback(data: Any, o1: DGeom, o2: DGeom) {

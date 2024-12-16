@@ -24,8 +24,9 @@ class AttackedDataController {
             val geom = entity.getBoundingBone("body").geom
             geom.data().onCollide { o2, buffer ->
                 entity.level().addParticle(ParticleTypes.CLOUD, geom.position.get0(), geom.position.get1(), geom.position.get2(), 0.0, 0.1, 0.0)
-                val target = geom.livingCommonAttack(o2, false)
-                target?.getAttackedData()?.setHitType(HitType.entries.random())
+                geom.livingCommonAttack(o2, false) {
+                    it.getAttackedData()?.setHitType(HitType.entries.random())
+                }
                 geom.data().attackedEntities.clear()
             }
         }
