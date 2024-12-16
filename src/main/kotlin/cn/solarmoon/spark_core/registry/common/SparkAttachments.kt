@@ -46,10 +46,5 @@ object SparkAttachments {
         .defaultValue { PreInput(it) }
         .build()
 
-    @JvmStatic
-    val PHYS_LEVEL = SparkCore.REGISTER.attachment<Optional<PhysLevel>>()
-        .id("phys_level")
-        .defaultValue { Optional.empty() }
-        .build()
 
 }

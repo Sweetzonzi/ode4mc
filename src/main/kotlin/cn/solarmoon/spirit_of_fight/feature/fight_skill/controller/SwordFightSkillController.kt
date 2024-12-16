@@ -15,6 +15,7 @@ import net.minecraft.tags.ItemTags
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
+import org.ode4j.ode.DGeom
 
 class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSkillController(
     animatable,
@@ -59,7 +60,8 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSk
         mapOf(0 to HitType.LIGHT_CHOP, 1 to HitType.LIGHT_SWIPE, 2 to HitType.HEAVY_STAB),
         mapOf(2 to 1)
     ) {
-        override fun shouldBoxSummon(index: Int, anim: MixedAnimation): Boolean {
+        override fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean {
+            val index = animBiMap.inverse()[anim.name]!!
             val attackTimes = mapOf(
                 0 to Pair(0.25, 0.5),
                 1 to Pair(0.2, 0.45),

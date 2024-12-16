@@ -14,6 +14,7 @@ class PhysWorld(val stepSize: Long) {
     val world = OdeHelper.createWorld()
     val space = OdeHelper.createHashSpace()
     val contactGroup = OdeHelper.createJointGroup()
+    val delayActions = mutableListOf<() -> Unit>()
 
     init {
         world.setGravity(0.0, -9.81, 0.0) //设置重力
@@ -31,9 +32,11 @@ class PhysWorld(val stepSize: Long) {
         world.quickStep(1000.0 / stepSize)
         space.collide(Any(), ::nearCallback)
         contactGroup.empty()
+        delayActions.forEach { it.invoke() }
     }
 
     fun nearCallback(data: Any, o1: DGeom, o2: DGeom) {
+        if (o1.data().owner == o2.data().owner) return
         val bufferSize = MAX_CONTACT_AMOUNT
         val contactBuffer = DContactBuffer(bufferSize)
         val contacts = OdeHelper.collide(o1, o2, bufferSize, contactBuffer.geomBuffer)

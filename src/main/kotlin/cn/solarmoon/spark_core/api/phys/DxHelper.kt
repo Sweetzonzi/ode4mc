@@ -1,6 +1,10 @@
 package cn.solarmoon.spark_core.api.phys
 
 import cn.solarmoon.spark_core.SparkCore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.minecraft.world.phys.AABB
 import org.joml.Vector3d
 import org.ode4j.math.DVector3
@@ -35,6 +39,13 @@ object DxHelper {
     @JvmStatic
     fun createNamedBody(world: DWorld, name: String? = null) = OdeHelper.createBody(world).apply { name?.let { data().name = it } }
 
+    @JvmStatic
+    fun initOde() {
+        CoroutineScope(Dispatchers.Default).launch {
+            OdeHelper.initODE()
+        }
+    }
+
 }
 
 fun DGeom.data() = data as DGeomData
@@ -58,11 +69,13 @@ fun DBox.getVertexes(): List<Vector3d> {
         vertices[i] = realPos.toVector3d()
     }
 
-    // 按照指定顺序重排顶点
-    val orderedVertices = listOf(vertices[0], vertices[2], vertices[4], vertices[6],
-        vertices[1], vertices[3], vertices[5], vertices[7])
+    return vertices
+}
 
-    return orderedVertices
+fun DBox.lerp(progress: Double, to: DBox) = OdeHelper.createBox(DVector3(lengths)).apply {
+    position = this@lerp.position.toVector3d().lerp(to.position.toVector3d(), progress).toDVector3()
+    lengths = this@lerp.lengths.toVector3d().lerp(to.lengths.toVector3d(), progress).toDVector3()
+    quaternion = this@lerp.quaternion.toQuaterniond().slerp(to.quaternion.toQuaterniond(), progress).toDQuaternion()
 }
 
 fun AABB.toDAABB() = DAABB(minX, maxX, minY, maxY, minZ, maxZ)

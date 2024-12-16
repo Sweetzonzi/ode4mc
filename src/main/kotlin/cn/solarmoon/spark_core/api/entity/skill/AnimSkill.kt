@@ -1,14 +1,16 @@
 package cn.solarmoon.spark_core.api.entity.skill
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
+import cn.solarmoon.spark_core.api.phys.IBoundingBone
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec3
+import org.ode4j.ode.DGeom
 
 /**
  * @param animBounds 该技能绑定的动画组
@@ -19,20 +21,7 @@ abstract class AnimSkill(
 ) {
 
     val entity = animatable.animatable
-
-    protected val attackedEntities = mutableSetOf<Int>()
-    /**
-     * 当此值设置为true时，会在tick末尾清空所有已攻击到的生物，此时如果再次使用[attack]攻击将无视无敌时间
-     *
-     * 在默认情况下，会在[summonBox]中调用，其中会检测[getBox]是否产生有效碰撞箱，如果碰撞箱为null，则自动清空已攻击的生物。
-     * 也就是说在默认情况下，如果间断性地生成box（也就是两个不同box调用的时间线之间返回过null值），那么就会自动清空攻击过的生物，以保证每个新的碰撞箱都能造成新的伤害
-     *
-     * 简而言之，如果您想要在每个连续的碰撞箱生成中不造成新的伤害，那么就不要动此项
-     */
-    protected var shouldClearAttackedEntities = false
-    private var lastBoxAmount = 0
-
-    val debugBox get() = SparkVisualEffects.OBB.getRenderableBox(getBoxId())
+    val boundingBones = mutableListOf<IBoundingBone>()
 
     /**
      * 根据该生物的攻速以及输入的基础攻速进行差值，以此获取一个基于攻速的动画速度
@@ -79,22 +68,38 @@ abstract class AnimSkill(
             whenNotInAnim()
         }
 
-        // 保证每次攻击无视无敌时间，并且每次攻击动作只对同一个生物造成一次伤害，并且此方法一定放在攻击动画检测之后调用防止连按直接刷新无敌时间
-        if (shouldClearAttackedEntities) {
-            shouldClearAttackedEntities = false
-            attackedEntities.clear()
+        boundingBones.forEach {
+            it.tick()
+            if (it.body.isEnabled) onGeomEnabled(it)
+            else onGeomDisabled(it)
         }
     }
+
+    open fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean = false
+
+    open fun onGeomEnabled(bone: IBoundingBone) {}
+
+    open fun onGeomDisabled(bone: IBoundingBone) {}
 
     /**
      * 当正在播放当前技能绑定的动画时的自定义内容
      */
     open fun whenInAnim(anim: MixedAnimation) {
+        boundingBones.forEach { bone ->
+            bone.tick()
+            bone.boundingGeoms.forEach { geom ->
+                if (shouldEnableGeom(geom, anim)) {
+                    bone.body.enable()
+                } else {
+                    bone.body.disable()
+                }
+            }
+        }
         move(anim)
     }
 
     open fun whenNotInAnim() {
-        onBoxNotPresent(null)
+        boundingBones.forEach { it.body.disable() }
     }
 
     /**
@@ -102,11 +107,6 @@ abstract class AnimSkill(
      * @return false将免疫此次攻击，true将正常执行[net.minecraft.world.entity.Entity.hurt]操作
      */
     open fun whenAttackedInAnim(damageSource: DamageSource, value: Float, anim: MixedAnimation): Boolean = true
-
-    /**
-     * 当碰撞箱不存在时，可进行自定义操作
-     */
-    open fun onBoxNotPresent(anim: MixedAnimation?) {}
 
     /**
      * [getBox]方法中每个box的唯一标识，默认用于生成对应的debug渲染箱，但也可用于外置骨骼等需要box唯一标识的方法
@@ -139,28 +139,5 @@ abstract class AnimSkill(
      * @param originWeapon 此方法修改的是[net.minecraft.world.entity.Entity.getWeaponItem]，因此origin代表了该方法所返回的默认武器
      */
     open fun getAttackItem(originWeapon: ItemStack?, anim: MixedAnimation): ItemStack? = originWeapon
-
-//    fun attack(box: DGeom) {
-//        entity.boxAttack(box, getBoxId()) { it.id !in attackedEntities }.forEach { target ->
-//            if (entity is Player) entity.attack(target)
-//            else if (entity is LivingEntity) entity.doHurtTarget(target)
-//            onTargetAttacked(target)
-//            if (attackedEntities.isEmpty()) onFirstTargetAttacked(target)
-//            target.invulnerableTime = 0
-//            attackedEntities.add(target.id)
-//        }
-//    }
-//
-//    /**
-//     * 当[attack]方法确定攻击某个实体时调用
-//     */
-//    open fun onTargetAttacked(target: Entity) {}
-//
-//    /**
-//     * 当在一次攻击中攻击到第一个生物的瞬间调用此方法
-//     *
-//     * 此处一次攻击不是指一次调用[attack]，而是指在一轮连续的攻击刷新可再击打生物前也就是[attackedEntities]为空时，详细可见[shouldClearAttackedEntities]
-//     */
-//    open fun onFirstTargetAttacked(target: Entity) {}
 
 }

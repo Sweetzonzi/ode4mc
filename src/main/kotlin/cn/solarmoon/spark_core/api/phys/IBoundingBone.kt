@@ -5,9 +5,10 @@ import org.ode4j.ode.DGeom
 
 interface IBoundingBone {
 
-    val body: DBody?
-    val boundingGeoms: MutableList<DGeom>?
+    val body: DBody
+    val boundingGeoms: MutableList<DGeom>
+    val geom get() = boundingGeoms[0]
 
-    fun physTick()
+    fun tick()
 
 }

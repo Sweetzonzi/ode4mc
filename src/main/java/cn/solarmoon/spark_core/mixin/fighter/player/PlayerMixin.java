@@ -7,6 +7,7 @@ import cn.solarmoon.spark_core.api.animation.anim.play.AnimController;
 import cn.solarmoon.spark_core.api.animation.vanilla.PlayerAnimHelper;
 import cn.solarmoon.spark_core.api.kotlinImpl.IEntityAnimatableJava;
 import cn.solarmoon.spark_core.api.kotlinImpl.IFightSkillHolderJava;
+import cn.solarmoon.spark_core.api.phys.BoundingBoxHelperKt;
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController;
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.SwordFightSkillController;
 import com.mojang.authlib.GameProfile;
@@ -45,6 +46,7 @@ public abstract class PlayerMixin extends LivingEntity implements IEntityAnimata
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void init(Level level, BlockPos pos, float yRot, GameProfile gameProfile, CallbackInfo ci) {
+        BoundingBoxHelperKt.putAllAnimatableBones((IAnimatable<?>) player);
         swordFightSkill = new SwordFightSkillController((IEntityAnimatable<?>) player);
     }
 

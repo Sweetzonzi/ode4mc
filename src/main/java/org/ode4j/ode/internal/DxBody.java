@@ -127,9 +127,7 @@ public class DxBody extends DObject implements DBody {
 	protected DxBody(DxWorld w)
 	{
 		super(w);
-		var data = new DBodyData();
-		setData(data);
-		DxHelper.getALL_BODYS().put(data.getId(), this);
+		setData(new DBodyData());
 	}
 
 
@@ -725,6 +723,10 @@ public class DxBody extends DObject implements DBody {
         flags &= ~dxBodyDisabled;
         adis_stepsleft = adis.idle_steps;
         adis_timeleft = adis.idle_time;
+		var i = getGeomIterator();
+		while (i.hasNext()) {
+			i.next().enable();
+		}
         // no code for average-processing needed here
     }
 
@@ -742,6 +744,10 @@ public class DxBody extends DObject implements DBody {
 	public void dBodyDisable ()
 	{
 		flags |= dxBodyDisabled;
+		var i = getGeomIterator();
+		while (i.hasNext()) {
+			i.next().disable();
+		}
 	}
 
 

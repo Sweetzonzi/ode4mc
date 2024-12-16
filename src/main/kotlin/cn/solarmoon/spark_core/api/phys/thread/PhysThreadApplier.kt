@@ -11,49 +11,47 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent
 
 class PhysThreadApplier {
 
+//    @SubscribeEvent
+//    private fun onLevelLoad(event: LevelEvent.Load) {
+//        val level = event.level
+//
+//        if (level.isClientSide) {
+//            val pl = ClientPhysLevel(level as ClientLevel)
+//            level.setPhysLevel(pl)
+//            pl.load()
+//        } else {
+//            val pl = ServerPhysLevel(level as ServerLevel)
+//            level.setPhysLevel(pl)
+//            pl.load()
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    private fun onLevelUnload(event: LevelEvent.Unload) {
+//        val level = event.level
+//
+//        if (level.isClientSide) {
+//            val pl = ClientPhysLevel(level as ClientLevel)
+//            level.setPhysLevel(pl)
+//            pl.unLoad()
+//        } else {
+//            val pl = ServerPhysLevel(level as ServerLevel)
+//            level.setPhysLevel(pl)
+//            pl.unLoad()
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    private fun addEntity(event: EntityJoinLevelEvent) {
+//        event.level.getPhysLevel().let {
+//            event.entity.setPhysLevel(it)
+//        }
+//    }
+
     @SubscribeEvent
-    private fun onLevelLoad(event: LevelEvent.Load) {
+    private fun levelTicker(event: LevelTickEvent.Pre) {
         val level = event.level
-
-        if (level.isClientSide) {
-            val pl = ClientPhysLevel(level as ClientLevel)
-            level.setPhysLevel(pl)
-            pl.load()
-        } else {
-            val pl = ServerPhysLevel(level as ServerLevel)
-            level.setPhysLevel(pl)
-            pl.load()
-        }
-    }
-
-    @SubscribeEvent
-    private fun onLevelUnload(event: LevelEvent.Unload) {
-        val level = event.level
-
-        if (level.isClientSide) {
-            val pl = ClientPhysLevel(level as ClientLevel)
-            level.setPhysLevel(pl)
-            pl.unLoad()
-        } else {
-            val pl = ServerPhysLevel(level as ServerLevel)
-            level.setPhysLevel(pl)
-            pl.unLoad()
-        }
-    }
-
-    @SubscribeEvent
-    private fun addEntity(event: EntityJoinLevelEvent) {
-        event.level.getPhysLevel().let {
-            event.entity.setPhysLevel(it)
-        }
-    }
-
-    @SubscribeEvent
-    private fun levelActionConsumer(event: LevelTickEvent.Post) {
-        val level = event.level
-        val actions = (level as IActionConsumer).getActions()
-        actions.forEach { it.invoke() }
-        actions.clear()
+        level.getPhysWorld().physTick()
     }
 
 }

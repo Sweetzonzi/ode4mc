@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core.api.phys.obb.renderable
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.phys.lerp
 import org.ode4j.ode.DBox
 import org.ode4j.ode.DGeom
 import java.awt.Color
@@ -53,6 +54,10 @@ class RenderableOBB {
     fun getBox(partialTicks: Float): DGeom? {
         if (box == null) return null
         if (lastBox == null) return box
+        if (lastBox!!.position == box!!.position) return box
+        if (lastBox is DBox && box is DBox) {
+            return (lastBox as DBox).lerp(partialTicks.toDouble(), box as DBox)
+        }
         return box
     }
 

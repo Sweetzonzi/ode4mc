@@ -3,11 +3,9 @@ package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import cn.solarmoon.spark_core.api.util.MoveDirection
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController
-import kotlinx.coroutines.launch
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload

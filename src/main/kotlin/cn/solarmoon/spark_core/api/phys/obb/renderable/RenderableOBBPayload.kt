@@ -2,16 +2,13 @@ package cn.solarmoon.spark_core.api.phys.obb.renderable
 
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.phys.DxHelper
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
-import kotlinx.coroutines.launch
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.network.handling.IPayloadContext
-import org.ode4j.ode.DGeom
 import java.awt.Color
 
 data class RenderableOBBPayload(

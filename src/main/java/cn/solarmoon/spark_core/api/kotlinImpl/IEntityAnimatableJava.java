@@ -6,6 +6,7 @@ import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload;
 import cn.solarmoon.spark_core.registry.common.SparkAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +25,8 @@ public interface IEntityAnimatableJava<T extends Entity> extends IEntityAnimatab
     }
 
     @Override
-    @NotNull
-    default List<@NotNull String> getPassableBones() {
-        return List.of();
+    default Level getLevel() {
+        return getAnimatable().level();
     }
 
     @Override

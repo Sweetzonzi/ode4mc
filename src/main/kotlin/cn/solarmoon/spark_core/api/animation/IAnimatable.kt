@@ -7,6 +7,7 @@ import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
 import cn.solarmoon.spark_core.api.phys.IBoundingBone
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.Level
 import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Matrix4f
@@ -20,6 +21,8 @@ interface IAnimatable<T: IAttachmentHolder> {
      * 一般而言输入this即可，用于调用该生物的位置信息等
      */
     val animatable: T
+
+    val level: Level
 
     /**
      * 动画控制器，可以轻松对动画执行开始/停止等操作，并且这些操作都是服务端可用的

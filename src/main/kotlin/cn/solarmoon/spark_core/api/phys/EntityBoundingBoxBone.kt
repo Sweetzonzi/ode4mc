@@ -1,38 +1,32 @@
 package cn.solarmoon.spark_core.api.phys
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
-import kotlinx.coroutines.launch
+import cn.solarmoon.spark_core.api.phys.thread.getPhysWorld
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import net.minecraft.world.entity.Entity
 import org.ode4j.ode.DBody
 import org.ode4j.ode.DGeom
-import org.ode4j.ode.OdeHelper
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVector3d
+import java.awt.Color
 
 class EntityBoundingBoxBone(
     val entity: Entity,
     name: String? = null
 ): IBoundingBone {
 
-    override var body: DBody? = null
-    override var boundingGeoms: MutableList<DGeom>? = null
-
-    init {
-        entity.getPhysLevel()!!.scope.launch {
-            body = DxHelper.createNamedBody(entity.getPhysLevel()!!.physWorld.world, name)
-            body!!.data().owner = entity
-            body!!.gravityMode = false
-            val geom = entity.boundingBox.toDAABB().toDBox(entity.getPhysLevel()!!.physWorld.space)
-            geom.body = body
-            geom.data().owner = entity
-            boundingGeoms = mutableListOf<DGeom>(geom)
-        }
+    override var body: DBody = DxHelper.createNamedBody(entity.getPhysWorld().world, name).apply {
+        data().owner = entity
+        gravityMode = false
     }
 
-    override fun physTick() {
-        entity.getPhysLevel()!!.launch {
-            body?.position = entity.boundingBox.center.toDVector3()
+    override var boundingGeoms: MutableList<DGeom> = mutableListOf(
+        entity.boundingBox.toDAABB().toDBox(entity.getPhysWorld().space).apply {
+            body = this@EntityBoundingBoxBone.body
+            data().owner = entity
         }
+    )
+
+    override fun tick() {
+        body.position = entity.boundingBox.center.toDVector3()
+        SparkVisualEffects.OBB.getRenderableBox("${entity.id}:BoundingBox").apply { setColor(Color.RED) }.refresh(geom)
     }
 
 }

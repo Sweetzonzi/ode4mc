@@ -55,11 +55,30 @@ class OBBRenderer(): VisualEffectRenderer() {
 
     override fun render(mc: Minecraft, camPos: Vec3, poseStack: PoseStack, bufferSource: MultiBufferSource, partialTicks: Float) {
         val buffer = bufferSource.getBuffer(RenderType.LINES)
-        if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) renderableBoxes.clear()
+        if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) {
+            renderableBoxes.clear()
+            return
+        }
         renderableBoxes.forEach { id, manager ->
             val box = manager.getBox(partialTicks) ?: return@forEach
             if (box is DBox) {
-                box.getVertexes().zipWithNext { v1, v2 ->
+                val vertices = box.getVertexes()
+                // 按照指定顺序重排顶点
+                val orderedVertices = listOf(
+                    vertices[0], vertices[1],
+                    vertices[0], vertices[2],
+                    vertices[0], vertices[4],
+                    vertices[6], vertices[2],
+                    vertices[6], vertices[4],
+                    vertices[6], vertices[7],
+                    vertices[3], vertices[1],
+                    vertices[3], vertices[2],
+                    vertices[3], vertices[7],
+                    vertices[5], vertices[1],
+                    vertices[5], vertices[4],
+                    vertices[5], vertices[7]
+                )
+                orderedVertices.zipWithNext { v1, v2 ->
                     val normal = Vector3f(v2.x.toFloat() - v1.x.toFloat(), v2.y.toFloat() - v1.y.toFloat(), v2.z.toFloat() - v1.z.toFloat()).normalize()
                     val color = manager.color
                     buffer.addVertex(poseStack.last().pose(), v1.x.toFloat() - camPos.x.toFloat(), v1.y.toFloat() - camPos.y.toFloat(), v1.z.toFloat() - camPos.z.toFloat())

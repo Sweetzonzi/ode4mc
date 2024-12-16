@@ -3,10 +3,7 @@ package cn.solarmoon.spark_core.api.animation.sync
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimModificationData
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
-import kotlinx.coroutines.launch
 import net.minecraft.server.level.ServerPlayer
-import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 
 /**

@@ -43,13 +43,7 @@ abstract class ComboAnimSkill(
 
     var index = 0
 
-    abstract fun shouldBoxSummon(index: Int, anim: MixedAnimation): Boolean
-
     abstract fun getMoveByIndex(index: Int, anim: MixedAnimation): Vec3?
-
-//    override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
-//        return if (shouldBoxSummon(animBiMap.inverse()[anim.name]!!, anim)) listOf(getBoxBoundToBone(anim)) else listOf()
-//    }
 
     override fun getMove(anim: MixedAnimation): Vec3? {
         return getMoveByIndex(animBiMap.inverse()[anim.name]!!, anim)

@@ -466,9 +466,7 @@ public abstract class DxGeom extends DBase implements DGeom {
 		// put this geom in a space if required
 		if (space != null) space.dSpaceAdd (this);
 
-		var data = new DGeomData();
-		setData(data);
-		DxHelper.getALL_GEOMS().put(data.getId(), this);
+		setData(new DGeomData());
 	}
 
 

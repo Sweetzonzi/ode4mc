@@ -64,6 +64,15 @@ data class CubePart(
         return list.toList()
     }
 
+    fun getTransformedCenter(matrix4f: Matrix4f): Vector3f {
+        matrix4f.translate(pivot.toVector3f())
+        matrix4f.rotateZYX(rotation.toVector3f())
+        matrix4f.translate(pivot.div(-1.0).toVector3f())
+        val oCenter = originPos.toVector3f().add(size.toVector3f().mul(0.5f))
+        val center = matrix4f.transformPosition(oCenter, Vector3f())
+        return center
+    }
+
     /**
      * 在客户端渲染各个顶点
      */

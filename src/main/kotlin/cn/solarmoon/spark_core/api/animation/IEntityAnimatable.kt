@@ -22,15 +22,12 @@ interface IEntityAnimatable<T: Entity>: IAnimatable<T> {
         get() = animatable.getData(SparkAttachments.ANIM_DATA)
         set(value) { animatable.setData(SparkAttachments.ANIM_DATA, value) }
 
+    override val level get() = animatable.level()
+
     /**
      * 在此组中的动画播放时，会强制让生物的yRot逐渐旋转到目视方向
      */
     val turnBodyAnims: List<String> get() = listOf()
-
-    /**
-     * 在使用[cn.solarmoon.spark_core.api.entity.attack.AttackHelper.getDamageBone]时，将会过滤掉该列表中的骨骼，也就是不会击中这些过滤掉的骨骼
-     */
-    val passableBones: List<String> get() = listOf()
 
     override fun getPositionMatrix(partialTick: Float): Matrix4f {
         return Matrix4f().translate(animatable.getPosition(partialTick).toVector3f()).rotateY(PI.toFloat() - animatable.getPreciseBodyRotation(partialTick).toRadians())

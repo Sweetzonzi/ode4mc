@@ -1,13 +1,9 @@
 package cn.solarmoon.spark_core.api.animation.anim.play
 
-import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.part.Loop
 import cn.solarmoon.spark_core.api.animation.sync.AnimFreezingPayload
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
-import kotlinx.coroutines.launch
 import net.minecraft.world.entity.Entity
-import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.network.PacketDistributor
 import kotlin.collections.contains
 

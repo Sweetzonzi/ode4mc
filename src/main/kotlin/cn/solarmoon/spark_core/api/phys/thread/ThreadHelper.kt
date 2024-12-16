@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.phys.thread
 
+import cn.solarmoon.spark_core.api.phys.IPhysWorldHolder
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.Level
@@ -7,8 +8,6 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-fun IAttachmentHolder.getPhysLevel() = getData(SparkAttachments.PHYS_LEVEL).getOrNull()
+fun Level.getPhysWorld() = (this as IPhysWorldHolder).physWorld
 
-fun IAttachmentHolder.setPhysLevel(physLevel: PhysLevel?) = setData(SparkAttachments.PHYS_LEVEL, Optional.ofNullable(physLevel))
-
-fun Level.launch(action: () -> Unit) = (this as IActionConsumer).getActions().add(action)
+fun Entity.getPhysWorld() = level().getPhysWorld()

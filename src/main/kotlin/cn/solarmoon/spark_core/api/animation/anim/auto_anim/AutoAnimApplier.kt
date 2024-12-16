@@ -1,9 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.anim.auto_anim
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.phys.thread.PhysLevelTickEvent
-import cn.solarmoon.spark_core.api.phys.thread.getPhysLevel
-import kotlinx.coroutines.launch
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent

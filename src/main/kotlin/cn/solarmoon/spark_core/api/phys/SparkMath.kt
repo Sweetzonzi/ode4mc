@@ -9,6 +9,7 @@ import org.joml.Vector3d
 import org.joml.Vector3f
 import org.ode4j.math.DMatrix3
 import org.ode4j.math.DQuaternion
+import org.ode4j.math.DQuaternionC
 import org.ode4j.math.DVector3
 import org.ode4j.math.DVector3C
 
@@ -50,6 +51,8 @@ fun Vector3d.toDVector3() = DVector3(x, y ,z)
 fun Vector3f.toDVector3() = DVector3(x.toDouble(), y.toDouble(), z.toDouble())
 
 fun Quaterniond.toDQuaternion() = DQuaternion(w, x, y, z)
+
+fun DQuaternionC.toQuaterniond() = Quaterniond(get1(), get2(), get3(), get0())
 
 fun Matrix3d.toDMatrix3() = DMatrix3(m00, m01, m02, m10, m11, m12, m20, m21, m22)
 

@@ -1,6 +1,7 @@
 package cn.solarmoon.spark_core;
 
 import cn.solarmoon.spark_core.api.entry_builder.ObjectRegister;
+import cn.solarmoon.spark_core.api.phys.DxHelper;
 import cn.solarmoon.spark_core.registry.client.SparkClientEvents;
 import cn.solarmoon.spark_core.registry.common.*;
 import cn.solarmoon.spirit_of_fight.registry.client.SOFClientEvents;
@@ -46,7 +47,7 @@ public class SparkCore {
         SOFVisualEffects.register();
         SOFAnimRegister.register();
 
-        OdeHelper.initODE();
+        DxHelper.initOde();
     }
 
 }
