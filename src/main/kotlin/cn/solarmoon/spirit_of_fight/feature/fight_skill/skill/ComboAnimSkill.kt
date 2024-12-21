@@ -73,7 +73,7 @@ abstract class ComboAnimSkill(
     fun getAnimModifier(changeTack: Boolean): AnimModificationData = AnimModificationData(
         getAttackAnimSpeed(baseAttackSpeed),
         if (changeTack) 2f else if (controller.isAttacking { !it.isCancelled } && !isPlaying()) 2f else -1f, // 特殊攻击到普通攻击的过渡时间上升
-        if (changeTack) attackChangeNode[index]!!.toFloat() * 20 else -1f
+        if (changeTack) attackChangeNode[index]?.toFloat()?.times(20) ?: -1f else -1f
     )
 
     override fun whenInAnim(anim: MixedAnimation) {

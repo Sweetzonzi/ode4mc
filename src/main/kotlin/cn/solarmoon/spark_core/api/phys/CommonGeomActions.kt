@@ -13,14 +13,15 @@ import org.ode4j.ode.DGeom
  * @return 碰撞到的实体
  */
 fun DGeom.setAttacked(o2: DGeom): Entity? {
-    val attacker = data().owner
-    val target = o2.data().owner
-    if (target is Entity) {
-        if (data().attackedEntities.contains(target.id)) return null
-        data().attackedEntities.add(target.id)
-        target.setAttackedData(AttackedData((attacker as? Entity)?.id, this, body.data().name))
-        return target
-    }
+//    val attacker = data().owner
+//    val target = o2.data().owner
+//    if (target is Entity) {
+//        if (data().attackedEntities.contains(target.id)) return null
+//        data().attackedEntities.add(target.id)
+//        val data = AttackedData((attacker as? Entity)?.id, this, o2.body.data().name)
+//        target.setAttackedData(data)
+//        return target
+//    }
     return null
 }
 
@@ -31,16 +32,16 @@ fun DGeom.setAttacked(o2: DGeom): Entity? {
  */
 fun DGeom.livingCommonAttack(o2: DGeom, immediateDamage: Boolean, actionBeforeAttack: (Entity) -> Unit = {}): Entity? {
     val target = setAttacked(o2)
-    if (target != null) {
-        val attacker = data().owner
-        if (attacker is Player) {
-            actionBeforeAttack.invoke(target)
-            attacker.attack(target)
-        } else if (attacker is LivingEntity) {
-            actionBeforeAttack.invoke(target)
-            attacker.doHurtTarget(target)
-        }
-        if (immediateDamage) target.invulnerableTime = 0
-    }
+//    if (target != null) {
+//        val attacker = data().owner
+//        if (attacker is Player) {
+//            actionBeforeAttack.invoke(target)
+//            attacker.attack(target)
+//        } else if (attacker is LivingEntity) {
+//            actionBeforeAttack.invoke(target)
+//            attacker.doHurtTarget(target)
+//        }
+//        if (immediateDamage) target.invulnerableTime = 0
+//    }
     return target
 }

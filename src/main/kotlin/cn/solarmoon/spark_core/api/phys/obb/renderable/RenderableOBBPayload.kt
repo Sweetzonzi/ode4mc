@@ -26,7 +26,7 @@ data class RenderableOBBPayload(
         fun handleInClient(payload: RenderableOBBPayload, context: IPayloadContext) {
             val debug = SparkVisualEffects.OBB.getRenderableBox(payload.id)
             payload.color?.let { debug.setColor(Color(it)) }
-            payload.boxId?.let { debug.box = DxHelper.getGeom(it) }
+//            payload.boxId?.let { debug.box = DxHelper.getGeom(it) }
         }
 
         @JvmStatic

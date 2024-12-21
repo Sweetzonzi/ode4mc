@@ -3,7 +3,6 @@ package cn.solarmoon.spark_core.api.entity.skill
 import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.phys.IBoundingBone
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
@@ -21,7 +20,6 @@ abstract class AnimSkill(
 ) {
 
     val entity = animatable.animatable
-    val boundingBones = mutableListOf<IBoundingBone>()
 
     /**
      * 根据该生物的攻速以及输入的基础攻速进行差值，以此获取一个基于攻速的动画速度
@@ -67,39 +65,18 @@ abstract class AnimSkill(
         } ?: run {
             whenNotInAnim()
         }
-
-        boundingBones.forEach {
-            it.tick()
-            if (it.body.isEnabled) onGeomEnabled(it)
-            else onGeomDisabled(it)
-        }
     }
 
     open fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean = false
-
-    open fun onGeomEnabled(bone: IBoundingBone) {}
-
-    open fun onGeomDisabled(bone: IBoundingBone) {}
 
     /**
      * 当正在播放当前技能绑定的动画时的自定义内容
      */
     open fun whenInAnim(anim: MixedAnimation) {
-        boundingBones.forEach { bone ->
-            bone.tick()
-            bone.boundingGeoms.forEach { geom ->
-                if (shouldEnableGeom(geom, anim)) {
-                    bone.body.enable()
-                } else {
-                    bone.body.disable()
-                }
-            }
-        }
         move(anim)
     }
 
     open fun whenNotInAnim() {
-        boundingBones.forEach { it.body.disable() }
     }
 
     /**

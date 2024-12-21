@@ -1,5 +1,6 @@
 package cn.solarmoon.spark_core.api.animation.anim.auto_anim
 
+import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent

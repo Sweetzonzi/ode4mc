@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Level.class)
-public class LevelMixin implements IPhysWorldHolder {
+public abstract class LevelMixin implements IPhysWorldHolder {
 
     private final PhysWorld physWorld = new PhysWorld(50);
 

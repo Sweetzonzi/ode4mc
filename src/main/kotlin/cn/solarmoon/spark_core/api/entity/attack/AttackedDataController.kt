@@ -1,33 +1,43 @@
 package cn.solarmoon.spark_core.api.entity.attack
 
-import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.phys.data
-import cn.solarmoon.spark_core.api.phys.getBoundingBone
-import cn.solarmoon.spark_core.api.phys.livingCommonAttack
-import cn.solarmoon.spark_core.api.phys.setAttacked
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
-import cn.solarmoon.spirit_of_fight.feature.hit.HitType
-import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
-import net.minecraft.core.particles.ParticleTypes
+import cn.solarmoon.spark_core.api.phys.DxEntity
+import cn.solarmoon.spark_core.registry.common.SparkEntityTypes
+import cn.solarmoon.spark_core.registry.common.SparkSkills
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.animal.IronGolem
+import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
-import java.awt.Color
 
 class AttackedDataController {
 
     @SubscribeEvent
     private fun entityTick(event: EntityTickEvent.Pre) {
         val entity = event.entity
+        val level = entity.level()
+
+        if (entity is Player) {
+            SparkSkills.PLAYER_SWORD_COMBO_0.value().tick(entity)
+        }
 
         if (entity is IronGolem) {
-            val geom = entity.getBoundingBone("body").geom
-            geom.data().onCollide { o2, buffer ->
-                entity.level().addParticle(ParticleTypes.CLOUD, geom.position.get0(), geom.position.get1(), geom.position.get2(), 0.0, 0.1, 0.0)
-                geom.livingCommonAttack(o2, false) {
-                    it.getAttackedData()?.setHitType(HitType.entries.random())
+
+        }
+    }
+
+    @SubscribeEvent
+    private fun join(event: EntityJoinLevelEvent) {
+        val entity = event.entity
+        val level = event.level
+        if (level is ServerLevel && entity !is DxEntity) {
+            SparkEntityTypes.DX_BOUNDING_BOX.value().create(level)?.let {
+                level.addFreshEntity(it.apply { setEntityOwner(entity) })
+            }
+            if (entity is Player) {
+                SparkEntityTypes.DX_ANIM_ATTACK.value().create(level)?.let {
+                    level.addFreshEntity(it.apply { setEntityOwner(entity); bodyName = "rightItem" })
                 }
-                geom.data().attackedEntities.clear()
             }
         }
     }

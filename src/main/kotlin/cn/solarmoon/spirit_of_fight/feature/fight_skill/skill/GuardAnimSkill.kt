@@ -5,6 +5,8 @@ import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
 import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
 import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
 import cn.solarmoon.spark_core.api.entity.state.canSee
+import cn.solarmoon.spark_core.api.phys.thread.getPhysWorld
+import cn.solarmoon.spark_core.api.phys.toDVector3
 import cn.solarmoon.spark_core.api.phys.toVec3
 import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
@@ -12,6 +14,7 @@ import cn.solarmoon.spirit_of_fight.feature.hit.getHitStrength
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.phys.Vec3
+import org.ode4j.ode.OdeHelper
 import java.awt.Color
 
 abstract class GuardAnimSkill(
@@ -20,7 +23,14 @@ abstract class GuardAnimSkill(
     val guardRange: Double,
 ): AnimSkill(controller.animatable, animGroup) {
 
+    val guardBox = OdeHelper.createBox(entity.getPhysWorld().space, controller.commonBoxSize.toDVector3())
     open val unblockableDamageTypes = mutableListOf(DamageTypes.EXPLOSION, DamageTypes.PLAYER_EXPLOSION)
+
+    init {
+//        boundingBones.add(
+//            //AnimatableBone(animatable, "rightItem", mutableListOf(guardBox)) { it.forEach { it.offsetPosition = controller.commonBoxOffset.toDVector3() } }.apply { body.data().name = "guard" }
+//        )
+    }
 
     abstract fun start(sync: (SyncedAnimation) -> Unit = {})
 
@@ -28,8 +38,6 @@ abstract class GuardAnimSkill(
         SyncedAnimation.STOP.consume(animatable)
         sync.invoke(SyncedAnimation.STOP)
     }
-
-    abstract fun shouldSummonBox(anim: MixedAnimation): Boolean
 
 //    override fun getBox(anim: MixedAnimation): List<OrientedBoundingBox> {
 //        return if (shouldSummonBox(anim)) {
@@ -56,13 +64,13 @@ abstract class GuardAnimSkill(
             return true
         }
         // 如果受击数据里有guard，则免疫此次攻击
-        val isBoxInteract = attackedData != null && attackedData.damageBone == getBoxId()
+        val isBoxInteract = attackedData != null && attackedData.damageBone == "guard"
         // 如果受到box的攻击，位移以box中心为准，否则以直接攻击者的坐标位置为准
         val targetPos = attackedData?.damageBox?.position?.toVec3() ?: damageSource.sourcePosition ?: return true
         // 如果受到box的攻击，按防守盒是否被碰撞为准，否则以攻击者的坐标位置是否在指定扇形范围内为准
         val attackedCheck = if (attackedData != null) isBoxInteract else entity.canSee(targetPos, guardRange)
         if (attackedCheck) {
-            SparkVisualEffects.OBB.syncBoxToClient(getBoxId(), Color.RED, null)
+            SparkVisualEffects.OBB.syncBoxToClient("guard", Color.RED, null)
             return onSuccessGuard(targetPos, damageSource, value, anim)
         }
 

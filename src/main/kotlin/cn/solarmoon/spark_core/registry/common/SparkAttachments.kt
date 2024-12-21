@@ -4,9 +4,7 @@ import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.entity.attack.AttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.PreInput
-import cn.solarmoon.spark_core.api.phys.EntityBoundingBoxBone
-import cn.solarmoon.spark_core.api.phys.IBoundingBone
-import cn.solarmoon.spark_core.api.phys.thread.PhysLevel
+import cn.solarmoon.spark_core.api.entity.skill.test.Skill
 import net.minecraft.world.entity.Entity
 import java.util.Optional
 
@@ -26,18 +24,6 @@ object SparkAttachments {
     val ATTACKED_DATA = SparkCore.REGISTER.attachment<Optional<AttackedData>>()
         .id("attacked_data")
         .defaultValue { Optional.empty() }
-        .build()
-
-    @JvmStatic
-    val BOUNDING_BONES = SparkCore.REGISTER.attachment<MutableMap<String, IBoundingBone>>()
-        .id("bounding_bones")
-        .defaultValue {
-            val value = mutableMapOf<String, IBoundingBone>()
-            when(it) {
-                is Entity -> value["body"] = EntityBoundingBoxBone(it, "body")
-            }
-            value
-        }
         .build()
 
     @JvmStatic

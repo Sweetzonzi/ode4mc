@@ -24,6 +24,7 @@
  *************************************************************************/
 package org.ode4j.ode;
 
+import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.math.DMatrix3;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternion;
@@ -145,6 +146,10 @@ public interface DGeom {
 	 * @return user data
 	 */
 	Object getData();
+
+	void setEntity(DxEntity entity);
+
+	DxEntity getEntity();
 
 	
 	/**

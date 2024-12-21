@@ -1,13 +1,15 @@
 package cn.solarmoon.spark_core.api.entry_builder.common
 
+import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
 
-class EntityBuilder<E: Entity>(private val entityDeferredRegister: DeferredRegister<EntityType<*>>) {//
+class EntityTypeBuilder<E: Entity>(private val entityDeferredRegister: DeferredRegister<EntityType<*>>) {
 
     private var id = ""
     private var builder: EntityType.Builder<E>? = null

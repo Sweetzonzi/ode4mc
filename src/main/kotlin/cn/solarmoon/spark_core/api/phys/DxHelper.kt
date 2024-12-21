@@ -1,11 +1,15 @@
 package cn.solarmoon.spark_core.api.phys
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.registry.common.SparkRegistries
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
+import net.neoforged.neoforge.network.PacketDistributor
 import org.joml.Vector3d
 import org.ode4j.math.DVector3
 import org.ode4j.math.DVector3C
@@ -25,21 +29,6 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 object DxHelper {
 
     @JvmStatic
-    val ALL_GEOMS = mutableMapOf<Int, DGeom>()
-
-    @JvmStatic
-    val ALL_BODYS = mutableMapOf<Int, DBody>()
-
-    @JvmStatic
-    fun getGeom(id: Int) = ALL_GEOMS[id]
-
-    @JvmStatic
-    fun getBody(id: Int) = ALL_BODYS[id]
-
-    @JvmStatic
-    fun createNamedBody(world: DWorld, name: String? = null) = OdeHelper.createBody(world).apply { name?.let { data().name = it } }
-
-    @JvmStatic
     fun initOde() {
         CoroutineScope(Dispatchers.Default).launch {
             OdeHelper.initODE()
@@ -47,10 +36,6 @@ object DxHelper {
     }
 
 }
-
-fun DGeom.data() = data as DGeomData
-
-fun DBody.data() = data as DBodyData
 
 fun DBox.getVertexes(): List<Vector3d> {
     val vertices = MutableList(8) { Vector3d() }

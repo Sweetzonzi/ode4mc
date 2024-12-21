@@ -65,7 +65,7 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSk
             val attackTimes = mapOf(
                 0 to Pair(0.25, 0.5),
                 1 to Pair(0.2, 0.45),
-                2 to Pair(0.2, 0.5)
+                2 to Pair(0.1, 0.5)
             )
             return attackTimes[index]?.let { (start, end) ->
                 anim.isTickIn(start, end)
@@ -89,7 +89,7 @@ class SwordFightSkillController(animatable: IEntityAnimatable<*>): CommonFightSk
     override val guard: CommonGuardAnimSkill = CommonGuardAnimSkill(this, GUARD_ANIMS, 150.0)
 
     override val parry: ParryAnimSkill = object : ParryAnimSkill(this@SwordFightSkillController, PARRY_ANIM, 150.0) {
-        override fun shouldSummonBox(anim: MixedAnimation): Boolean {
+        override fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean {
             return anim.isTickIn(0.0, 0.25)
         }
     }

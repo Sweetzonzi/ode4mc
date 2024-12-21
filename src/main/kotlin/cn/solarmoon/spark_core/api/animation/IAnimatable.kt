@@ -4,7 +4,6 @@ import cn.solarmoon.spark_core.api.animation.anim.auto_anim.AutoAnim
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimController
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.animation.sync.AnimDataPayload
-import cn.solarmoon.spark_core.api.phys.IBoundingBone
 import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.Level

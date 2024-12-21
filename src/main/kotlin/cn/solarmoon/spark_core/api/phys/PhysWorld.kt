@@ -38,13 +38,16 @@ class PhysWorld(val stepSize: Long) {
     }
 
     fun nearCallback(data: Any, o1: DGeom, o2: DGeom) {
-        if (o1.data().owner == o2.data().owner) return
+        if (o1.entity == null || o2.entity == null) return
+        if (o1.entity.getOwner() == null || o2.entity.getOwner() == null) return
+        if (!o1.entity.body.isEnabled || !o2.entity.body.isEnabled) return
+        if (o1.entity.pass(o2.entity)) return
         val bufferSize = MAX_CONTACT_AMOUNT
         val contactBuffer = DContactBuffer(bufferSize)
         val contacts = OdeHelper.collide(o1, o2, bufferSize, contactBuffer.geomBuffer)
         if (contacts > 0) {
-            o1.data().invoke(o2, contactBuffer)
-            o2.data().invoke(o1, contactBuffer)
+            if (!o2.entity.passFromCollide()) o1.entity.onCollide(o2, contactBuffer)
+            if (!o1.entity.passFromCollide()) o2.entity.onCollide(o1, contactBuffer)
         }
     }
 

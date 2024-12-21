@@ -24,6 +24,7 @@
  *************************************************************************/
 package org.ode4j.ode;
 
+import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternionC;
 import org.ode4j.math.DVector3;
@@ -100,6 +101,10 @@ public interface DBody {
 	 * @return a pointer to the user's data.
 	 */
 	Object getData();
+
+	void setEntity(DxEntity entity);
+
+	DxEntity getEntity();
 
 	/**
 	 * Set position of a body.

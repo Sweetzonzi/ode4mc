@@ -22,6 +22,7 @@ class AnimController<T: IAnimatable<*>>(private val animatable: T) {
      * @param filter 会对每一个正在组里的动画进行遍历，可根据它们的属性选择一个boolean值来决定是否暂停它们
      */
     fun stopAndAddAnimation(vararg mixedAnimation: MixedAnimation, filter: (MixedAnimation) -> Boolean = { true }) {
+        if (mixedAnimation.any { !animatable.animData.animationSet.hasAnimation(it.name) }) return
         val it = animatable.animData.playData.mixedAnims
         val minTransSpeed = mixedAnimation.minOfOrNull { it.startTransSpeed }
         it.forEach {

@@ -38,8 +38,7 @@ import static org.ode4j.ode.internal.Rotation.dQMultiply0;
 import static org.ode4j.ode.internal.Rotation.dQfromR;
 import static org.ode4j.ode.internal.Rotation.dRfromQ;
 
-import cn.solarmoon.spark_core.api.phys.DBodyData;
-import cn.solarmoon.spark_core.api.phys.DxHelper;
+import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.math.DMatrix3;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternion;
@@ -124,10 +123,12 @@ public class DxBody extends DObject implements DBody {
 	private final dxDampingParameters dampingp = new dxDampingParameters(); // damping parameters, depends on flags
 	double max_angular_speed;      // limit the angular velocity to this magnitude
 
+	DxEntity entity;
+
 	protected DxBody(DxWorld w)
 	{
 		super(w);
-		setData(new DBodyData());
+		entity = null;
 	}
 
 
@@ -199,6 +200,7 @@ public class DxBody extends DObject implements DBody {
 	//		public void dBodyDestroy (dxBody b)
 	public void dBodyDestroy ()
 	{
+		disable();
 		//dAASSERT (b);
 		// ode4j special: We set world=null, so we can check here
 		if (world == null) {
@@ -1185,8 +1187,22 @@ public class DxBody extends DObject implements DBody {
 	{ dBodySetData (data); }
 	//void *getData() 
 	@Override
-	public Object getData() 
+	public Object getData()
 	{ return dBodyGetData (); }
+
+	@Override
+	public void setEntity(DxEntity entity) {
+		this.entity = entity;
+		var i = getGeomIterator();
+		while (i.hasNext()) {
+			i.next().setEntity(entity);
+		}
+	}
+
+	@Override
+	public DxEntity getEntity() {
+		return entity;
+	}
 
 	@Override
 	public void setPosition (double x, double y, double z)

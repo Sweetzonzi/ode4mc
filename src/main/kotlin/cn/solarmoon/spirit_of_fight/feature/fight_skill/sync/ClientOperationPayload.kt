@@ -4,6 +4,7 @@ import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.util.MoveDirection
+import cn.solarmoon.spark_core.registry.common.SparkSkills
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -34,9 +35,10 @@ data class ClientOperationPayload(
             val skill = player.skillController ?: return
             when(payload.operation) {
                 "combo" -> {
-                    skill.combo.start(false) {
-                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(false))
-                    }
+                    SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player)
+//                    skill.combo.start(false) {
+//                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(false))
+//                    }
                 }
                 "combo_switch" -> {
                     skill.combo.start(true) {

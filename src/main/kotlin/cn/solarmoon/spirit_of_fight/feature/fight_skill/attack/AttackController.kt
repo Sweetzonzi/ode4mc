@@ -7,6 +7,7 @@ import cn.solarmoon.spark_core.api.entity.state.getInputVector
 import cn.solarmoon.spark_core.api.event.KeyboardInputTickEvent
 import cn.solarmoon.spark_core.api.event.OnPreInputExecuteEvent
 import cn.solarmoon.spark_core.api.util.MoveDirection
+import cn.solarmoon.spark_core.registry.common.SparkSkills
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ConcentrationAttackAnimSkill
@@ -41,31 +42,33 @@ class AttackController {
         if (player !is IFightSkillHolder) return
         val skillController = player.skillController ?: return
         if (event.isAttack && hit.type in listOf(HitResult.Type.ENTITY, HitResult.Type.MISS)) {
-            var shouldCombo = true
-            for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
-                if (skill !is ConcentrationAttackAnimSkill && skill.canRelease) {
-                    skill.start {
-                        ClientOperationPayload.sendOperationToServer(index.toString())
-                    }
-                    shouldCombo = false
-                    break
-                }
-            }
-            if (shouldCombo) {
-                skillController.combo.start(false) {
-                    ClientOperationPayload.sendOperationToServer("combo")
-                }
-                skillController.combo.getPlayingAnim()?.let {
-                    // 这一段使得连招在50-150ms之间可以变招
-                    val changeNode = skillController.combo.attackChangeNode[skillController.combo.index]
-                    if (player.getPreInput().hasInput("combo") && changeNode != null && !it.isInTransition && it.isTickIn(0.05, 0.15)) {
-                        skillController.combo.start(true) {
-                            ClientOperationPayload.sendOperationToServer("combo_switch")
-                        }
-                        player.getPreInput().executeIfPresent("combo")
-                    }
-                }
-            }
+            SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player)
+            ClientOperationPayload.sendOperationToServer("combo")
+//            var shouldCombo = true
+//            for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {
+//                if (skill !is ConcentrationAttackAnimSkill && skill.canRelease) {
+//                    skill.start {
+//                        ClientOperationPayload.sendOperationToServer(index.toString())
+//                    }
+//                    shouldCombo = false
+//                    break
+//                }
+//            }
+//            if (shouldCombo) {
+//                skillController.combo.start(false) {
+//                    ClientOperationPayload.sendOperationToServer("combo")
+//                }
+//                skillController.combo.getPlayingAnim()?.let {
+//                    // 这一段使得连招在50-150ms之间可以变招
+//                    val changeNode = skillController.combo.attackChangeNode[skillController.combo.index]
+//                    if (player.getPreInput().hasInput("combo") && changeNode != null && !it.isInTransition && it.isTickIn(0.05, 0.15)) {
+//                        skillController.combo.start(true) {
+//                            ClientOperationPayload.sendOperationToServer("combo_switch")
+//                        }
+//                        player.getPreInput().executeIfPresent("combo")
+//                    }
+//                }
+//            }
             event.setSwingHand(false)
             event.isCanceled = true
         }

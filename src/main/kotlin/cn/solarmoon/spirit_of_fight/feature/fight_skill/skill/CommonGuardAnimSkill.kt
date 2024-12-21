@@ -11,6 +11,7 @@ import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.MovePayload
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
+import org.ode4j.ode.DGeom
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 
 open class CommonGuardAnimSkill(
@@ -57,7 +58,7 @@ open class CommonGuardAnimSkill(
         super.stop(sync)
     }
 
-    override fun shouldSummonBox(anim: MixedAnimation): Boolean {
+    override fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean {
         return !anim.isInTransition
     }
 
@@ -75,10 +76,6 @@ open class CommonGuardAnimSkill(
         if (!anim.isCancelled && anim.name == idleAnim.anim.name) {
             animatable.getAutoAnim<EntityStateAutoAnim>("EntityState")?.blendWithoutArms(false) { it.name !in animBounds }
         }
-    }
-
-    override fun getBoxId(index: Int): String {
-        return "${entity.id}:guard"
     }
 
     override fun onSuccessGuard(attackerPos: Vec3, damageSource: DamageSource, value: Float, anim: MixedAnimation): Boolean {

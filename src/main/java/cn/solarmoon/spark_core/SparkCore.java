@@ -1,5 +1,7 @@
 package cn.solarmoon.spark_core;
 
+import cn.solarmoon.spark_core.registry.client.SparkEntityRendererRegister;
+import cn.solarmoon.spark_core.registry.common.SparkRegistries;
 import cn.solarmoon.spark_core.api.entry_builder.ObjectRegister;
 import cn.solarmoon.spark_core.api.phys.DxHelper;
 import cn.solarmoon.spark_core.registry.client.SparkClientEvents;
@@ -12,8 +14,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
-import org.ode4j.ode.OdeHelper;
-import org.ode4j.ode.internal.OdeInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,10 @@ public class SparkCore {
             SparkClientEvents.register();
             SOFClientEvents.register();
             SOFKeyMappings.register();
+            SparkEntityRendererRegister.register(modEventBus);
         }
+
+        SparkRegistries.register();
 
         SparkVisualEffects.register();
         SparkAttachments.register();
@@ -46,6 +49,8 @@ public class SparkCore {
         SOFAttachments.register();
         SOFVisualEffects.register();
         SOFAnimRegister.register();
+        SparkSkills.register();
+        SparkEntityTypes.register();
 
         DxHelper.initOde();
     }
