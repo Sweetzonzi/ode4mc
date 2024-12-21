@@ -42,6 +42,9 @@ class OBBRenderer(): VisualEffectRenderer() {
         PacketDistributor.sendToAllPlayers(RenderableOBBPayload(id, color?.rgb, box))
     }
 
+    /**
+     * 客户端每tick更新要渲染的box
+     */
     override fun tick() {
         val iterator = renderableBoxes.entries.iterator()
         while (iterator.hasNext()) {

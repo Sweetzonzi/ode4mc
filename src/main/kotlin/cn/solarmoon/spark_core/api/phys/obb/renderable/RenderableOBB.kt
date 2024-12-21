@@ -24,6 +24,8 @@ class RenderableOBB {
     var color: Color = defaultColor
         private set
     var box: DGeom? = null
+    var boxCache: DGeom? = null
+    var refreshCache: Boolean = false
     var lastBox: DGeom? = null
     var isRemoved: Boolean = false
 
@@ -37,6 +39,7 @@ class RenderableOBB {
             remove()
         } else {
             tick++
+            this.boxCache?.let { refresh(it, this.refreshCache) }//每tick将缓存正式存入对象一次
         }
 
         if (color != defaultColor) {
@@ -45,10 +48,18 @@ class RenderableOBB {
         }
     }
 
-    fun refresh(box: DGeom, straight: Boolean = false) {
+    fun update(box: DGeom, straight: Boolean = false) {//收到新数据时暂存起来
+        this.boxCache = box
+        this.refreshCache = straight
+    }
+
+    fun refresh(box: DGeom, straight: Boolean = false) {//将缓存数据正式存入OBB对象
         tick = 0
-        this.box = box
         if (straight) lastBox = box
+        else if (this.box != null) this.lastBox = lerp(this.box as DBox,this.box as DBox,0.0)
+        this.box = box
+//        this.box = box
+//        if (straight) lastBox = box
     }
 
     fun getBox(partialTicks: Float): DGeom? {
@@ -69,9 +80,9 @@ class RenderableOBB {
         val s2 = b2.lengths.toVector3d()
         val q2 = b2.quaternion.toQuaterniond()
 
-        val rp = p1.lerp(p2, partialTicks).toDVector3()
-        val rs = s1.lerp(s2, partialTicks).toDVector3()
-        val rq = q1.slerp(q2, partialTicks).toDQuaternion()
+        val rp = p1.lerp(p2, partialTicks).toDVector3()//混合后的位置
+        val rs = s1.lerp(s2, partialTicks).toDVector3()//混合后的尺寸
+        val rq = q1.slerp(q2, partialTicks).toDQuaternion()//混合后的旋转
         return OdeHelper.createBox(rs).apply { position = rp; quaternion = rq }
     }
 

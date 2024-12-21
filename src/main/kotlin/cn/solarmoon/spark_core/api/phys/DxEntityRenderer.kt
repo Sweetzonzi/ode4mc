@@ -24,8 +24,11 @@ abstract class DxEntityRenderer<T: DxEntity> private constructor( context: Entit
         var i = 0
         if (!entity.body.isEnabled) return
         entity.body.geomIterator.forEach {
-            SparkVisualEffects.OBB.getRenderableBox("${entity.id}:box-$i").refresh(it, true)
+            //为实体的body上每一个附着的geom创建/选中id为${entity.id}:box-$i的RenderableOBB，并将geom传入其中的缓存区
+            SparkVisualEffects.OBB.getRenderableBox("${entity.id}:box-$i").update(it, false)
             i++
+            if (entity is DxAnimAttackEntity)
+                println(it.position.toVector3d())
         }
     }
 
