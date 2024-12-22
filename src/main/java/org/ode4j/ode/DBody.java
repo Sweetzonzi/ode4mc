@@ -24,7 +24,7 @@
  *************************************************************************/
 package org.ode4j.ode;
 
-import cn.solarmoon.spark_core.api.phys.DxEntity;
+import org.jetbrains.annotations.Nullable;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternionC;
 import org.ode4j.math.DVector3;
@@ -68,6 +68,19 @@ import java.util.Iterator;
  */
 public interface DBody {
 
+	void onTick(Runnable function);
+
+	void tick();
+
+	void setName(String name);
+
+	String getName();
+
+	void setOwner(Object ob);
+
+	@Nullable
+	Object getOwner();
+
 	 /**
 	  * Whenever a body has its position or rotation changed during the
 	  * timestep, the callback will be called (with body as the argument).
@@ -101,10 +114,6 @@ public interface DBody {
 	 * @return a pointer to the user's data.
 	 */
 	Object getData();
-
-	void setEntity(DxEntity entity);
-
-	DxEntity getEntity();
 
 	/**
 	 * Set position of a body.

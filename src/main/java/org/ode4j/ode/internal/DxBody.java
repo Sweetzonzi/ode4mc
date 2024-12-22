@@ -38,7 +38,6 @@ import static org.ode4j.ode.internal.Rotation.dQMultiply0;
 import static org.ode4j.ode.internal.Rotation.dQfromR;
 import static org.ode4j.ode.internal.Rotation.dRfromQ;
 
-import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.math.DMatrix3;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternion;
@@ -61,6 +60,38 @@ import java.util.Iterator;
  * rigid body (dynamics object).
  */
 public class DxBody extends DObject implements DBody {
+
+	private String name = "body";
+	private Object owner = null;
+	private Runnable tickFunction = () -> {};
+
+	public void onTick(Runnable function) {
+		tickFunction = function;
+	}
+
+	public void tick() {
+		tickFunction.run();
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setOwner(Object ob) {
+		owner = ob;
+	}
+
+	@Override
+	public Object getOwner() {
+		return owner;
+	}
 
 	// some body flags
 
@@ -123,12 +154,9 @@ public class DxBody extends DObject implements DBody {
 	private final dxDampingParameters dampingp = new dxDampingParameters(); // damping parameters, depends on flags
 	double max_angular_speed;      // limit the angular velocity to this magnitude
 
-	DxEntity entity;
-
 	protected DxBody(DxWorld w)
 	{
 		super(w);
-		entity = null;
 	}
 
 
@@ -1189,20 +1217,6 @@ public class DxBody extends DObject implements DBody {
 	@Override
 	public Object getData()
 	{ return dBodyGetData (); }
-
-	@Override
-	public void setEntity(DxEntity entity) {
-		this.entity = entity;
-		var i = getGeomIterator();
-		while (i.hasNext()) {
-			i.next().setEntity(entity);
-		}
-	}
-
-	@Override
-	public DxEntity getEntity() {
-		return entity;
-	}
 
 	@Override
 	public void setPosition (double x, double y, double z)

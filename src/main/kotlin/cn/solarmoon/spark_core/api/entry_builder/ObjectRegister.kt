@@ -6,7 +6,6 @@ import cn.solarmoon.spark_core.api.entry_builder.client.KeyMappingBuilder
 import cn.solarmoon.spark_core.api.entry_builder.client.LayerBuilder
 import cn.solarmoon.spark_core.api.entry_builder.common.*
 import cn.solarmoon.spark_core.api.entry_builder.common.fluid.FluidBuilder
-import cn.solarmoon.spark_core.api.phys.DxEntity
 import cn.solarmoon.spark_core.api.util.RegisterUtil
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleType
@@ -113,7 +112,7 @@ class ObjectRegister(val modId: String, val gatherData: Boolean = true) {
     fun layer() = LayerBuilder(modId, modBus!!)
     fun keyMapping() = KeyMappingBuilder(modId, modBus!!)
 
-    fun <S: Skill> skill(): SkillBuilder<S> {
+    fun <S: Skill<*>> skill(): SkillBuilder<S> {
         if (!skillDeferredRegister.isInitialized()) {
             skillDeferredRegister.value.register(modBus!!)
         }

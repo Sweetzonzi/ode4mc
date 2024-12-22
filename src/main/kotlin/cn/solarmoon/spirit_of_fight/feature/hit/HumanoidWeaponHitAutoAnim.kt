@@ -53,7 +53,7 @@ class HumanoidWeaponHitAutoAnim(
             val hitType = data.getHitType() ?: return ""
             val side = entity.getLateralSide(data.damageBox.position.toVec3())
             val posSide = entity.getSide(sourcePos)
-            val damagedBone = data.damageBone
+            val damagedBone = data.damagedBody?.name
             if (damagedBone != null) {
                 val hitAnimName = getAnimName(hitType, damagedBone, side, posSide) ?: return ""
                 return hitAnimName.substringAfter("/")

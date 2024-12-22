@@ -42,7 +42,7 @@ class AttackController {
         if (player !is IFightSkillHolder) return
         val skillController = player.skillController ?: return
         if (event.isAttack && hit.type in listOf(HitResult.Type.ENTITY, HitResult.Type.MISS)) {
-            SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player)
+            SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player as IEntityAnimatable<*>)
             ClientOperationPayload.sendOperationToServer("combo")
 //            var shouldCombo = true
 //            for ((index, skill) in skillController.specialAttackSkillGroup.withIndex()) {

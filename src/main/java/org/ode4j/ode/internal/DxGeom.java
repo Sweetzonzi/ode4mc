@@ -27,7 +27,6 @@ package org.ode4j.ode.internal;
 import static org.ode4j.ode.OdeMath.*;
 import static org.ode4j.ode.internal.Rotation.dQfromR;
 
-import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.ode.*;
 import org.ode4j.math.DMatrix3;
 import org.ode4j.math.DMatrix3C;
@@ -41,6 +40,8 @@ import org.ode4j.ode.internal.cpp4j.java.Ref;
 import org.ode4j.ode.internal.cpp4j.java.RefInt;
 import org.ode4j.ode.internal.DxQuadTreeSpace.Block;
 
+import java.util.function.BiConsumer;
+
 import static org.ode4j.ode.internal.CollisionLibccd.*;
 
 /**
@@ -50,6 +51,33 @@ import static org.ode4j.ode.internal.CollisionLibccd.*;
  */
 public abstract class DxGeom extends DBase implements DGeom {
 
+	private BiConsumer<DGeom, DContactBuffer> collide = (a, b) -> {};
+	private boolean passFromCollide = false;
+
+	@Override
+	public void onCollide(BiConsumer<DGeom, DContactBuffer> collide) {
+		this.collide = collide;
+	}
+
+	@Override
+	public void collide(DGeom o2, DContactBuffer buffer) {
+		collide.accept(o2, buffer);
+	}
+
+	@Override
+	public void setPassFromCollide(boolean value) {
+		passFromCollide = value;
+	}
+
+	@Override
+	public boolean isPassFromCollide() {
+		return passFromCollide;
+	}
+
+	@Override
+	public boolean collisionDetectable() {
+		return body != null && body.isEnabled();
+	}
 
 	//****************************************************************************
 	// constants and macros
@@ -167,8 +195,6 @@ public abstract class DxGeom extends DBase implements DGeom {
 	protected DAABB _aabb = new DAABB();	// cached AABB for this space
 	//TODO unsigned
 	long category_bits,collide_bits;
-
-	DxEntity entity;
 
 	//	  dxGeom (dSpace _space, int is_placeable);
 	//	  virtual ~dxGeom();
@@ -435,7 +461,6 @@ public abstract class DxGeom extends DBase implements DGeom {
 	//	dxGeom::dxGeom (dSpace _space, int is_placeable)
 	protected DxGeom (DxSpace space, boolean isPlaceable)
 	{
-		entity = null;
 		// setup body vars. invalid type of -1 must be changed by the constructor.
 		type = -1;
 		_gflags = GEOM_DIRTY | GEOM_AABB_BAD | GEOM_ENABLED;
@@ -701,7 +726,6 @@ public abstract class DxGeom extends DBase implements DGeom {
 		DxSpace.CHECK_NOT_LOCKED (parent_space);
 
 		if (b != null) {
-			setEntity(b.getEntity());
 			if (body == null) dFreePosr(_final_posr);
 			if (body != b) {
 				if (offset_posr != null) {
@@ -1838,16 +1862,6 @@ public abstract class DxGeom extends DBase implements DGeom {
 	@Override
 	public Object getData() //const
 	{ return dGeomGetData (); }
-
-	@Override
-	public void setEntity(DxEntity entity) {
-		this.entity = entity;
-	}
-
-	@Override
-	public DxEntity getEntity() {
-		return entity;
-	}
 
 	@Override
 	public void setBody (DBody b)

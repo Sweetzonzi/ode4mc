@@ -31,7 +31,7 @@ import org.ode4j.ode.internal.cpp4j.java.Ref;
  * Base class for bodies and joints.
  */
 public abstract class DObject extends DBase {
-   
+
     public DxWorld world;        // world this object is in
 //      dObject *next;        // next object of this type in list
 //      dObject **tome;        // pointer to previous object's next ptr

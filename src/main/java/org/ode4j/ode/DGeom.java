@@ -24,7 +24,6 @@
  *************************************************************************/
 package org.ode4j.ode;
 
-import cn.solarmoon.spark_core.api.phys.DxEntity;
 import org.ode4j.math.DMatrix3;
 import org.ode4j.math.DMatrix3C;
 import org.ode4j.math.DQuaternion;
@@ -32,11 +31,29 @@ import org.ode4j.math.DQuaternionC;
 import org.ode4j.math.DVector3;
 import org.ode4j.math.DVector3C;
 
+import java.util.function.BiConsumer;
+
 /**
  * Common base class for all geometries.
  *
  */
 public interface DGeom {
+
+	void onCollide(BiConsumer<DGeom, DContactBuffer> collide);
+
+	void collide(DGeom o2, DContactBuffer buffer);
+
+	void setPassFromCollide(boolean value);
+
+	/**
+	 * @return 此值为true时，将在检测到碰撞后不调用<b>被碰撞到</b>的geom的 {@link #onCollide(BiConsumer)} 方法
+	 */
+	boolean isPassFromCollide();
+
+	/**
+	 * @return 是否可被碰撞检测（当且仅当绑定了任意body且body为enable时为true）
+	 */
+	boolean collisionDetectable();
 
 	/** the maximum number of user classes that are supported. */
 	//	enum {
@@ -146,11 +163,6 @@ public interface DGeom {
 	 * @return user data
 	 */
 	Object getData();
-
-	void setEntity(DxEntity entity);
-
-	DxEntity getEntity();
-
 	
 	/**
 	 * Set the body associated with a placeable geom.

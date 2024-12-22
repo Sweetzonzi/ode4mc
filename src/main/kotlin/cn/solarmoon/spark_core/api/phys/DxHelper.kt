@@ -37,6 +37,20 @@ object DxHelper {
 
 }
 
+inline fun <reified T> DBody.getOwner(): T? {
+    return owner as? T
+}
+
+/**
+ * 复制一个只留存基本几何数据的Box
+ */
+fun DBox.baseCopy() = OdeHelper.createBox(lengths.copy()).apply {
+    copyPosition(this@baseCopy.position.copy())
+    copyRotation(this@baseCopy.rotation.copy())
+    copyOffsetPosition(this@baseCopy.offsetPosition.copy())
+    copyOffsetRotation(this@baseCopy.offsetRotation.copy())
+}
+
 fun DBox.getVertexes(): List<Vector3d> {
     val vertices = MutableList(8) { Vector3d() }
     val halfLengths = lengths.toVector3d().div(2.0)

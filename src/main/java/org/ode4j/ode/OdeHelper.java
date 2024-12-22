@@ -27,6 +27,8 @@ package org.ode4j.ode;
 import java.io.File;
 import java.util.List;
 
+import cn.solarmoon.spark_core.api.phys.PhysWorld;
+import kotlin.Unit;
 import org.ode4j.math.DVector3;
 import org.ode4j.math.DVector3C;
 import org.ode4j.ode.DGeom.DNearCallback;
@@ -537,6 +539,14 @@ public abstract class OdeHelper {
 		return DxBody.dBodyCreate((DxWorld) w);
 	}
 
+	public static DBody createBody (String name, Object owner, boolean gravity, DWorld w){
+		var box = DxBody.dBodyCreate((DxWorld) w);
+		box.setName(name);
+		box.setOwner(owner);
+		box.setGravityMode(gravity);
+		return box;
+	}
+
 	//ODE_API 
 	public static DSimpleSpace createSimpleSpace () {
 		return DxSimpleSpace.dSimpleSpaceCreate(null);
@@ -676,6 +686,22 @@ public abstract class OdeHelper {
 	 */
 	public static DBox createBox(DSpace space, DVector3 lxyz) {
 		return DxBox.dCreateBox((DxSpace) space, lxyz.get0(), lxyz.get1(), lxyz.get2());
+	}
+
+	public static DBox createBox(DBody body, DSpace space, DVector3 lxyz) {
+		var box = DxBox.dCreateBox((DxSpace) space, lxyz.get0(), lxyz.get1(), lxyz.get2());
+		box.setBody(body);
+		return box;
+	}
+
+	public static DBox laterCreateBox(DBody body, PhysWorld physWorld, DVector3 lxyz) {
+		var box = DxBox.dCreateBox(null, lxyz.get0(), lxyz.get1(), lxyz.get2());
+		physWorld.laterConsume(() -> {
+			physWorld.getSpace().add(box);
+            return Unit.INSTANCE;
+        });
+		box.setBody(body);
+		return box;
 	}
 
 	public static DCapsule createCapsule(double radius, double length) {

@@ -2,38 +2,32 @@ package cn.solarmoon.spark_core.api.entity.skill.test
 
 import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.phys.DxAnimAttackEntity
+import cn.solarmoon.spark_core.api.phys.attached_body.EntityAnimatedAttackBody
+import cn.solarmoon.spark_core.api.phys.attached_body.getBody
 import cn.solarmoon.spark_core.api.phys.toDVector3
+import net.neoforged.neoforge.attachment.IAttachmentHolder
 import org.joml.Vector3d
 import org.joml.Vector3f
 
 class SimpleAttackAnimSkill(
-    val animName: String,
-    val boxSize: Vector3d,
-    val boxOffset: Vector3d,
-    val shouldAttack: (DxAnimAttackEntity, MixedAnimation) -> Boolean
-): Skill {
+    val animName: String
+): Skill<IEntityAnimatable<*>> {
 
-    override fun activate(ob: Any) {
-        if (ob is IEntityAnimatable<*>) {
-            ob.animController.stopAndAddAnimation(MixedAnimation(animName))
-        }
+    override fun activate(ob: IEntityAnimatable<*>) {
+        ob.animController.stopAndAddAnimation(MixedAnimation(animName))
     }
 
-    override fun tick(ob: Any) {
-        if (ob is DxAnimAttackEntity) {
-            var flag = false
-            ob.getOwner()?.let { animatable ->
-                animatable.animData.playData.getMixedAnimation(animName)?.let {
-                    if (shouldAttack.invoke(ob, it)) {
-                        flag = true
-                        ob.geom.lengths = boxSize.toDVector3()
-                        ob.geom.offsetPosition = boxOffset.toDVector3()
-                        ob.body.enable()
-                    }
-                }
+    override fun tick(ob: IEntityAnimatable<*>) {
+        var enable = false
+        val aBody = ob.animatable.getBody<EntityAnimatedAttackBody>("attack") ?: return
+        ob.animData.playData.getMixedAnimation(animName)?.let {
+            if (it.isTickIn(0.05, 0.25)) {
+                enable = true
+                aBody.enableAttack()
             }
-            if (!flag) ob.body.disable()
+        }
+        if (!enable && aBody.isEnabled) {
+            aBody.disableAttack()
         }
     }
 

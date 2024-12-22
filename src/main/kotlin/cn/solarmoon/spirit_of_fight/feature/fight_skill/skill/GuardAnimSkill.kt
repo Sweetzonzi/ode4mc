@@ -64,7 +64,7 @@ abstract class GuardAnimSkill(
             return true
         }
         // 如果受击数据里有guard，则免疫此次攻击
-        val isBoxInteract = attackedData != null && attackedData.damageBone == "guard"
+        val isBoxInteract = attackedData != null && attackedData.damagedBody?.name == "guard"
         // 如果受到box的攻击，位移以box中心为准，否则以直接攻击者的坐标位置为准
         val targetPos = attackedData?.damageBox?.position?.toVec3() ?: damageSource.sourcePosition ?: return true
         // 如果受到box的攻击，按防守盒是否被碰撞为准，否则以攻击者的坐标位置是否在指定扇形范围内为准

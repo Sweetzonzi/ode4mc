@@ -1,6 +1,7 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 
 import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
 import cn.solarmoon.spark_core.api.data.SerializeHelper
 import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
 import cn.solarmoon.spark_core.api.util.MoveDirection
@@ -35,7 +36,7 @@ data class ClientOperationPayload(
             val skill = player.skillController ?: return
             when(payload.operation) {
                 "combo" -> {
-                    SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player)
+                    SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player as IEntityAnimatable<*>)
 //                    skill.combo.start(false) {
 //                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(false))
 //                    }

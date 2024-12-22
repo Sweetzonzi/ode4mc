@@ -1,14 +1,23 @@
 package cn.solarmoon.spark_core.api.entity.attack
 
-import cn.solarmoon.spark_core.api.phys.DxEntity
-import cn.solarmoon.spark_core.registry.common.SparkEntityTypes
+import cn.solarmoon.spark_core.SparkCore
+import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.api.phys.attached_body.AnimatedCubeBody
+import cn.solarmoon.spark_core.api.phys.attached_body.EntityAnimatedAttackBody
+import cn.solarmoon.spark_core.api.phys.attached_body.EntityBoundingBoxBody
+import cn.solarmoon.spark_core.api.phys.attached_body.putBody
+import cn.solarmoon.spark_core.api.phys.thread.getPhysWorld
+import cn.solarmoon.spark_core.registry.common.SparkAttachments
 import cn.solarmoon.spark_core.registry.common.SparkSkills
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.animal.IronGolem
 import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.attachment.IAttachmentHolder
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
+import org.ode4j.math.DVector3
 
 class AttackedDataController {
 
@@ -17,7 +26,7 @@ class AttackedDataController {
         val entity = event.entity
         val level = entity.level()
 
-        if (entity is Player) {
+        if (entity is IEntityAnimatable<*>) {
             SparkSkills.PLAYER_SWORD_COMBO_0.value().tick(entity)
         }
 
@@ -27,18 +36,39 @@ class AttackedDataController {
     }
 
     @SubscribeEvent
+    private fun hurt(event: LivingDamageEvent.Post) {
+        val entity = event.entity
+        SparkCore.LOGGER.info(entity.getAttackedData()?.damagedBody?.name + " " + entity.getAttackedData().toString())
+    }
+
+    @SubscribeEvent
     private fun join(event: EntityJoinLevelEvent) {
         val entity = event.entity
         val level = event.level
-        if (level is ServerLevel && entity !is DxEntity) {
-            SparkEntityTypes.DX_BOUNDING_BOX.value().create(level)?.let {
-                level.addFreshEntity(it.apply { setEntityOwner(entity) })
+        if (entity is IEntityAnimatable<*>) {
+            entity.animData.model.bones.forEach {
+                val body = AnimatedCubeBody(it.name, level, entity)
+                entity.putBody(body)
             }
             if (entity is Player) {
-                SparkEntityTypes.DX_ANIM_ATTACK.value().create(level)?.let {
-                    level.addFreshEntity(it.apply { setEntityOwner(entity); bodyName = "rightItem" })
+                val body = EntityAnimatedAttackBody("attack", "rightItem", level, entity).apply {
+                    size = DVector3(0.5, 0.5, 1.0)
+                    offset = DVector3(0.0, 0.0, -0.5)
                 }
+                entity.putBody(body)
             }
+        } else {
+            val body = EntityBoundingBoxBody(level, entity)
+            entity.putBody(body)
+        }
+    }
+
+    @SubscribeEvent
+    private fun leave(event: EntityLeaveLevelEvent) {
+        val entity = event.entity
+        val level = event.level
+        entity.getData(SparkAttachments.BODY).values.forEach {
+            level.getPhysWorld().laterConsume { it.body.destroy() }
         }
     }
 

@@ -24,8 +24,6 @@ class RenderableOBB {
     var color: Color = defaultColor
         private set
     var box: DGeom? = null
-    var boxCache: DGeom? = null
-    var refreshCache: Boolean = false
     var lastBox: DGeom? = null
     var isRemoved: Boolean = false
 
@@ -39,7 +37,6 @@ class RenderableOBB {
             remove()
         } else {
             tick++
-            this.boxCache?.let { refresh(it, this.refreshCache) }//每tick将缓存正式存入对象一次
         }
 
         if (color != defaultColor) {
@@ -48,18 +45,11 @@ class RenderableOBB {
         }
     }
 
-    fun update(box: DGeom, straight: Boolean = false) {//收到新数据时暂存起来
-        this.boxCache = box
-        this.refreshCache = straight
-    }
-
     fun refresh(box: DGeom, straight: Boolean = false) {//将缓存数据正式存入OBB对象
         tick = 0
         if (straight) lastBox = box
-        else if (this.box != null) this.lastBox = lerp(this.box as DBox,this.box as DBox,0.0)
-        this.box = box
-//        this.box = box
-//        if (straight) lastBox = box
+        if (this.box != null) this.lastBox = lerp(this.box as DBox, this.box as DBox, 0.0)
+        this.box = lerp(box as DBox,box,0.0)
     }
 
     fun getBox(partialTicks: Float): DGeom? {

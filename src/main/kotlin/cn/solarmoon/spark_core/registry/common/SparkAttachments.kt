@@ -4,8 +4,7 @@ import cn.solarmoon.spark_core.SparkCore
 import cn.solarmoon.spark_core.api.animation.anim.play.AnimData
 import cn.solarmoon.spark_core.api.entity.attack.AttackedData
 import cn.solarmoon.spark_core.api.entity.preinput.PreInput
-import cn.solarmoon.spark_core.api.entity.skill.test.Skill
-import net.minecraft.world.entity.Entity
+import cn.solarmoon.spark_core.api.phys.attached_body.AttachedBody
 import java.util.Optional
 
 
@@ -32,5 +31,10 @@ object SparkAttachments {
         .defaultValue { PreInput(it) }
         .build()
 
+    @JvmStatic
+    val BODY = SparkCore.REGISTER.attachment<LinkedHashMap<String, AttachedBody>>()
+        .id("attached_body")
+        .defaultValue { linkedMapOf() }
+        .build()
 
 }

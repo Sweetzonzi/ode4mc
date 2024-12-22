@@ -33,8 +33,11 @@ import static org.ode4j.ode.internal.Common.dSqrt;
 import static org.ode4j.ode.internal.Common.dUASSERT;
 import static org.ode4j.ode.internal.ErrorHandler.dMessage;
 
+import org.jetbrains.annotations.Nullable;
 import org.ode4j.math.DVector3;
 import org.ode4j.math.DVector3C;
+import org.ode4j.ode.DBody;
+import org.ode4j.ode.DGeom;
 import org.ode4j.ode.DWorld;
 import org.ode4j.ode.internal.Objects_H.dxAutoDisable;
 import org.ode4j.ode.internal.Objects_H.dxContactParameters;
@@ -63,7 +66,36 @@ import org.ode4j.ode.threading.task.Task;
 import org.ode4j.ode.threading.task.TaskExecutor;
 import org.ode4j.ode.threading.task.TaskGroup;
 
+import java.util.Iterator;
+
 public class DxWorld extends DBase implements DWorld {
+
+	public static class BodyIteration implements Iterator<DxBody> {
+		DxBody current;
+
+		BodyIteration(DxBody start) {
+			current = start;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return current != null;
+		}
+
+		@Override
+		public DxBody next() {
+			DxBody ret = current;
+			var n = current.getNext();
+			if (n instanceof DxBody nb) {
+				current = nb;
+			} else current = null;
+			return ret;
+		}
+	}
+
+	public BodyIteration getBodyIteration() {
+		return new BodyIteration(firstbody.get());
+	}
 
 	private TaskExecutor taskExecutor = new SameThreadTaskExecutor();
 	
