@@ -1,17 +1,31 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.attack
 
-import cn.solarmoon.spark_core.api.entity.skill.IAnimSkillHolder
-import cn.solarmoon.spark_core.api.event.EntityGetWeaponEvent
-import cn.solarmoon.spark_core.api.event.PlayerGetAttackStrengthEvent
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit.getFightSpirit
+import cn.solarmoon.spark_core.entity.attack.AttackSystem
+import cn.solarmoon.spark_core.entity.attack.AttackedData
+import cn.solarmoon.spark_core.entity.attack.setAttackedData
+import cn.solarmoon.spark_core.phys.attached_body.AttachedBody
+import cn.solarmoon.spark_core.phys.attached_body.EntityBoundingBoxBody
+import cn.solarmoon.spark_core.phys.attached_body.putBody
+import cn.solarmoon.spark_core.phys.thread.getPhysWorld
+import cn.solarmoon.spark_core.phys.toDVector3
+import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
+import cn.solarmoon.spark_core.skill.getTypedSkillController
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.animal.IronGolem
+import net.minecraft.world.level.Level
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent
 import net.neoforged.neoforge.event.entity.player.SweepAttackEvent
 import net.neoforged.neoforge.event.tick.EntityTickEvent
+import org.ode4j.math.DVector3
+import org.ode4j.ode.DBody
+import org.ode4j.ode.OdeHelper
 
-class AttackModifier {
+object AttackModifier {
 
     /**
      * 原版横扫从此再见
@@ -19,9 +33,8 @@ class AttackModifier {
     @SubscribeEvent
     private fun playerSweep(event: SweepAttackEvent) {
         val player = event.entity
-        if (player !is IFightSkillHolder) return
-        val skill = player.skillController ?: return
-        if (skill.isAttacking()) {
+        val skillController = player.getTypedSkillController<FightSkillController>() ?: return
+        if (skillController.isAttacking()) {
             event.isSweeping = false
         }
     }
@@ -32,9 +45,8 @@ class AttackModifier {
     @SubscribeEvent
     private fun playerCriticalHit(event: CriticalHitEvent) {
         val player = event.entity
-        if (player !is IFightSkillHolder) return
-        val skill = player.skillController ?: return
-        if (skill.isAttacking()) {
+        val skillController = player.getTypedSkillController<FightSkillController>() ?: return
+        if (skillController.isAttacking()) {
             // 逻辑是原版暴击只能在跳劈情况下触发，因此直接删掉原版跳劈，但是别的模组由暴击率驱动的概率性伤害显然理应不受其影响
             if (event.vanillaMultiplier == 1.5f) event.isCriticalHit = false
         }
@@ -47,6 +59,38 @@ class AttackModifier {
     private fun knockBackModify(event: LivingKnockBackEvent) {
         val entity = event.entity
         entity.setOnGround(false)
+    }
+
+    @SubscribeEvent
+    private fun test(event: EntityJoinLevelEvent) {
+        val entity = event.entity
+        if (entity is IronGolem) {
+            entity.putBody(AttackBody(event.level, entity))
+        }
+    }
+
+    class AttackBody(level: Level, entity: Entity): AttachedBody {
+        override val name: String = "wow"
+        override val body: DBody = OdeHelper.createBody(name, entity, false, level.getPhysWorld().world)
+        val geom = OdeHelper.laterCreateBox(body, level.getPhysWorld(), DVector3())
+        val ats = AttackSystem(entity)
+
+        init {
+            body.onTick {
+                val bb = entity.boundingBox
+                geom.lengths = DVector3(bb.xsize, bb.ysize, bb.zsize)
+                body.position = bb.center.toDVector3()
+                if (level.isClientSide) SparkVisualEffects.GEOM.getRenderableBox(geom.uuid.toString()).refresh(geom)
+            }
+
+            geom.onCollide { o2, buffer ->
+                val target = o2.body.owner
+                if (target is LivingEntity) {
+                    ats.customGeomAttack(geom, o2) { target.hurt(target.damageSources().magic(), 1f) }
+                }
+                ats.reset()
+            }
+        }
     }
 
 }

@@ -1,15 +1,15 @@
 package cn.solarmoon.spirit_of_fight.feature.hit
 
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.HitAutoAnim
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
-import cn.solarmoon.spark_core.api.entity.attack.clearAttackedData
-import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
-import cn.solarmoon.spark_core.api.entity.state.getLateralSide
-import cn.solarmoon.spark_core.api.entity.state.getSide
-import cn.solarmoon.spark_core.api.phys.toVec3
-import cn.solarmoon.spark_core.api.util.Side
+import cn.solarmoon.spark_core.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.animation.anim.auto_anim.HitAutoAnim
+import cn.solarmoon.spark_core.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.animation.sync.SyncedAnimation
+import cn.solarmoon.spark_core.entity.attack.clearAttackedData
+import cn.solarmoon.spark_core.entity.attack.getAttackedData
+import cn.solarmoon.spark_core.entity.state.getLateralSide
+import cn.solarmoon.spark_core.entity.state.getSide
+import cn.solarmoon.spark_core.phys.toVec3
+import cn.solarmoon.spark_core.util.Side
 import cn.solarmoon.spirit_of_fight.feature.hit.HitType.*
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3

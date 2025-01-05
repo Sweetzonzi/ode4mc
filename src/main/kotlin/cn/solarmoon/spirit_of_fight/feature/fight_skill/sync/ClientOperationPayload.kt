@@ -1,24 +1,21 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.data.SerializeHelper
-import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.util.MoveDirection
-import cn.solarmoon.spark_core.registry.common.SparkSkills
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.IFightSkillHolder
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.CommonFightSkillController
+import cn.solarmoon.spark_core.data.SerializeHelper
+import cn.solarmoon.spark_core.skill.getTypedSkillController
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.SwordFightSkillController
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
 
 data class ClientOperationPayload(
+    val entityId: Int,
     val operation: String,
     val moveVector: Vec3,
     val id: Int
@@ -30,58 +27,29 @@ data class ClientOperationPayload(
 
     companion object {
         @JvmStatic
-        fun handleInServer(payload: ClientOperationPayload, context: IPayloadContext) {
-            val player = context.player() as ServerPlayer
-            if (player !is IFightSkillHolder) return
-            val skill = player.skillController ?: return
+        fun handle(payload: ClientOperationPayload, context: IPayloadContext) {
+            val player = context.player()
+            val entity = context.player().level().getEntity(payload.entityId) ?: return
+            val skillController = entity.getTypedSkillController<FightSkillController>() ?: return
             when(payload.operation) {
                 "combo" -> {
-                    SparkSkills.PLAYER_SWORD_COMBO_0.value().activate(player as IEntityAnimatable<*>)
-//                    skill.combo.start(false) {
-//                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(false))
-//                    }
-                }
-                "combo_switch" -> {
-                    skill.combo.start(true) {
-                        it.syncToClientExceptPresentPlayer(player, skill.combo.getAnimModifier(true))
-                    }
-                    player.getPreInput().executeIfPresent("combo")
-                }
-                "dodge" -> {
-                    skill.dodge.start(MoveDirection.getById(payload.id), payload.moveVector) {
-                        it.syncToClientExceptPresentPlayer(player)
-                    }
+                    skillController.comboIndex.set(payload.id)
+                    skillController.getComboSkill().activate()
                 }
                 "guard" -> {
-                    skill.guard.start {
-                        it.syncToClientExceptPresentPlayer(player)
-                    }
+                    skillController.getGuardSkill().activate()
                 }
                 "guard_stop" -> {
-                    skill.guard.stop {
-                        it.syncToClientExceptPresentPlayer(player)
-                    }
+                    skillController.getGuardSkill().end()
                 }
-                "guard_clear" -> {
-                    (player as Entity).getPreInput().clear()
+                "guard_hurt" -> {
+                    skillController.getGuardSkill().playHurtAnim()
                 }
                 "parry" -> {
-                    if (skill is CommonFightSkillController) skill.parry.start {
-                        it.syncToClientExceptPresentPlayer(player)
-                    }
-                }
-                else -> {
-                    val operation = payload.operation.toIntOrNull() ?: return
-                    skill.specialAttackSkillGroup.getOrNull(operation)?.let { attack ->
-                        attack.start { it.syncToClientExceptPresentPlayer(player, attack.getAnimModifier()) }
-                    }
+                    (skillController as? SwordFightSkillController)?.getParrySkill()?.activate()
                 }
             }
-        }
-
-        @JvmStatic
-        fun sendOperationToServer(operation: String, v: Vec3? = null, d: Int? = null) {
-            PacketDistributor.sendToServer(ClientOperationPayload(operation, v ?: Vec3.ZERO, d ?: 0))
+            if (player is ServerPlayer) PacketDistributor.sendToPlayersNear(player.serverLevel(), player, player.x, player.y, player.z, 512.0, payload)
         }
 
         @JvmStatic
@@ -90,13 +58,15 @@ data class ClientOperationPayload(
         @JvmStatic
         val STREAM_CODEC = object : StreamCodec<RegistryFriendlyByteBuf, ClientOperationPayload> {
             override fun decode(buffer: RegistryFriendlyByteBuf): ClientOperationPayload {
+                val entityId = buffer.readInt()
                 val operation = buffer.readUtf()
                 val moveVector = SerializeHelper.VEC3_STREAM_CODEC.decode(buffer)
                 val moveDirection = buffer.readInt()
-                return ClientOperationPayload(operation, moveVector, moveDirection)
+                return ClientOperationPayload(entityId, operation, moveVector, moveDirection)
             }
 
             override fun encode(buffer: RegistryFriendlyByteBuf, value: ClientOperationPayload) {
+                buffer.writeInt(value.entityId)
                 buffer.writeUtf(value.operation)
                 SerializeHelper.VEC3_STREAM_CODEC.encode(buffer, value.moveVector)
                 buffer.writeInt(value.id)

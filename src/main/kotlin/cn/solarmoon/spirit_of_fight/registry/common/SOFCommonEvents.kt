@@ -8,8 +8,8 @@ object SOFCommonEvents {
 
     @JvmStatic
     fun register() {
-        add(AttackModifier())
-        add(FightSpiritApplier())
+        add(AttackModifier)
+        add(FightSpiritApplier)
     }
 
     private fun add(event: Any) {

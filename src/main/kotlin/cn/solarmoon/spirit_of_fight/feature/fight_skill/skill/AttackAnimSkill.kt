@@ -1,70 +1,64 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.entity.attack.getAttackedData
-import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
-import cn.solarmoon.spark_core.api.phys.livingCommonAttack
-import cn.solarmoon.spark_core.api.phys.thread.getPhysWorld
-import cn.solarmoon.spark_core.api.phys.toDVector3
-import cn.solarmoon.spark_core.registry.common.SparkVisualEffects
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
-import cn.solarmoon.spirit_of_fight.feature.hit.HitType
-import cn.solarmoon.spirit_of_fight.feature.hit.setHitStrength
-import cn.solarmoon.spirit_of_fight.feature.hit.setHitType
-import net.minecraft.world.entity.Entity
-import org.ode4j.math.DVector3
+import cn.solarmoon.spark_core.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.entity.preinput.getPreInput
+import cn.solarmoon.spark_core.entity.state.getAttackAnimSpeed
+import cn.solarmoon.spark_core.skill.BaseSkill
+import cn.solarmoon.spark_core.skill.Skill
+import cn.solarmoon.spark_core.skill.SkillType
+import cn.solarmoon.spirit_of_fight.fighter.getEntityPatch
+import net.minecraft.world.phys.Vec3
+import org.ode4j.ode.DContactBuffer
 import org.ode4j.ode.DGeom
-import org.ode4j.ode.OdeHelper
+import kotlin.let
 
-/**
- * 拥有以下部分：
- *
- * - 攻击时对战意的修改
- * - 默认将碰撞箱绑定到右手骨骼上
- * - 重攻击的屏幕颤动
- * - 刀光
- * - 碰撞箱生成时自动攻击
- * - 自动根据生物触及距离拓展攻击碰撞箱
- * - 攻击力度（力度大于0时为不可格挡的攻击，然后数值越大将获得越大的屏幕震动）
- * - 强制位移（在控制器中按住s会阻止水平位移）
- */
-abstract class AttackAnimSkill(
-    val controller: FightSkillController,
-    animBounds: Set<String>,
-): AnimSkill(controller.animatable, animBounds) {
+open class AttackAnimSkill(
+    animatable: IEntityAnimatable<*>,
+    skillType: SkillType<IEntityAnimatable<*>, out Skill<IEntityAnimatable<*>>>,
+    val animName: String,
+    val baseAttackSpeed: Double,
+    val switchNode: Double?,
+    private val enableAttack: (IEntityAnimatable<*>, MixedAnimation) -> Boolean,
+    private val enableMove: ((IEntityAnimatable<*>, MixedAnimation) -> Vec3?)
+): BaseSkill<IEntityAnimatable<*>>(animatable, skillType) {
 
-    val baseAttackSpeed = controller.baseAttackSpeed
+    val entity = animatable.animatable
 
-    abstract fun getHitType(anim: MixedAnimation): HitType
+    override fun onActivate() {
+        val anim = MixedAnimation(animName, startTransSpeed = 6f, speed = entity.getAttackAnimSpeed(baseAttackSpeed.toFloat())).apply { shouldTurnBody = true }
+        holder.animController.stopAndAddAnimation(anim)
+    }
 
-    abstract fun getHitStrength(anim: MixedAnimation): Int
+    override fun onUpdate() {
+        val aBody = entity.getEntityPatch().weaponAttackBody ?: return
+        holder.animData.playData.getMixedAnimation(animName)?.let {
+            if (enableAttack.invoke(holder, it)) {
+                aBody.enable()
+            } else {
+                aBody.disable()
+            }
 
-    open fun onFirstTargetAttacked(target: Entity) {
-        animatable.animController.startFreezing(false)
-        // 重攻击可使屏幕晃动
-        getPlayingAnim()?.let {
-            if (getHitType(it).isHeavy) SparkVisualEffects.CAMERA_SHAKE.shakeToClient(entity, 2, getHitStrength(it) + 0.5f)
+            switchNode?.let { time -> if (it.isTickIn(time, Double.MAX_VALUE)) entity.getPreInput().executeIfPresent() }
+
+            enableMove.invoke(holder, it)?.let { entity.deltaMovement = it }
+
+            if (it.isCancelled) end()
+        } ?: run {
+            end()
         }
     }
 
-    open fun onTargetAttacked(target: Entity) {
-        addFightSpiritWhenAttack(target)
-        getPlayingAnim()?.let {
-            target.getAttackedData()?.setHitType(getHitType(it))
-            target.getAttackedData()?.setHitStrength(getHitStrength(it))
-        }
+    override fun onEnd() {
+        val aBody = entity.getEntityPatch().weaponAttackBody ?: return
+        aBody.disable()
     }
 
-    fun createAttackBox(size: DVector3): DGeom = OdeHelper.createBox(entity.getPhysWorld().space, size).apply {
-//        data().onCollide { o2, buffer ->
-//            livingCommonAttack(o2, true) {
-//                if (data().attackedEntities.size == 1) onFirstTargetAttacked(it)
-//                onTargetAttacked(it)
-//            }
-//            data().passFromCollision = true
-//        }
+    /**
+     * 当击打到目标时调用（伤害触发前）
+     */
+    open fun whenAttacked(o1: DGeom, o2: DGeom, buffer: DContactBuffer) {
+        holder.animController.startFreezing(false)
     }
-
-    abstract fun addFightSpiritWhenAttack(target: Entity)
 
 }

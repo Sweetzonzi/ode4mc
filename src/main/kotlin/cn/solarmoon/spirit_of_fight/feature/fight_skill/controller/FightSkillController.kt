@@ -1,60 +1,70 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.controller
 
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spark_core.api.entity.skill.AnimSkill
-import cn.solarmoon.spark_core.api.entity.skill.AnimSkillController
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.ComboAnimSkill
+import cn.solarmoon.spark_core.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.skill.SkillController
+import cn.solarmoon.spark_core.util.CycleIndex
+import cn.solarmoon.spirit_of_fight.data.SOFSkillTags
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.AttackAnimSkill
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.CommonGuardAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.DodgeAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.JumpAttackAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SingleAttackAnimSkill
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.SprintAttackAnimSkill
-import org.joml.Vector3f
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.skill.GuardAnimSkill
+import cn.solarmoon.spirit_of_fight.fighter.getEntityPatch
+import net.minecraft.world.damagesource.DamageTypes
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
+import org.ode4j.math.DVector3
+import org.ode4j.ode.DBox
 
-/**
- * 武器连招系统
- */
 abstract class FightSkillController(
-    val animatable: IEntityAnimatable<*>,
-    val id: String,
-    val baseAttackSpeed: Float,
-    val commonBoxSize: Vector3f,
-    val commonBoxOffset: Vector3f = Vector3f(0f, 0f, commonBoxSize.z / -2)
-): AnimSkillController() {
+    override val holder: LivingEntity,
+    val animatable: IEntityAnimatable<*>
+): SkillController<Entity>() {
 
-    val entity get() = animatable.animatable
+    abstract val boxLength: DVector3
+    abstract val boxOffset: DVector3
 
-    abstract val combo: ComboAnimSkill
-    abstract val dodge: DodgeAnimSkill
-    abstract val guard: CommonGuardAnimSkill
-    abstract val jumpAttack: JumpAttackAnimSkill
-    abstract val sprintAttack: SprintAttackAnimSkill
+    open val maxComboAmount = 3
+    val comboIndex = CycleIndex(maxComboAmount)
 
-    open val specialAttackSkillGroup: MutableList<SingleAttackAnimSkill> get() = mutableListOf(
-        jumpAttack, sprintAttack
-    )
+    /**
+     * 如果受到的伤害类型在此列表中则无法进行[onHurt]方法
+     */
+    val unblockableDamageTypes = hashSetOf(DamageTypes.EXPLOSION, DamageTypes.PLAYER_EXPLOSION)
 
-    override val skillGroup: List<AnimSkill>
-        get() = mutableListOf(combo, dodge, guard).apply { addAll(specialAttackSkillGroup) }
+    abstract fun getComboSkill(index: Int): AttackAnimSkill
 
-    override fun isAttacking(filter: (MixedAnimation) -> Boolean): Boolean {
-        return combo.isPlaying(filter) || specialAttackSkillGroup.any { it.isPlaying(filter) }
-    }
+    abstract fun getGuardSkill(): CommonGuardAnimSkill
+
+    open fun isAttacking() = allSkills.any { it.isActive() && it.`is`(SOFSkillTags.FORGE_ATTACK) }
+
+    fun getComboSkill() = getComboSkill(comboIndex.get())
 
     override fun tick() {
-        super.tick()
-        // 不在播放任何动画，直接进行预输入释放
-        if (!isPlayingSkill { !it.isCancelled }) {
-            combo.index = 0
-            entity.getPreInput().executeIfPresent()
+        // 不在播放任意技能时重置连击
+        if (!isPlaying()) {
+            comboIndex.set(0)
+        }
+
+        // 攻击碰撞大小
+        holder.getEntityPatch().weaponAttackBody?.let {
+            val box = it.body.firstGeom as? DBox ?: return@let
+            box.lengths = boxLength
+            box.offsetPosition = boxOffset
+        }
+        // 防守碰撞大小
+        holder.getEntityPatch().weaponGuardBody?.let {
+            val box = it.body.firstGeom as? DBox ?: return@let
+            box.lengths = boxLength
+            box.offsetPosition = boxOffset
         }
     }
 
-    override fun onDisabledMoment() {
-        super.onDisabledMoment()
-        entity.getPreInput().clear()
+    override fun onHurt(event: LivingIncomingDamageEvent) {
+        super.onHurt(event)
+
+        if (unblockableDamageTypes.any { event.source.`is`(it) }) return
+
+        getGuardSkill().onHurt(event)
     }
 
 }

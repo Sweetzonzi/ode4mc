@@ -1,4 +1,7 @@
 dependencies {
+    //核心
+    implementation "cn.solarmoon:spark-core-neoforge:${minecraft_version}-${spark_core_version}"
+
     // jei
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
@@ -24,6 +27,9 @@ dependencies {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url 'https://jitpack.io'
+    }
     maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
@@ -75,6 +81,13 @@ repositories {
     }
     maven {
         url = 'https://maven.azuredoom.com/mods'
+    }
+    maven {
+        url = "https://maven.pkg.github.com/SolarMoonQAQ/Spark-Core"
+        credentials {
+            username = System.getenv("GITMAVEN_USERNAME")
+            password = System.getenv("SolarMoonCore_TOKEN")
+        }
     }
     flatDir {
         dir 'lib'

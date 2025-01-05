@@ -1,67 +1,36 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
-import cn.solarmoon.spark_core.api.animation.IEntityAnimatable
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
-import cn.solarmoon.spark_core.api.entity.state.getLateralSide
-import cn.solarmoon.spark_core.api.util.Side
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
-import net.minecraft.world.damagesource.DamageSource
-import net.minecraft.world.entity.Entity
+import cn.solarmoon.spark_core.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.animation.anim.auto_anim.EntityStateAutoAnim
+import cn.solarmoon.spark_core.animation.anim.auto_anim.getAutoAnim
+import cn.solarmoon.spark_core.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.skill.Skill
+import cn.solarmoon.spark_core.skill.SkillType
+import cn.solarmoon.spirit_of_fight.fighter.getEntityPatch
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
 
-abstract class ParryAnimSkill(
-    controller: FightSkillController,
-    val anim: SyncedAnimation,
+class ParryAnimSkill(
+    animatable: IEntityAnimatable<*>,
+    skillType: SkillType<IEntityAnimatable<*>, out Skill<IEntityAnimatable<*>>>,
+    animName: String,
     guardRange: Double
-): GuardAnimSkill(controller, setOf(anim.anim.name), guardRange) {
+): GuardAnimSkill(animatable, skillType, animName, guardRange) {
 
-    companion object {
-        @JvmStatic
-        fun createParrySyncedAnim(prefix: String) = SyncedAnimation(MixedAnimation("$prefix:parry", startTransSpeed = 6f))
+    override fun onActivate() {
+        holder.animController.stopAndAddAnimation(MixedAnimation(animName, startTransSpeed = 6f))
+    }
 
-        @JvmStatic
-        val PARRY_SYNCED_ANIM = buildMap {
-            listOf(Side.LEFT, Side.RIGHT).forEach {
-                put(it, SyncedAnimation(MixedAnimation("parried_$it", startTransSpeed = 6f)))
-            }
+    override fun onUpdate() {
+        holder.animData.playData.getMixedAnimation(animName)?.takeIf { !it.isCancelled }?.let {
+            entity.getEntityPatch().weaponGuardBody?.enable()
+        } ?: run {
+            end()
         }
-
-        @JvmStatic
-        fun registerAnim() {}
     }
 
-    override fun getBoxId(index: Int): String {
-        return "${entity.id}:parry"
-    }
-
-    override fun start(sync: (SyncedAnimation) -> Unit) {
-        anim.consume(animatable)
-        sync.invoke(anim)
-    }
-
-    override fun onSuccessGuard(
-        attackerPos: Vec3,
-        damageSource: DamageSource,
-        value: Float,
-        anim: MixedAnimation
-    ): Boolean {
-        damageSource.entity?.let {
-            parry(attackerPos, it)
-        }
-        return false
-    }
-
-    fun parry(attackerPos: Vec3, attacker: Entity) {
-        if (attacker is IEntityAnimatable<*> && !attacker.level().isClientSide) {
-            val side = entity.getLateralSide(attackerPos, true)
-            if (attacker.animData.animationSet.hasAnimation("parried_$side")) {
-                PARRY_SYNCED_ANIM[side]?.let { anim ->
-                    anim.consume(attacker)
-                    anim.syncToClient(attacker.id)
-                }
-            }
-        }
+    override fun onSuccessGuard(attackerPos: Vec3, event: LivingIncomingDamageEvent): Boolean {
+        return true
     }
 
 }

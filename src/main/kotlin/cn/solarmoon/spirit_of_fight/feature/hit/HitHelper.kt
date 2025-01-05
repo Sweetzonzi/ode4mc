@@ -1,6 +1,6 @@
 package cn.solarmoon.spirit_of_fight.feature.hit
 
-import cn.solarmoon.spark_core.api.entity.attack.AttackedData
+import cn.solarmoon.spark_core.entity.attack.AttackedData
 
 fun AttackedData.getHitType() = extraData.getString("hitType").takeIf { it.isNotEmpty() }?.let { HitType.valueOf(it) }
 

@@ -1,9 +1,9 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.spirit
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.util.ColorUtil
-import cn.solarmoon.spark_core.api.util.RenderTypeUtil
-import cn.solarmoon.spark_core.api.util.blitTransparent
+import cn.solarmoon.spark_core.util.ColorUtil
+import cn.solarmoon.spark_core.util.RenderTypeUtil
+import cn.solarmoon.spark_core.util.blitTransparent
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.BufferUploader

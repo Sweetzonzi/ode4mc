@@ -1,94 +1,62 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.skill
 
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.EntityStateAutoAnim
-import cn.solarmoon.spark_core.api.animation.anim.auto_anim.getAutoAnim
-import cn.solarmoon.spark_core.api.animation.sync.SyncedAnimation
-import cn.solarmoon.spark_core.api.animation.anim.play.MixedAnimation
-import cn.solarmoon.spark_core.api.entity.attack.clearAttackedData
-import cn.solarmoon.spark_core.api.entity.preinput.getPreInput
-import cn.solarmoon.spirit_of_fight.feature.fight_skill.controller.FightSkillController
+import cn.solarmoon.spark_core.animation.IEntityAnimatable
+import cn.solarmoon.spark_core.animation.anim.auto_anim.EntityStateAutoAnim
+import cn.solarmoon.spark_core.animation.anim.auto_anim.getAutoAnim
+import cn.solarmoon.spark_core.animation.anim.play.MixedAnimation
+import cn.solarmoon.spark_core.entity.attack.clearAttackedData
+import cn.solarmoon.spark_core.skill.Skill
+import cn.solarmoon.spark_core.skill.SkillType
+import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.ClientOperationPayload
 import cn.solarmoon.spirit_of_fight.feature.fight_skill.sync.MovePayload
-import net.minecraft.world.damagesource.DamageSource
-import net.minecraft.world.entity.LivingEntity
+import cn.solarmoon.spirit_of_fight.fighter.getEntityPatch
 import net.minecraft.world.phys.Vec3
-import org.ode4j.ode.DGeom
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
+import net.neoforged.neoforge.network.PacketDistributor
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 
-open class CommonGuardAnimSkill(
-    controller: FightSkillController,
-    val animGroup: Map<AnimType, SyncedAnimation>,
-    guardRange: Double,
-): GuardAnimSkill(
-    controller,
-    buildSet { animGroup.values.forEach { add(it.anim.name) } },
-    guardRange
-) {
+class CommonGuardAnimSkill(
+    animatable: IEntityAnimatable<*>,
+    skillType: SkillType<IEntityAnimatable<*>, out Skill<IEntityAnimatable<*>>>,
+    animName: String,
+    guardRange: Double
+): GuardAnimSkill(animatable, skillType, animName, guardRange) {
 
-    enum class AnimType { IDLE, HURT }
+    val hurtAnimName = animName + "_hurt"
 
-    companion object {
-        @JvmStatic
-        fun createGuardSyncedAnim(prefix: String): Map<AnimType, SyncedAnimation> = buildMap {
-            AnimType.entries.forEach {
-                val name = it.toString().lowercase()
-                when(it) {
-                    AnimType.IDLE -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 2.5f)))
-                    AnimType.HURT -> put(it, SyncedAnimation(MixedAnimation("$prefix:guard_${name}", startTransSpeed = 6f)))
-                }
+    override fun onActivate() {
+        holder.animController.stopAndAddAnimation(MixedAnimation(animName, startTransSpeed = 2.5f))
+    }
+
+    override fun onUpdate() {
+        holder.animData.playData.getMixedAnimation(animName)?.takeIf { !it.isCancelled }?.let {
+            entity.getEntityPatch().weaponGuardBody?.enable()
+            // 和走路混合
+            holder.getAutoAnim<EntityStateAutoAnim>("EntityState")?.blendWithoutArms(false) { it.name == animName }
+        } ?: run {
+            // 击退后再续上动作
+            holder.animData.playData.getMixedAnimation(hurtAnimName)?.let {
+                if (it.isCancelled) holder.animController.stopAndAddAnimation(MixedAnimation(animName, startTransSpeed = 6f))
+            } ?: run {
+                entity.getEntityPatch().weaponGuardBody?.disable()
+                active = false
             }
         }
     }
 
-    val idleAnim = animGroup[AnimType.IDLE]!!
-    val hurtAnim = animGroup[AnimType.HURT]!!
-
-    fun isStanding(filter: (MixedAnimation) -> Boolean = {true}) = isPlaying { it.name == idleAnim.anim.name && filter.invoke(it) }
-
-    fun isBacking(filter: (MixedAnimation) -> Boolean = {true}) = isPlaying { it.name == hurtAnim.anim.name && filter.invoke(it) }
-
-    override fun start(sync: (SyncedAnimation) -> Unit) {
-        entity.getPreInput().setInput("guard") {
-            idleAnim.consume(animatable)
-            sync.invoke(idleAnim)
+    override fun onSuccessGuard(attackerPos: Vec3, event: LivingIncomingDamageEvent): Boolean {
+        if (!holder.animController.isPlaying(hurtAnimName) { !it.isCancelled }) {
+            playHurtAnim()
+            PacketDistributor.sendToAllPlayers(ClientOperationPayload(entity.id, "guard_hurt", Vec3.ZERO, 0))
         }
-    }
-
-    override fun stop(sync: (SyncedAnimation) -> Unit) {
-        if (entity.getPreInput().id == "guard") entity.getPreInput().clear()
-        super.stop(sync)
-    }
-
-    override fun shouldEnableGeom(geom: DGeom, anim: MixedAnimation): Boolean {
-        return !anim.isInTransition
-    }
-
-    override fun whenInAnim(anim: MixedAnimation) {
-        super.whenInAnim(anim)
-
-        // 击退动作的末尾续上站立动画
-        if (anim.name == hurtAnim.anim.name) {
-            if (anim.tick >= anim.maxTick && !isStanding()) {
-                animatable.animController.stopAndAddAnimation(idleAnim.anim.apply { startTransSpeed = 4f })
-            }
-        }
-
-        // 格挡行走时混合一个走路动画
-        if (!anim.isCancelled && anim.name == idleAnim.anim.name) {
-            animatable.getAutoAnim<EntityStateAutoAnim>("EntityState")?.blendWithoutArms(false) { it.name !in animBounds }
-        }
-    }
-
-    override fun onSuccessGuard(attackerPos: Vec3, damageSource: DamageSource, value: Float, anim: MixedAnimation): Boolean {
-        if (getPlayingAnim{ !it.isCancelled }?.name == idleAnim.anim.name) {
-            if (entity is LivingEntity) {
-                hurtAnim.consume(animatable)
-                hurtAnim.syncToClient(entity.id)
-                val v = Vec3(entity.x - attackerPos.x, entity.y - attackerPos.y, entity.z - attackerPos.z).normalize().div(2.5)
-                MovePayload.moveEntityInClient(entity.id, v)
-            }
-        }
+        val v = Vec3(entity.x - attackerPos.x, entity.y - attackerPos.y, entity.z - attackerPos.z).normalize().div(2.5)
+        MovePayload.moveEntityInClient(entity.id, v)
         entity.clearAttackedData()
-        return false
+        return true
+    }
+
+    fun playHurtAnim() {
+        holder.animController.stopAndAddAnimation(MixedAnimation(hurtAnimName, startTransSpeed = 6f))
     }
 
 }

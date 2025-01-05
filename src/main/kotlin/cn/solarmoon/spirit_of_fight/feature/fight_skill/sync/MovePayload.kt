@@ -1,7 +1,7 @@
 package cn.solarmoon.spirit_of_fight.feature.fight_skill.sync
 
 import cn.solarmoon.spark_core.SparkCore
-import cn.solarmoon.spark_core.api.data.SerializeHelper
+import cn.solarmoon.spark_core.data.SerializeHelper
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
